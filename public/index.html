@@ -1,36 +1,2430 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
+
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta charset="utf-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+
 <title>LifeOS AI — Your day, engineered.</title>
-<meta name="description" content="LifeOS AI convierte tus pendientes en un plan inteligente, claro y adaptable.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<meta
+  name="description"
+  content="LifeOS AI turns your responsibilities into an intelligent, realistic and adaptive plan."
+>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link
+  rel="preconnect"
+  href="https://fonts.gstatic.com"
+  crossorigin
+>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+>
+
 <style>
-:root{--bg:#07090d;--surface:#0d1118;--surface2:#111722;--line:#202936;--text:#f3f7fb;--muted:#8995a5;--lime:#c7ff5e;--cyan:#64e6ff}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Manrope,system-ui,sans-serif;overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:70px 70px;mask-image:linear-gradient(to bottom,#000,transparent 70%)}
-nav{height:78px;max-width:1180px;margin:auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff08}.brand{font-weight:800;letter-spacing:-1px;font-size:20px}.brand i{font-style:normal;color:var(--lime)}.links{display:flex;gap:28px;font-size:13px;color:var(--muted)}.links a:hover{color:#fff}.navbtn{font-size:12px;padding:10px 15px;border:1px solid var(--line);border-radius:9px;background:#10151d;color:#fff}
-.hero{max-width:1180px;margin:0 auto;padding:115px 28px 105px;display:grid;grid-template-columns:1.08fr .92fr;gap:70px;align-items:center}.label{font:500 11px "DM Mono",monospace;color:var(--lime);letter-spacing:2px;text-transform:uppercase}.hero h1{font-size:clamp(52px,7vw,86px);line-height:.98;letter-spacing:-5px;margin:20px 0 25px}.hero h1 span{color:transparent;-webkit-text-stroke:1px #c7ff5e}.hero p{color:var(--muted);font-size:17px;line-height:1.7;max-width:590px}.actions{display:flex;gap:10px;margin-top:30px}.btn{cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:13px 18px;background:#0e131b;color:#fff;font-weight:700}.primary{background:var(--lime);border-color:var(--lime);color:#0a0d08}.terminal{border:1px solid #26313f;border-radius:18px;background:linear-gradient(145deg,#101721,#0b0e14);box-shadow:0 30px 100px #000;overflow:hidden}.termhead{height:42px;border-bottom:1px solid #202936;display:flex;align-items:center;padding:0 15px;gap:7px}.dot{width:7px;height:7px;border-radius:50%;background:#4a5360}.termhead small{margin-left:8px;color:#647082;font:400 10px "DM Mono"}.screen{padding:25px}.prompt{font:500 12px "DM Mono";color:#748193}.input{margin-top:10px;padding:13px 14px;border:1px solid #273342;border-radius:9px;color:#e7ecf2;font-size:13px;background:#0b0f15}.airesponse{margin-top:17px;border-left:2px solid var(--lime);padding-left:15px}.airesponse b{font-size:12px}.schedule{margin-top:14px;display:grid;gap:7px}.row{display:flex;align-items:center;padding:11px;border:1px solid #1e2733;border-radius:8px;background:#0e141d}.time{font:400 10px "DM Mono";color:#657182;width:55px}.row strong{font-size:11px}.pill{margin-left:auto;font:400 9px "DM Mono";color:var(--lime)}.section{max-width:1180px;margin:auto;padding:80px 28px}.sectionhead{max-width:650px}.section h2{font-size:42px;letter-spacing:-2.5px;margin:12px 0}.sectionhead p{color:var(--muted);line-height:1.7}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:40px}.card{border:1px solid var(--line);background:linear-gradient(145deg,#0e131b,#0a0d12);padding:25px;border-radius:15px;min-height:185px}.num{font:500 11px "DM Mono";color:#566273}.card h3{font-size:18px;margin:30px 0 8px}.card p{font-size:13px;color:var(--muted);line-height:1.6}.pricing{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:40px}.price{padding:30px;border-radius:16px;border:1px solid var(--line);background:#0d1219}.price.pro{border-color:#5f7830;background:linear-gradient(145deg,#121a10,#0d1219)}.price h3{margin:0;font-size:18px}.amount{font-size:45px;font-weight:800;letter-spacing:-2px;margin:18px 0}.amount small{font:400 12px "DM Mono";color:var(--muted);letter-spacing:0}.price ul{padding-left:18px;color:var(--muted);line-height:2;font-size:13px}.footer{border-top:1px solid var(--line);padding:30px 28px;text-align:center;color:#56606e;font:400 10px "DM Mono"}@media(max-width:820px){.links{display:none}.hero{grid-template-columns:1fr;padding-top:75px;gap:45px}.hero h1{letter-spacing:-3px}.grid,.pricing{grid-template-columns:1fr}.section{padding:60px 22px}}
+
+/* =========================================================
+   LIFEOS AI — CORE DESIGN
+   ========================================================= */
+
+:root{
+
+  --bg:#07090d;
+  --surface:#0d1118;
+  --surface2:#111722;
+  --line:#202936;
+
+  --text:#f3f7fb;
+  --muted:#8995a5;
+
+  --lime:#c7ff5e;
+  --cyan:#64e6ff;
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  margin:0;
+
+  background:var(--bg);
+
+  color:var(--text);
+
+  font-family:
+    Manrope,
+    system-ui,
+    sans-serif;
+
+  overflow-x:hidden;
+
+}
+
+body:before{
+
+  content:"";
+
+  position:fixed;
+
+  inset:0;
+
+  pointer-events:none;
+
+  opacity:.16;
+
+  background-image:
+    linear-gradient(
+      #fff 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      #fff 1px,
+      transparent 1px
+    );
+
+  background-size:70px 70px;
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      #000,
+      transparent 70%
+    );
+
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+nav{
+
+  height:78px;
+
+  max-width:1180px;
+
+  margin:auto;
+
+  padding:0 28px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  border-bottom:
+    1px solid #ffffff08;
+
+}
+
+.brand{
+
+  font-weight:800;
+
+  letter-spacing:-1px;
+
+  font-size:20px;
+
+}
+
+.brand span{
+
+  color:var(--lime);
+
+}
+
+.links{
+
+  display:flex;
+
+  gap:28px;
+
+  font-size:13px;
+
+}
+
+.links a{
+
+  color:var(--muted);
+
+  text-decoration:none;
+
+  cursor:pointer;
+
+  transition:.2s;
+
+}
+
+.links a:hover{
+
+  color:#fff;
+
+}
+
+.navbtn{
+
+  font-size:12px;
+
+  padding:10px 15px;
+
+  border:1px solid var(--line);
+
+  border-radius:9px;
+
+  background:#10151d;
+
+  color:#fff;
+
+  cursor:pointer;
+
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.btn{
+
+  cursor:pointer;
+
+  border:1px solid var(--line);
+
+  border-radius:10px;
+
+  padding:13px 18px;
+
+  background:#0e131b;
+
+  color:#fff;
+
+  font-weight:700;
+
+  font-family:Manrope,sans-serif;
+
+  transition:.2s;
+
+}
+
+.btn:hover{
+
+  transform:translateY(-2px);
+
+  border-color:#3b4655;
+
+}
+
+.primary{
+
+  background:var(--lime);
+
+  border-color:var(--lime);
+
+  color:#0a0d08;
+
+}
+
+.primary:hover{
+
+  background:#d5ff7d;
+
+  border-color:#d5ff7d;
+
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero{
+
+  max-width:1180px;
+
+  margin:0 auto;
+
+  padding:
+    115px
+    28px
+    105px;
+
+  display:grid;
+
+  grid-template-columns:
+    1.08fr
+    .92fr;
+
+  gap:70px;
+
+  align-items:center;
+
+}
+
+.label{
+
+  font:
+    500 11px
+    "DM Mono",
+    monospace;
+
+  color:var(--lime);
+
+  letter-spacing:2px;
+
+  text-transform:uppercase;
+
+}
+
+.hero h1{
+
+  font-size:
+    clamp(
+      52px,
+      7vw,
+      86px
+    );
+
+  line-height:.98;
+
+  letter-spacing:-5px;
+
+  margin:20px 0 25px;
+
+}
+
+.hero h1 span{
+
+  color:transparent;
+
+  -webkit-text-stroke:
+    1px var(--lime);
+
+}
+
+.hero p{
+
+  color:var(--muted);
+
+  font-size:17px;
+
+  line-height:1.7;
+
+  max-width:590px;
+
+}
+
+.actions{
+
+  display:flex;
+
+  gap:10px;
+
+  margin-top:30px;
+
+}
+
+.terminal{
+
+  border:
+    1px solid #26313f;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #101721,
+      #0b0e14
+    );
+
+  box-shadow:
+    0 30px 100px #000;
+
+  overflow:hidden;
+
+}
+
+.termhead{
+
+  height:42px;
+
+  border-bottom:
+    1px solid #202936;
+
+  display:flex;
+
+  align-items:center;
+
+  padding:0 15px;
+
+  gap:7px;
+
+}
+
+.dot{
+
+  width:7px;
+
+  height:7px;
+
+  border-radius:50%;
+
+  background:#4a5360;
+
+}
+
+.termhead small{
+
+  margin-left:8px;
+
+  color:#647082;
+
+  font:
+    400 10px
+    "DM Mono";
+
+}
+
+.screen{
+
+  padding:25px;
+
+}
+
+.prompt{
+
+  font:
+    500 12px
+    "DM Mono";
+
+  color:#748193;
+
+}
+
+.input{
+
+  margin-top:10px;
+
+  padding:13px 14px;
+
+  border:
+    1px solid #273342;
+
+  border-radius:9px;
+
+  color:#e7ecf2;
+
+  font-size:13px;
+
+  background:#0b0f15;
+
+}
+
+.airesponse{
+
+  margin-top:17px;
+
+  border-left:
+    2px solid var(--lime);
+
+  padding-left:15px;
+
+}
+
+.airesponse b{
+
+  font-size:12px;
+
+}
+
+.schedule{
+
+  margin-top:14px;
+
+  display:grid;
+
+  gap:7px;
+
+}
+
+.row{
+
+  display:flex;
+
+  align-items:center;
+
+  padding:11px;
+
+  border:
+    1px solid #1e2733;
+
+  border-radius:8px;
+
+  background:#0e141d;
+
+}
+
+.time{
+
+  font:
+    400 10px
+    "DM Mono";
+
+  color:#657182;
+
+  width:55px;
+
+}
+
+.row strong{
+
+  font-size:11px;
+
+}
+
+.pill{
+
+  margin-left:auto;
+
+  font:
+    400 9px
+    "DM Mono";
+
+  color:var(--lime);
+
+}
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.section{
+
+  max-width:1180px;
+
+  margin:auto;
+
+  padding:80px 28px;
+
+}
+
+.sectionhead{
+
+  max-width:650px;
+
+}
+
+.section h2{
+
+  font-size:42px;
+
+  letter-spacing:-2.5px;
+
+  margin:12px 0;
+
+}
+
+.sectionhead p{
+
+  color:var(--muted);
+
+  line-height:1.7;
+
+}
+
+.grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:12px;
+
+  margin-top:40px;
+
+}
+
+.card{
+
+  border:
+    1px solid var(--line);
+
+  background:
+    linear-gradient(
+      145deg,
+      #0e131b,
+      #0a0d12
+    );
+
+  padding:25px;
+
+  border-radius:15px;
+
+  min-height:185px;
+
+}
+
+.num{
+
+  font:
+    500 11px
+    "DM Mono";
+
+  color:#566273;
+
+}
+
+.card h3{
+
+  font-size:18px;
+
+  margin:30px 0 8px;
+
+}
+
+.card p{
+
+  font-size:13px;
+
+  color:var(--muted);
+
+  line-height:1.6;
+
+}
+
+/* =========================================================
+   PRICING
+   ========================================================= */
+
+.pricing{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:12px;
+
+  margin-top:40px;
+
+}
+
+.price{
+
+  padding:30px;
+
+  border-radius:16px;
+
+  border:
+    1px solid var(--line);
+
+  background:#0d1219;
+
+}
+
+.price.pro{
+
+  border-color:#5f7830;
+
+  background:
+    linear-gradient(
+      145deg,
+      #121a10,
+      #0d1219
+    );
+
+}
+
+.price h3{
+
+  margin:0;
+
+  font-size:18px;
+
+}
+
+.amount{
+
+  font-size:45px;
+
+  font-weight:800;
+
+  letter-spacing:-2px;
+
+  margin:18px 0;
+
+}
+
+.amount small{
+
+  font:
+    400 12px
+    "DM Mono";
+
+  color:var(--muted);
+
+  letter-spacing:0;
+
+}
+
+.price ul{
+
+  padding-left:18px;
+
+  color:var(--muted);
+
+  line-height:2;
+
+  font-size:13px;
+
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer{
+
+  border-top:
+    1px solid var(--line);
+
+  padding:30px 28px;
+
+  text-align:center;
+
+  color:#56606e;
+
+  font:
+    400 10px
+    "DM Mono";
+
+}
+
+/* =========================================================
+   FULL SCREEN APP
+   ========================================================= */
+
+.app-screen{
+
+  position:fixed;
+
+  inset:0;
+
+  z-index:9999;
+
+  background:
+    rgba(7,9,13,.98);
+
+  overflow-y:auto;
+
+  animation:
+    screenIn .25s ease;
+
+}
+
+@keyframes screenIn{
+
+  from{
+
+    opacity:0;
+    transform:translateY(10px);
+
+  }
+
+  to{
+
+    opacity:1;
+    transform:translateY(0);
+
+  }
+
+}
+
+.app-inner{
+
+  width:
+    min(
+      900px,
+      calc(100% - 40px)
+    );
+
+  margin:auto;
+
+  padding:
+    35px
+    0
+    80px;
+
+}
+
+.app-top{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:80px;
+
+}
+
+/* =========================================================
+   AUTH
+   ========================================================= */
+
+.auth-box{
+
+  width:
+    min(
+      440px,
+      calc(100% - 40px)
+    );
+
+  margin:
+    80px auto;
+
+  padding:35px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #111722,
+      #0b0f15
+    );
+
+  box-shadow:
+    0 30px 100px #000;
+
+}
+
+.auth-box h1{
+
+  font-size:48px;
+
+  line-height:1;
+
+  letter-spacing:-3px;
+
+  margin:18px 0;
+
+}
+
+.auth-box h1 span{
+
+  color:transparent;
+
+  -webkit-text-stroke:
+    1px var(--lime);
+
+}
+
+.auth-description{
+
+  color:var(--muted);
+
+  line-height:1.6;
+
+  font-size:14px;
+
+  margin-bottom:25px;
+
+}
+
+.auth-input{
+
+  width:100%;
+
+  padding:14px;
+
+  margin-bottom:12px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:9px;
+
+  background:#080c12;
+
+  color:#fff;
+
+  outline:none;
+
+  font-family:Manrope,sans-serif;
+
+}
+
+.auth-input:focus{
+
+  border-color:var(--lime);
+
+}
+
+.auth-main{
+
+  width:100%;
+
+  margin-top:8px;
+
+}
+
+.login-link{
+
+  display:block;
+
+  margin:18px auto 0;
+
+  border:0;
+
+  background:none;
+
+  color:var(--muted);
+
+  cursor:pointer;
+
+  font-size:12px;
+
+}
+
+/* =========================================================
+   PLANNER
+   ========================================================= */
+
+.planner-title{
+
+  font-size:
+    clamp(
+      48px,
+      8vw,
+      78px
+    );
+
+  line-height:.98;
+
+  letter-spacing:-4px;
+
+  margin:18px 0;
+
+}
+
+.planner-title span{
+
+  color:transparent;
+
+  -webkit-text-stroke:
+    1px var(--lime);
+
+}
+
+.planner-description{
+
+  color:var(--muted);
+
+  max-width:650px;
+
+  line-height:1.7;
+
+}
+
+.planner-input{
+
+  width:100%;
+
+  min-height:190px;
+
+  margin-top:30px;
+
+  padding:18px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:12px;
+
+  background:#0d1219;
+
+  color:#fff;
+
+  font-family:Manrope,sans-serif;
+
+  font-size:15px;
+
+  resize:vertical;
+
+  outline:none;
+
+}
+
+.planner-input:focus{
+
+  border-color:var(--lime);
+
+}
+
+.generate-btn{
+
+  margin-top:15px;
+
+}
+
+.generated-plan{
+
+  margin-top:35px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:16px;
+
+  overflow:hidden;
+
+  background:#0d1219;
+
+}
+
+.plan-header{
+
+  padding:18px;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  border-bottom:
+    1px solid var(--line);
+
+  color:var(--lime);
+
+  font:
+    500 11px
+    "DM Mono";
+
+}
+
+.plan-header small{
+
+  color:var(--muted);
+
+}
+
+.plan-item{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:15px;
+
+  padding:17px;
+
+  border-bottom:
+    1px solid #ffffff08;
+
+}
+
+.plan-item span{
+
+  width:55px;
+
+  color:#657182;
+
+  font:
+    400 11px
+    "DM Mono";
+
+}
+
+.plan-item strong{
+
+  font-size:13px;
+
+}
+
+.plan-item em{
+
+  margin-left:auto;
+
+  color:var(--lime);
+
+  font:
+    400 10px
+    "DM Mono";
+
+  font-style:normal;
+
+}
+
+.plan-footer{
+
+  padding:18px;
+
+  color:var(--muted);
+
+  font-size:12px;
+
+}
+
+/* =========================================================
+   PRO
+   ========================================================= */
+
+.pro-box{
+
+  width:
+    min(
+      680px,
+      calc(100% - 40px)
+    );
+
+  margin:
+    80px auto;
+
+  padding:45px;
+
+  border:
+    1px solid #5f7830;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #121a10,
+      #0d1219
+    );
+
+  box-shadow:
+    0 30px 100px #000;
+
+  position:relative;
+
+}
+
+.pro-box h1{
+
+  font-size:
+    clamp(
+      50px,
+      8vw,
+      80px
+    );
+
+  line-height:.98;
+
+  letter-spacing:-4px;
+
+  margin:18px 0;
+
+}
+
+.pro-box h1 span{
+
+  color:transparent;
+
+  -webkit-text-stroke:
+    1px var(--lime);
+
+}
+
+.pro-box p{
+
+  color:var(--muted);
+
+  line-height:1.7;
+
+}
+
+.pro-price{
+
+  font-size:55px;
+
+  font-weight:800;
+
+  margin:30px 0;
+
+}
+
+.pro-price small{
+
+  font:
+    400 12px
+    "DM Mono";
+
+  color:var(--muted);
+
+}
+
+.pro-features{
+
+  display:grid;
+
+  gap:12px;
+
+  color:#cdd5df;
+
+  font-size:14px;
+
+  margin-bottom:30px;
+
+}
+
+.pro-button{
+
+  width:100%;
+
+}
+
+/* =========================================================
+   SUCCESS SCREEN
+   ========================================================= */
+
+.success{
+
+  text-align:center;
+
+  width:
+    min(
+      600px,
+      calc(100% - 40px)
+    );
+
+  margin:
+    120px auto;
+
+  padding:50px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:20px;
+
+  background:#0d1219;
+
+}
+
+.success-icon{
+
+  width:70px;
+
+  height:70px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  margin:0 auto 25px;
+
+  border-radius:50%;
+
+  background:var(--lime);
+
+  color:#080b07;
+
+  font-size:30px;
+
+}
+
+.success h1{
+
+  font-size:42px;
+
+  letter-spacing:-2px;
+
+}
+
+.success p{
+
+  color:var(--muted);
+
+  line-height:1.7;
+
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:820px){
+
+  .links{
+
+    display:none;
+
+  }
+
+  .hero{
+
+    grid-template-columns:1fr;
+
+    padding-top:75px;
+
+    gap:45px;
+
+  }
+
+  .hero h1{
+
+    letter-spacing:-3px;
+
+  }
+
+  .grid,
+  .pricing{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .section{
+
+    padding:
+      60px 22px;
+
+  }
+
+}
+
+@media(max-width:600px){
+
+  .actions{
+
+    flex-direction:column;
+
+  }
+
+  .actions .btn{
+
+    width:100%;
+
+    text-align:center;
+
+  }
+
+  .auth-box,
+  .pro-box,
+  .success{
+
+    padding:25px;
+
+  }
+
+  .app-inner{
+
+    width:
+      calc(100% - 30px);
+
+  }
+
+  .app-top{
+
+    margin-bottom:55px;
+
+  }
+
+  .plan-item{
+
+    gap:8px;
+
+  }
+
+}
+
 </style>
+
 </head>
+
 <body>
-<nav><div class="brand">LIFEOS<span>AI</span></div><div class="links"><a href="#system">SYSTEM</a><a href="#features">FEATURES</a><a href="#pricing">PRICING</a></div><button class="navbtn" onclick="start()">GET STARTED</button></nav>
+
+<!-- ======================================================
+     MAIN LANDING PAGE
+     ====================================================== -->
+
+<nav>
+
+  <div class="brand">
+    LIFEOS<span>AI</span>
+  </div>
+
+  <div class="links">
+
+    <a onclick="goTo('system')">
+      SYSTEM
+    </a>
+
+    <a onclick="goTo('features')">
+      FEATURES
+    </a>
+
+    <a onclick="goTo('pricing')">
+      PRICING
+    </a>
+
+  </div>
+
+  <button
+    class="navbtn"
+    onclick="openAuth()"
+  >
+    GET STARTED
+  </button>
+
+</nav>
+
+
 <section class="hero">
-<div><div class="label">AI PERSONAL OPERATING SYSTEM</div><h1>Your day.<br><span>Engineered.</span></h1><p>Stop managing a calendar. Tell LifeOS what matters, and let an intelligent system turn your priorities into a realistic plan that adapts when life changes.</p><div class="actions"><button class="btn primary" onclick="start()">Build my day →</button><a class="btn" href="#system">Explore system</a></div></div>
-<div class="terminal"><div class="termhead"><i class="dot"></i><i class="dot"></i><i class="dot"></i><small>LIFEOS / PLANNER_ENGINE</small></div><div class="screen"><div class="prompt">INPUT / NATURAL LANGUAGE</div><div class="input">“I have math, English and a workout today.”</div><div class="airesponse"><b>✦ LIFEOS AI — PLAN GENERATED</b><div class="schedule"><div class="row"><span class="time">16:00</span><strong>Math assignment</strong><span class="pill">HIGH</span></div><div class="row"><span class="time">17:15</span><strong>Workout</strong><span class="pill">FOCUS</span></div><div class="row"><span class="time">18:45</span><strong>English study</strong><span class="pill">30 MIN</span></div><div class="row"><span class="time">19:30</span><strong>Free time</strong><span class="pill">BUFFER</span></div></div></div></div></div>
+
+  <div>
+
+    <div class="label">
+      AI PERSONAL OPERATING SYSTEM
+    </div>
+
+    <h1>
+      Your day.<br>
+      <span>Engineered.</span>
+    </h1>
+
+    <p>
+      Stop managing a calendar.
+      Tell LifeOS what matters,
+      and let an intelligent system
+      turn your priorities into a
+      realistic plan that adapts when
+      life changes.
+    </p>
+
+    <div class="actions">
+
+      <button
+        class="btn primary"
+        onclick="openPlanner()"
+      >
+        Build my day →
+      </button>
+
+      <button
+        class="btn"
+        onclick="goTo('system')"
+      >
+        Explore system
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="terminal">
+
+    <div class="termhead">
+
+      <i class="dot"></i>
+      <i class="dot"></i>
+      <i class="dot"></i>
+
+      <small>
+        LIFEOS / PLANNER_ENGINE
+      </small>
+
+    </div>
+
+
+    <div class="screen">
+
+      <div class="prompt">
+        INPUT / NATURAL LANGUAGE
+      </div>
+
+      <div class="input">
+        “I have math, English and a workout today.”
+      </div>
+
+
+      <div class="airesponse">
+
+        <b>
+          ✦ LIFEOS AI — PLAN GENERATED
+        </b>
+
+        <div class="schedule">
+
+          <div class="row">
+            <span class="time">16:00</span>
+            <strong>Math assignment</strong>
+            <span class="pill">HIGH</span>
+          </div>
+
+          <div class="row">
+            <span class="time">17:15</span>
+            <strong>Workout</strong>
+            <span class="pill">FOCUS</span>
+          </div>
+
+          <div class="row">
+            <span class="time">18:45</span>
+            <strong>English study</strong>
+            <span class="pill">30 MIN</span>
+          </div>
+
+          <div class="row">
+            <span class="time">19:30</span>
+            <strong>Free time</strong>
+            <span class="pill">BUFFER</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
 </section>
-<section class="section" id="system"><div class="sectionhead"><div class="label">THE SYSTEM</div><h2>Planning that thinks in context.</h2><p>LifeOS is built around one idea: your plan should adapt to your reality, not force your reality to fit a rigid calendar.</p></div><div class="grid">
-<article class="card"><div class="num">01 / INPUT</div><h3>Talk normally.</h3><p>Write your tasks, deadlines and priorities exactly as they come to your mind.</p></article>
-<article class="card"><div class="num">02 / ENGINE</div><h3>AI structures it.</h3><p>LifeOS understands what needs to happen, how long it may take and what matters most.</p></article>
-<article class="card"><div class="num">03 / OUTPUT</div><h3>Get a real plan.</h3><p>Your day becomes a sequence of actionable blocks with space for reality to happen.</p></article>
-</div></section>
-<section class="section" id="features"><div class="sectionhead"><div class="label">CORE FEATURES</div><h2>Your personal command center.</h2></div><div class="grid">
-<article class="card"><div class="num">AI.01</div><h3>Auto-replan</h3><p>Missed a task? LifeOS rebuilds the rest of the day around what still matters.</p></article>
-<article class="card"><div class="num">AI.02</div><h3>SOS mode</h3><p>When everything feels urgent, get the simplest viable route through the day.</p></article>
-<article class="card"><div class="num">AI.03</div><h3>Time matching</h3><p>Have 20 minutes? LifeOS finds something useful that fits.</p></article>
-</div></section>
-<section class="section" id="pricing"><div class="sectionhead"><div class="label">PRICING</div><h2>Start free. Go further when you're ready.</h2></div><div class="pricing"><article class="price"><h3>FREE</h3><div class="amount">$0 <small>/ FOREVER</small></div><ul><li>Tasks & basic planning</li><li>Reminders</li><li>Limited AI planning</li><li>Limited SOS mode</li></ul><button class="btn" onclick="start()">Create account</button></article><article class="price pro"><h3>PRO ✦</h3><div class="amount">$9.99 <small>/ MONTH</small></div><ul><li>Advanced AI planning</li><li>Automatic re-planning</li><li>Weekly planning</li><li>Stats & progress</li><li>Automations</li></ul><button class="btn primary" onclick="start()">Get Pro →</button></article></div></section>
-<footer class="footer">LIFEOS AI · YOUR DAY, ENGINEERED · 2026</footer>
-<script>function start(){alert("LifeOS AI — siguiente fase: conectar registro, IA, base de datos y pagos reales.");}</script>
-</body></html>
+
+
+<!-- SYSTEM -->
+
+<section
+  class="section"
+  id="system"
+>
+
+  <div class="sectionhead">
+
+    <div class="label">
+      THE SYSTEM
+    </div>
+
+    <h2>
+      Planning that thinks in context.
+    </h2>
+
+    <p>
+      LifeOS is built around one idea:
+      your plan should adapt to your reality,
+      not force your reality to fit a rigid calendar.
+    </p>
+
+  </div>
+
+
+  <div class="grid">
+
+    <article class="card">
+
+      <div class="num">
+        01 / INPUT
+      </div>
+
+      <h3>
+        Talk normally.
+      </h3>
+
+      <p>
+        Write your tasks, deadlines and
+        priorities exactly as they come
+        to your mind.
+      </p>
+
+    </article>
+
+
+    <article class="card">
+
+      <div class="num">
+        02 / ENGINE
+      </div>
+
+      <h3>
+        AI structures it.
+      </h3>
+
+      <p>
+        LifeOS understands what needs
+        to happen, how long it may take
+        and what matters most.
+      </p>
+
+    </article>
+
+
+    <article class="card">
+
+      <div class="num">
+        03 / OUTPUT
+      </div>
+
+      <h3>
+        Get a real plan.
+      </h3>
+
+      <p>
+        Your day becomes a sequence
+        of actionable blocks with space
+        for reality to happen.
+      </p>
+
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- FEATURES -->
+
+<section
+  class="section"
+  id="features"
+>
+
+  <div class="sectionhead">
+
+    <div class="label">
+      CORE FEATURES
+    </div>
+
+    <h2>
+      Your personal command center.
+    </h2>
+
+  </div>
+
+
+  <div class="grid">
+
+    <article class="card">
+
+      <div class="num">
+        AI.01
+      </div>
+
+      <h3>
+        Auto-replan
+      </h3>
+
+      <p>
+        Missed a task?
+        LifeOS rebuilds the rest
+        of the day around what
+        still matters.
+      </p>
+
+    </article>
+
+
+    <article class="card">
+
+      <div class="num">
+        AI.02
+      </div>
+
+      <h3>
+        SOS mode
+      </h3>
+
+      <p>
+        When everything feels urgent,
+        get the simplest viable route
+        through the day.
+      </p>
+
+    </article>
+
+
+    <article class="card">
+
+      <div class="num">
+        AI.03
+      </div>
+
+      <h3>
+        Time matching
+      </h3>
+
+      <p>
+        Have 20 minutes?
+        LifeOS finds something useful
+        that fits.
+      </p>
+
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- PRICING -->
+
+<section
+  class="section"
+  id="pricing"
+>
+
+  <div class="sectionhead">
+
+    <div class="label">
+      PRICING
+    </div>
+
+    <h2>
+      Start free.
+      Go further when you're ready.
+    </h2>
+
+  </div>
+
+
+  <div class="pricing">
+
+
+    <!-- FREE -->
+
+    <article class="price">
+
+      <h3>
+        FREE
+      </h3>
+
+      <div class="amount">
+
+        $0
+
+        <small>
+          / FOREVER
+        </small>
+
+      </div>
+
+      <ul>
+
+        <li>
+          Tasks & basic planning
+        </li>
+
+        <li>
+          Reminders
+        </li>
+
+        <li>
+          Limited AI planning
+        </li>
+
+        <li>
+          Limited SOS mode
+        </li>
+
+      </ul>
+
+      <button
+        class="btn"
+        onclick="openAuth()"
+      >
+        Create account
+      </button>
+
+    </article>
+
+
+    <!-- PRO -->
+
+    <article class="price pro">
+
+      <h3>
+        PRO ✦
+      </h3>
+
+      <div class="amount">
+
+        $9.99
+
+        <small>
+          / MONTH
+        </small>
+
+      </div>
+
+      <ul>
+
+        <li>
+          Advanced AI planning
+        </li>
+
+        <li>
+          Automatic re-planning
+        </li>
+
+        <li>
+          Weekly planning
+        </li>
+
+        <li>
+          Stats & progress
+        </li>
+
+        <li>
+          Automations
+        </li>
+
+      </ul>
+
+      <button
+        class="btn primary"
+        onclick="openPro()"
+      >
+        Get Pro →
+      </button>
+
+    </article>
+
+  </div>
+
+</section>
+
+
+<footer class="footer">
+
+  LIFEOS AI · YOUR DAY, ENGINEERED · 2026
+
+</footer>
+
+
+<!-- ======================================================
+     JAVASCRIPT
+     ====================================================== -->
+
+<script>
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+function goTo(sectionId){
+
+  const element =
+    document.getElementById(sectionId);
+
+  if(!element){
+    return;
+  }
+
+  element.scrollIntoView({
+    behavior:"smooth"
+  });
+
+}
+
+
+/* =========================================================
+   AUTH SCREEN
+   GET STARTED / CREATE ACCOUNT
+   ========================================================= */
+
+function openAuth(){
+
+  closeAllScreens();
+
+  const screen =
+    document.createElement("div");
+
+  screen.className="app-screen";
+
+  screen.id="authScreen";
+
+  screen.innerHTML=`
+
+    <div class="app-inner">
+
+      <div class="app-top">
+
+        <div class="brand">
+          LIFEOS<span>AI</span>
+        </div>
+
+        <button
+          class="btn"
+          onclick="closeScreen('authScreen')"
+        >
+          ← BACK
+        </button>
+
+      </div>
+
+
+      <div class="auth-box">
+
+        <div class="label">
+          LIFEOS AI / ACCESS
+        </div>
+
+        <h1>
+          Build your<br>
+          <span>day.</span>
+        </h1>
+
+        <p class="auth-description">
+
+          Create your LifeOS account
+          and start turning your
+          responsibilities into an
+          intelligent daily plan.
+
+        </p>
+
+
+        <input
+          id="authEmail"
+          class="auth-input"
+          type="email"
+          placeholder="Email"
+        >
+
+
+        <input
+          id="authPassword"
+          class="auth-input"
+          type="password"
+          placeholder="Password"
+        >
+
+
+        <button
+          class="btn primary auth-main"
+          onclick="createAccount()"
+        >
+          CREATE ACCOUNT →
+        </button>
+
+
+        <button
+          class="login-link"
+          onclick="loginAccount()"
+        >
+          Already have an account?
+          Log in
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+  document.body.appendChild(screen);
+
+}
+
+
+/* =========================================================
+   CREATE ACCOUNT
+   ========================================================= */
+
+function createAccount(){
+
+  const email =
+    document.getElementById("authEmail")
+    ?.value
+    .trim();
+
+  const password =
+    document.getElementById("authPassword")
+    ?.value
+    .trim();
+
+
+  if(!email || !password){
+
+    alert(
+      "Please enter your email and password."
+    );
+
+    return;
+
+  }
+
+
+  openPlanner();
+
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+function loginAccount(){
+
+  const email =
+    document.getElementById("authEmail")
+    ?.value
+    .trim();
+
+  const password =
+    document.getElementById("authPassword")
+    ?.value
+    .trim();
+
+
+  if(!email || !password){
+
+    alert(
+      "Please enter your email and password."
+    );
+
+    return;
+
+  }
+
+
+  openPlanner();
+
+}
+
+
+/* =========================================================
+   PLANNER SCREEN
+   ========================================================= */
+
+function openPlanner(){
+
+  closeAllScreens();
+
+  const screen =
+    document.createElement("div");
+
+  screen.className="app-screen";
+
+  screen.id="plannerScreen";
+
+  screen.innerHTML=`
+
+    <div class="app-inner">
+
+      <div class="app-top">
+
+        <div class="brand">
+          LIFEOS<span>AI</span>
+        </div>
+
+        <button
+          class="btn"
+          onclick="closeScreen('plannerScreen')"
+        >
+          ← HOME
+        </button>
+
+      </div>
+
+
+      <div class="label">
+        LIFEOS AI / PLANNER ENGINE
+      </div>
+
+
+      <h1 class="planner-title">
+
+        Tell me what you<br>
+
+        <span>
+          need to do.
+        </span>
+
+      </h1>
+
+
+      <p class="planner-description">
+
+        Write everything you have today.
+        LifeOS will organize it into a
+        realistic sequence of tasks.
+
+      </p>
+
+
+      <textarea
+        id="taskInput"
+        class="planner-input"
+        placeholder="Example: I have math homework, I need to study English, workout for 45 minutes and finish everything before 9 PM."
+      ></textarea>
+
+
+      <button
+        class="btn primary generate-btn"
+        onclick="generatePlan()"
+      >
+        GENERATE MY PLAN →
+      </button>
+
+
+      <div id="planResult"></div>
+
+    </div>
+
+  `;
+
+  document.body.appendChild(screen);
+
+}
+
+
+/* =========================================================
+   GENERATE PLAN
+   ========================================================= */
+
+function generatePlan(){
+
+  const input =
+    document.getElementById("taskInput")
+    ?.value
+    .trim();
+
+  const result =
+    document.getElementById("planResult");
+
+
+  if(!input){
+
+    alert(
+      "Tell LifeOS what you need to do first."
+    );
+
+    return;
+
+  }
+
+
+  result.innerHTML=`
+
+    <div class="generated-plan">
+
+      <div class="plan-header">
+
+        <span>
+          ✦ LIFEOS AI
+        </span>
+
+        <small>
+          PLAN GENERATED
+        </small>
+
+      </div>
+
+
+      <div class="plan-item">
+
+        <span>
+          16:00
+        </span>
+
+        <strong>
+          Priority task
+        </strong>
+
+        <em>
+          HIGH
+        </em>
+
+      </div>
+
+
+      <div class="plan-item">
+
+        <span>
+          17:15
+        </span>
+
+        <strong>
+          Focused work
+        </strong>
+
+        <em>
+          FOCUS
+        </em>
+
+      </div>
+
+
+      <div class="plan-item">
+
+        <span>
+          18:30
+        </span>
+
+        <strong>
+          Study / personal task
+        </strong>
+
+        <em>
+          30 MIN
+        </em>
+
+      </div>
+
+
+      <div class="plan-item">
+
+        <span>
+          19:15
+        </span>
+
+        <strong>
+          Buffer / free time
+        </strong>
+
+        <em>
+          BUFFER
+        </em>
+
+      </div>
+
+
+      <div class="plan-footer">
+
+        LifeOS has structured your day
+        around your priorities.
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   PRO SCREEN
+   ========================================================= */
+
+function openPro(){
+
+  closeAllScreens();
+
+  const screen =
+    document.createElement("div");
+
+  screen.className="app-screen";
+
+  screen.id="proScreen";
+
+  screen.innerHTML=`
+
+    <div class="app-inner">
+
+      <div class="app-top">
+
+        <div class="brand">
+          LIFEOS<span>AI</span>
+        </div>
+
+        <button
+          class="btn"
+          onclick="closeScreen('proScreen')"
+        >
+          ← BACK
+        </button>
+
+      </div>
+
+
+      <div class="pro-box">
+
+        <div class="label">
+          LIFEOS AI / PRO
+        </div>
+
+
+        <h1>
+
+          Your day.<br>
+
+          <span>
+            Unlimited.
+          </span>
+
+        </h1>
+
+
+        <p>
+
+          Unlock the complete LifeOS
+          planning engine and let your
+          schedule adapt automatically.
+
+        </p>
+
+
+        <div class="pro-price">
+
+          $9.99
+
+          <small>
+            / MONTH
+          </small>
+
+        </div>
+
+
+        <div class="pro-features">
+
+          <div>
+            ✓ Advanced AI planning
+          </div>
+
+          <div>
+            ✓ Automatic re-planning
+          </div>
+
+          <div>
+            ✓ Weekly planning
+          </div>
+
+          <div>
+            ✓ Stats & progress
+          </div>
+
+          <div>
+            ✓ Automations
+          </div>
+
+        </div>
+
+
+        <button
+          class="btn primary pro-button"
+          onclick="confirmPro()"
+        >
+          CONTINUE TO PRO →
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+  document.body.appendChild(screen);
+
+}
+
+
+/* =========================================================
+   PRO CONFIRMATION
+   ========================================================= */
+
+function confirmPro(){
+
+  closeAllScreens();
+
+  const screen =
+    document.createElement("div");
+
+  screen.className="app-screen";
+
+  screen.id="proSuccessScreen";
+
+  screen.innerHTML=`
+
+    <div class="success">
+
+      <div class="success-icon">
+        ✓
+      </div>
+
+      <div class="label">
+        LIFEOS AI / PRO
+      </div>
+
+      <h1>
+        Almost there.
+      </h1>
+
+      <p>
+
+        Your Pro upgrade flow is ready.
+        Payments will be connected here
+        when Stripe is added to LifeOS AI.
+
+      </p>
+
+      <button
+        class="btn"
+        onclick="closeScreen('proSuccessScreen')"
+      >
+        ← BACK HOME
+      </button>
+
+    </div>
+
+  `;
+
+  document.body.appendChild(screen);
+
+}
+
+
+/* =========================================================
+   CLOSE ONE SCREEN
+   ========================================================= */
+
+function closeScreen(id){
+
+  const screen =
+    document.getElementById(id);
+
+  if(screen){
+
+    screen.remove();
+
+  }
+
+}
+
+
+/* =========================================================
+   CLOSE ALL APP SCREENS
+   ========================================================= */
+
+function closeAllScreens(){
+
+  document
+    .querySelectorAll(".app-screen")
+    .forEach(screen => {
+
+      screen.remove();
+
+    });
+
+}
+
+</script>
+
+</body>
+
+  </html>
