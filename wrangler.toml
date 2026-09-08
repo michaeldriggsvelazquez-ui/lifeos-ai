@@ -1,5 +1,9 @@
 name = "lifeos-ai"
-compatibility_date = "2026-09-07"
+main = "./src/index.js"
+compatibility_date = "2026-09-08"
+no_bundle = true
 
-[assets]
-directory = "./public"
+[[d1_databases]]
+binding = "DB"
+database_name = "lifeos-db"
+database_id = "3a054d49-3901-45ef-a54f-5c1d8024fcec"
