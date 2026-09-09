@@ -1,0 +1,2762 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07090d">
+
+  <title>LifeOS AI — Your day, engineered.</title>
+
+  <meta
+    name="description"
+    content="LifeOS AI turns your responsibilities into an intelligent, realistic and adaptive plan."
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    :root {
+      --bg: #07090d;
+      --surface: #0d1118;
+      --surface2: #111722;
+      --line: #202936;
+
+      --text: #f3f7fb;
+      --muted: #8995a5;
+
+      --lime: #c7ff5e;
+      --cyan: #64e6ff;
+
+      --danger: #ff687d;
+
+      --radius: 18px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background:
+        radial-gradient(
+          circle at 75% 10%,
+          rgba(100, 230, 255, 0.08),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 20% 20%,
+          rgba(199, 255, 94, 0.06),
+          transparent 25%
+        ),
+        var(--bg);
+
+      color: var(--text);
+      font-family: "Manrope", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.035;
+
+      background-image:
+        linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+
+      background-size: 45px 45px;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .mono {
+      font-family: "DM Mono", monospace;
+    }
+
+    .container {
+      width: min(calc(100% - 40px), var(--max));
+      margin: auto;
+    }
+
+    /* =========================
+       NAVIGATION
+    ========================= */
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+
+      height: 76px;
+
+      background: rgba(7, 9, 13, .78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+
+    .nav-inner {
+      width: min(calc(100% - 40px), var(--max));
+      height: 100%;
+      margin: auto;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+
+      font-weight: 800;
+      letter-spacing: .08em;
+      font-size: 14px;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+
+      border-radius: 9px;
+
+      background: var(--lime);
+
+      display: grid;
+      place-items: center;
+
+      color: #07090d;
+      font-size: 13px;
+      font-weight: 900;
+
+      box-shadow: 0 0 28px rgba(199,255,94,.18);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+
+      font-size: 12px;
+      color: var(--muted);
+      font-family: "DM Mono", monospace;
+    }
+
+    .nav-links a {
+      transition: color .2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-cta {
+      border: 1px solid var(--line);
+      padding: 10px 15px;
+      border-radius: 9px;
+
+      color: var(--text) !important;
+
+      transition:
+        border-color .2s ease,
+        background .2s ease;
+    }
+
+    .nav-cta:hover {
+      border-color: rgba(199,255,94,.5);
+      background: rgba(199,255,94,.05);
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      min-height: 100vh;
+      padding: 150px 0 90px;
+
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 70px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+
+      font-family: "DM Mono", monospace;
+      font-size: 11px;
+      color: var(--lime);
+
+      margin-bottom: 22px;
+    }
+
+    .eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--lime);
+
+      box-shadow: 0 0 12px var(--lime);
+    }
+
+    h1 {
+      font-size: clamp(52px, 7vw, 90px);
+      line-height: .93;
+      letter-spacing: -.065em;
+      font-weight: 800;
+
+      max-width: 700px;
+    }
+
+    h1 span {
+      color: var(--lime);
+    }
+
+    .hero-description {
+      margin-top: 28px;
+
+      max-width: 570px;
+
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 36px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+
+      padding: 14px 21px;
+
+      font-weight: 800;
+      font-size: 13px;
+
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: var(--lime);
+      color: #07090d;
+
+      box-shadow: 0 12px 35px rgba(199,255,94,.12);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 16px 45px rgba(199,255,94,.22);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      border-color: #3a4655;
+      background: rgba(255,255,255,.025);
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 25px;
+      margin-top: 45px;
+
+      color: var(--muted);
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+    }
+
+    .hero-meta strong {
+      display: block;
+      color: var(--text);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    /* =========================
+       TERMINAL
+    ========================= */
+
+    .terminal {
+      background: rgba(13,17,24,.88);
+
+      border: 1px solid var(--line);
+      border-radius: 18px;
+
+      box-shadow:
+        0 35px 100px rgba(0,0,0,.4),
+        0 0 70px rgba(100,230,255,.035);
+
+      overflow: hidden;
+      transform: rotate(1deg);
+    }
+
+    .terminal-top {
+      height: 44px;
+
+      display: flex;
+      align-items: center;
+
+      padding: 0 16px;
+
+      border-bottom: 1px solid var(--line);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .terminal-dots i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #35404e;
+    }
+
+    .terminal-title {
+      margin-left: 14px;
+
+      color: #687487;
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+    }
+
+    .terminal-body {
+      padding: 24px;
+      font-family: "DM Mono", monospace;
+    }
+
+    .terminal-line {
+      color: #607082;
+      font-size: 10px;
+      margin-bottom: 16px;
+    }
+
+    .terminal-command {
+      color: var(--cyan);
+    }
+
+    .schedule {
+      display: grid;
+      gap: 10px;
+    }
+
+    .schedule-item {
+      display: grid;
+      grid-template-columns: 64px 1fr auto;
+      gap: 12px;
+
+      align-items: center;
+
+      padding: 12px;
+
+      border: 1px solid rgba(255,255,255,.055);
+      border-radius: 10px;
+
+      background: rgba(255,255,255,.018);
+    }
+
+    .schedule-time {
+      color: var(--lime);
+      font-size: 10px;
+    }
+
+    .schedule-name {
+      color: var(--text);
+      font-size: 11px;
+    }
+
+    .schedule-detail {
+      color: #657181;
+      font-size: 9px;
+      margin-top: 4px;
+    }
+
+    .schedule-tag {
+      color: #647181;
+      font-size: 9px;
+    }
+
+    .terminal-footer {
+      margin-top: 18px;
+
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+
+      color: #607082;
+      font-size: 9px;
+    }
+
+    .terminal-footer span {
+      color: var(--lime);
+    }
+
+    /* =========================
+       SECTIONS
+    ========================= */
+
+    section {
+      padding: 110px 0;
+      position: relative;
+    }
+
+    .section-label {
+      color: var(--cyan);
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      margin-bottom: 18px;
+      letter-spacing: .08em;
+    }
+
+    .section-title {
+      font-size: clamp(34px, 5vw, 58px);
+      letter-spacing: -.05em;
+      line-height: 1;
+
+      max-width: 760px;
+    }
+
+    .section-description {
+      max-width: 650px;
+      margin-top: 20px;
+
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* =========================
+       SYSTEM
+    ========================= */
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+
+      margin-top: 55px;
+
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .system-card {
+      padding: 32px;
+
+      min-height: 250px;
+
+      background: rgba(13,17,24,.55);
+
+      border-right: 1px solid var(--line);
+    }
+
+    .system-card:last-child {
+      border-right: 0;
+    }
+
+    .system-number {
+      color: #566170;
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+    }
+
+    .system-card h3 {
+      margin-top: 50px;
+
+      font-size: 22px;
+      letter-spacing: -.03em;
+    }
+
+    .system-card p {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    /* =========================
+       FEATURES
+    ========================= */
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+
+      margin-top: 55px;
+    }
+
+    .feature {
+      padding: 28px;
+
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.025),
+          transparent
+        );
+
+      min-height: 270px;
+
+      transition:
+        transform .25s ease,
+        border-color .25s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-5px);
+      border-color: #303b49;
+    }
+
+    .feature-icon {
+      width: 38px;
+      height: 38px;
+
+      display: grid;
+      place-items: center;
+
+      border: 1px solid var(--line);
+      border-radius: 10px;
+
+      color: var(--lime);
+      font-family: "DM Mono", monospace;
+      font-size: 12px;
+    }
+
+    .feature h3 {
+      margin-top: 45px;
+      font-size: 20px;
+    }
+
+    .feature p {
+      margin-top: 10px;
+
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* =========================
+       PRICING
+    ========================= */
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+
+      max-width: 900px;
+      margin: 55px auto 0;
+    }
+
+    .price-card {
+      padding: 35px;
+
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+
+      background: var(--surface);
+    }
+
+    .price-card.pro {
+      border-color: rgba(199,255,94,.35);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(199,255,94,.06),
+          var(--surface)
+        );
+    }
+
+    .price-name {
+      font-family: "DM Mono", monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .price {
+      margin-top: 18px;
+
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -.06em;
+    }
+
+    .price small {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0;
+      font-weight: 400;
+    }
+
+    .price-list {
+      list-style: none;
+      margin: 30px 0;
+
+      display: grid;
+      gap: 13px;
+    }
+
+    .price-list li {
+      color: #b1bac7;
+      font-size: 13px;
+    }
+
+    .price-list li::before {
+      content: "✓";
+      color: var(--lime);
+      margin-right: 10px;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    footer {
+      padding: 35px 0;
+      border-top: 1px solid var(--line);
+
+      color: #566170;
+      font-family: "DM Mono", monospace;
+      font-size: 9px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    /* =========================
+       OVERLAYS
+    ========================= */
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      background: rgba(3,5,8,.86);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+
+      overflow-y: auto;
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      width: min(100%, 540px);
+
+      border: 1px solid var(--line);
+      border-radius: 20px;
+
+      background:
+        radial-gradient(
+          circle at 100% 0,
+          rgba(100,230,255,.06),
+          transparent 35%
+        ),
+        var(--surface);
+
+      box-shadow: 0 40px 120px rgba(0,0,0,.6);
+
+      padding: 30px;
+
+      position: relative;
+    }
+
+    .modal.wide {
+      width: min(100%, 850px);
+    }
+
+    .modal-close {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+
+      width: 34px;
+      height: 34px;
+
+      border-radius: 9px;
+
+      border: 1px solid var(--line);
+      background: transparent;
+
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+      border-color: #394555;
+    }
+
+    .modal-eyebrow {
+      color: var(--lime);
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      margin-bottom: 12px;
+    }
+
+    .modal h2 {
+      font-size: 32px;
+      letter-spacing: -.045em;
+    }
+
+    .modal-description {
+      margin-top: 10px;
+
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    /* =========================
+       AUTH
+    ========================= */
+
+    .auth-switch {
+      display: flex;
+      margin-top: 25px;
+
+      padding: 4px;
+
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #090c11;
+    }
+
+    .auth-tab {
+      flex: 1;
+
+      padding: 10px;
+
+      border: 0;
+      border-radius: 7px;
+
+      background: transparent;
+      color: var(--muted);
+
+      font-size: 11px;
+      font-family: "DM Mono", monospace;
+    }
+
+    .auth-tab.active {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .auth-form {
+      margin-top: 20px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+
+      margin-bottom: 7px;
+
+      color: #778394;
+
+      font-size: 10px;
+      font-family: "DM Mono", monospace;
+    }
+
+    .field input,
+    .planner-input {
+      width: 100%;
+
+      border: 1px solid var(--line);
+      border-radius: 10px;
+
+      background: #090c11;
+      color: var(--text);
+
+      padding: 13px 14px;
+
+      outline: none;
+
+      font-size: 13px;
+
+      transition: border-color .2s ease;
+    }
+
+    .field input:focus,
+    .planner-input:focus {
+      border-color: rgba(199,255,94,.45);
+    }
+
+    .field input::placeholder,
+    .planner-input::placeholder {
+      color: #4d5867;
+    }
+
+    .auth-submit {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .status {
+      display: none;
+
+      padding: 11px 12px;
+      margin-top: 14px;
+
+      border: 1px solid var(--line);
+      border-radius: 9px;
+
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.error {
+      color: var(--danger);
+      border-color: rgba(255,104,125,.25);
+      background: rgba(255,104,125,.04);
+    }
+
+    .status.success {
+      color: var(--lime);
+      border-color: rgba(199,255,94,.2);
+      background: rgba(199,255,94,.035);
+    }
+
+    .auth-foot {
+      margin-top: 18px;
+
+      color: #596575;
+      font-size: 9px;
+      line-height: 1.6;
+      text-align: center;
+      font-family: "DM Mono", monospace;
+    }
+
+    /* =========================
+       PLANNER
+    ========================= */
+
+    .planner-user {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-top: 25px;
+      padding: 11px 13px;
+
+      border: 1px solid var(--line);
+      border-radius: 10px;
+
+      background: rgba(255,255,255,.015);
+
+      font-family: "DM Mono", monospace;
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    .planner-user strong {
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .logout-btn {
+      border: 0;
+      background: transparent;
+      color: var(--danger);
+      font-family: "DM Mono", monospace;
+      font-size: 9px;
+    }
+
+    .planner-input {
+      margin-top: 20px;
+      min-height: 145px;
+      resize: vertical;
+    }
+
+    .planner-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      margin-top: 13px;
+      gap: 15px;
+    }
+
+    .planner-hint {
+      color: #596575;
+      font-family: "DM Mono", monospace;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    .plan-result {
+      display: none;
+      margin-top: 22px;
+
+      border-top: 1px solid var(--line);
+      padding-top: 20px;
+    }
+
+    .plan-result.show {
+      display: block;
+    }
+
+    .plan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      margin-bottom: 14px;
+    }
+
+    .plan-header h3 {
+      font-size: 16px;
+    }
+
+    .plan-header span {
+      color: var(--lime);
+      font-family: "DM Mono", monospace;
+      font-size: 9px;
+    }
+
+    .plan-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .plan-item {
+      display: grid;
+      grid-template-columns: 75px 1fr;
+
+      padding: 12px;
+
+      border: 1px solid rgba(255,255,255,.055);
+      border-radius: 9px;
+
+      background: rgba(255,255,255,.015);
+    }
+
+    .plan-time {
+      color: var(--lime);
+      font-family: "DM Mono", monospace;
+      font-size: 9px;
+    }
+
+    .plan-task {
+      color: var(--text);
+      font-size: 11px;
+    }
+
+    .plan-task small {
+      display: block;
+      color: #697586;
+      margin-top: 4px;
+      font-size: 9px;
+    }
+
+    /* =========================
+       PRO MODAL
+    ========================= */
+
+    .pro-box {
+      text-align: center;
+      padding: 15px;
+    }
+
+    .pro-price {
+      font-size: 58px;
+      font-weight: 800;
+      letter-spacing: -.07em;
+      margin: 18px 0;
+    }
+
+    .pro-price small {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0;
+      font-weight: 400;
+    }
+
+    .pro-features {
+      display: grid;
+      gap: 10px;
+
+      max-width: 400px;
+      margin: 20px auto 30px;
+
+      text-align: left;
+    }
+
+    .pro-features div {
+      color: #aab4c0;
+      font-size: 12px;
+    }
+
+    .pro-features div::before {
+      content: "◆";
+      color: var(--lime);
+      font-size: 7px;
+      margin-right: 10px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 55px;
+      }
+
+      .terminal {
+        max-width: 650px;
+        width: 100%;
+        margin: auto;
+      }
+
+      .system-grid,
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .system-card {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .system-card:last-child {
+        border-bottom: 0;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .nav-links a:not(.nav-cta) {
+        display: none;
+      }
+
+      .container {
+        width: min(calc(100% - 28px), var(--max));
+      }
+
+      .hero {
+        padding-top: 125px;
+      }
+
+      h1 {
+        font-size: 54px;
+      }
+
+      .hero-description {
+        font-size: 15px;
+      }
+
+      .hero-meta {
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      section {
+        padding: 80px 0;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .schedule-item {
+        grid-template-columns: 55px 1fr;
+      }
+
+      .schedule-tag {
+        display: none;
+      }
+
+      .modal {
+        padding: 23px;
+      }
+
+      .planner-controls {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .planner-controls .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       NAV
+  ========================= -->
+
+  <nav>
+    <div class="nav-inner">
+
+      <a href="#" class="brand">
+        <span class="brand-mark">L</span>
+        LIFEOSAI
+      </a>
+
+      <div class="nav-links">
+        <a href="#system">SYSTEM</a>
+        <a href="#features">FEATURES</a>
+        <a href="#pricing">PRICING</a>
+        <a href="#" class="nav-cta" onclick="openAuth(); return false;">
+          GET STARTED
+        </a>
+      </div>
+
+    </div>
+  </nav>
+
+
+  <!-- =========================
+       HERO
+  ========================= -->
+
+  <main>
+
+    <section class="hero">
+      <div class="container">
+
+        <div class="hero-grid">
+
+          <div>
+
+            <div class="eyebrow">
+              <span class="eyebrow-dot"></span>
+              INTELLIGENT PERSONAL PLANNING SYSTEM
+            </div>
+
+            <h1>
+              Your day.<br>
+              <span>Engineered.</span>
+            </h1>
+
+            <p class="hero-description">
+              LifeOS AI turns your responsibilities into an intelligent,
+              realistic and adaptive plan — then recalculates it when life
+              doesn't go according to plan.
+            </p>
+
+            <div class="hero-actions">
+
+              <button
+                class="btn btn-primary"
+                onclick="openAuth()"
+              >
+                BUILD MY DAY →
+              </button>
+
+              <a
+                href="#system"
+                class="btn btn-secondary"
+              >
+                HOW IT WORKS
+              </a>
+
+            </div>
+
+            <div class="hero-meta">
+
+              <div>
+                <strong>01</strong>
+                INPUT
+              </div>
+
+              <div>
+                <strong>02</strong>
+                PLAN
+              </div>
+
+              <div>
+                <strong>03</strong>
+                ADAPT
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- TERMINAL -->
+
+          <div class="terminal">
+
+            <div class="terminal-top">
+
+              <div class="terminal-dots">
+                <i></i>
+                <i></i>
+                <i></i>
+              </div>
+
+              <div class="terminal-title">
+                lifeos / daily-engine
+              </div>
+
+            </div>
+
+            <div class="terminal-body">
+
+              <div class="terminal-line">
+                <span class="terminal-command">$</span>
+                lifeos plan --today
+              </div>
+
+              <div class="schedule">
+
+                <div class="schedule-item">
+                  <div class="schedule-time">07:30</div>
+
+                  <div>
+                    <div class="schedule-name">
+                      Morning routine
+                    </div>
+
+                    <div class="schedule-detail">
+                      Start the day
+                    </div>
+                  </div>
+
+                  <div class="schedule-tag">
+                    ROUTINE
+                  </div>
+                </div>
+
+                <div class="schedule-item">
+                  <div class="schedule-time">08:30</div>
+
+                  <div>
+                    <div class="schedule-name">
+                      School
+                    </div>
+
+                    <div class="schedule-detail">
+                      Fixed commitment
+                    </div>
+                  </div>
+
+                  <div class="schedule-tag">
+                    FIXED
+                  </div>
+                </div>
+
+                <div class="schedule-item">
+                  <div class="schedule-time">16:30</div>
+
+                  <div>
+                    <div class="schedule-name">
+                      Training
+                    </div>
+
+                    <div class="schedule-detail">
+                      75 min session
+                    </div>
+                  </div>
+
+                  <div class="schedule-tag">
+                    HEALTH
+                  </div>
+                </div>
+
+                <div class="schedule-item">
+                  <div class="schedule-time">18:00</div>
+
+                  <div>
+                    <div class="schedule-name">
+                      Study block
+                    </div>
+
+                    <div class="schedule-detail">
+                      Highest priority
+                    </div>
+                  </div>
+
+                  <div class="schedule-tag">
+                    FOCUS
+                  </div>
+                </div>
+
+                <div class="schedule-item">
+                  <div class="schedule-time">20:00</div>
+
+                  <div>
+                    <div class="schedule-name">
+                      Personal time
+                    </div>
+
+                    <div class="schedule-detail">
+                      Recovery
+                    </div>
+                  </div>
+
+                  <div class="schedule-tag">
+                    FLEX
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="terminal-footer">
+                system status:
+                <span>OPTIMIZED</span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- =========================
+         SYSTEM
+    ========================= -->
+
+    <section id="system">
+
+      <div class="container">
+
+        <div class="section-label">
+          / 01 — THE SYSTEM
+        </div>
+
+        <h2 class="section-title">
+          Stop managing your schedule.
+          Start managing your life.
+        </h2>
+
+        <p class="section-description">
+          LifeOS AI converts messy, natural-language responsibilities into
+          an organized system that understands priorities, available time
+          and real-world constraints.
+        </p>
+
+
+        <div class="system-grid">
+
+          <article class="system-card">
+
+            <div class="system-number">
+              01 / INPUT
+            </div>
+
+            <h3>
+              Tell it everything.
+            </h3>
+
+            <p>
+              School, studying, exercise, appointments, personal tasks,
+              deadlines and anything else occupying your mind.
+            </p>
+
+          </article>
+
+
+          <article class="system-card">
+
+            <div class="system-number">
+              02 / ENGINE
+            </div>
+
+            <h3>
+              AI builds the plan.
+            </h3>
+
+            <p>
+              LifeOS analyzes your responsibilities and creates a realistic
+              sequence around your available time and priorities.
+            </p>
+
+          </article>
+
+
+          <article class="system-card">
+
+            <div class="system-number">
+              03 / OUTPUT
+            </div>
+
+            <h3>
+              Your day makes sense.
+            </h3>
+
+            <p>
+              You get a clear plan you can actually follow — without
+              manually organizing everything yourself.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         FEATURES
+    ========================= -->
+
+    <section id="features">
+
+      <div class="container">
+
+        <div class="section-label">
+          / 02 — FEATURES
+        </div>
+
+        <h2 class="section-title">
+          Designed for real life.
+        </h2>
+
+        <p class="section-description">
+          A plan is only useful when it survives reality.
+        </p>
+
+
+        <div class="features-grid">
+
+          <article class="feature">
+
+            <div class="feature-icon">
+              ↻
+            </div>
+
+            <h3>
+              Auto-replan
+            </h3>
+
+            <p>
+              Missed a task? Tell LifeOS. The system can rebuild the
+              remaining schedule instead of leaving you with an outdated
+              plan.
+            </p>
+
+          </article>
+
+
+          <article class="feature">
+
+            <div class="feature-icon">
+              !
+            </div>
+
+            <h3>
+              SOS Mode
+            </h3>
+
+            <p>
+              When your day gets overloaded, LifeOS prioritizes what
+              matters most and helps you recover without restarting
+              everything.
+            </p>
+
+          </article>
+
+
+          <article class="feature">
+
+            <div class="feature-icon">
+              ◷
+            </div>
+
+            <h3>
+              Time matching
+            </h3>
+
+            <p>
+              Tasks are positioned according to the time you actually
+              have, rather than forcing your life into a generic template.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         PRICING
+    ========================= -->
+
+    <section id="pricing">
+
+      <div class="container">
+
+        <div class="section-label">
+          / 03 — PRICING
+        </div>
+
+        <h2 class="section-title">
+          Start simple. Upgrade when you need more.
+        </h2>
+
+        <div class="pricing-grid">
+
+          <article class="price-card">
+
+            <div class="price-name">
+              LIFEOS / FREE
+            </div>
+
+            <div class="price">
+              $0
+            </div>
+
+            <ul class="price-list">
+              <li>AI daily planning</li>
+              <li>Task organization</li>
+              <li>Basic scheduling</li>
+              <li>Personal dashboard</li>
+            </ul>
+
+            <button
+              class="btn btn-secondary"
+              style="width:100%;"
+              onclick="openAuth()"
+            >
+              GET STARTED
+            </button>
+
+          </article>
+
+
+          <article class="price-card pro">
+
+            <div class="price-name">
+              LIFEOS / PRO
+            </div>
+
+            <div class="price">
+              $9.99
+              <small>/ month</small>
+            </div>
+
+            <ul class="price-list">
+              <li>Advanced AI planning</li>
+              <li>Automatic replanning</li>
+              <li>SOS mode</li>
+              <li>Advanced productivity tools</li>
+            </ul>
+
+            <button
+              class="btn btn-primary"
+              style="width:100%;"
+              onclick="openPro()"
+            >
+              EXPLORE PRO
+            </button>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+    ========================= -->
+
+  <footer>
+
+    <div class="container footer-inner">
+
+      <div>
+        LIFEOS AI © 2026
+      </div>
+
+      <div>
+        YOUR DAY. ENGINEERED.
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- =========================
+       AUTH OVERLAY
+  ========================= -->
+
+  <div
+    class="overlay"
+    id="authOverlay"
+    onclick="closeOverlayOutside(event, 'authOverlay')"
+  >
+
+    <div class="modal">
+
+      <button
+        class="modal-close"
+        onclick="closeOverlay('authOverlay')"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+      <div class="modal-eyebrow">
+        LIFEOS / ACCOUNT
+      </div>
+
+      <h2 id="authTitle">
+        Create your account.
+      </h2>
+
+      <p class="modal-description" id="authDescription">
+        Your personal planning system starts here.
+      </p>
+
+
+      <div class="auth-switch">
+
+        <button
+          class="auth-tab active"
+          id="registerTab"
+          onclick="switchAuth('register')"
+        >
+          CREATE ACCOUNT
+        </button>
+
+        <button
+          class="auth-tab"
+          id="loginTab"
+          onclick="switchAuth('login')"
+        >
+          LOG IN
+        </button>
+
+      </div>
+
+
+      <form
+        class="auth-form"
+        id="authForm"
+        onsubmit="handleAuthSubmit(event)"
+      >
+
+        <div class="field">
+
+          <label for="authEmail">
+            EMAIL
+          </label>
+
+          <input
+            id="authEmail"
+            type="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            required
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="authPassword">
+            PASSWORD
+          </label>
+
+          <input
+            id="authPassword"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Minimum 8 characters"
+            minlength="8"
+            required
+          >
+
+        </div>
+
+
+        <button
+          class="btn btn-primary auth-submit"
+          id="authSubmit"
+          type="submit"
+        >
+          CREATE ACCOUNT →
+        </button>
+
+      </form>
+
+
+      <div
+        class="status"
+        id="authStatus"
+      ></div>
+
+
+      <div class="auth-foot">
+        Your password is handled by the LifeOS backend.
+        Never share your password with anyone.
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       PLANNER OVERLAY
+  ========================= -->
+
+  <div
+    class="overlay"
+    id="plannerOverlay"
+    onclick="closeOverlayOutside(event, 'plannerOverlay')"
+  >
+
+    <div class="modal wide">
+
+      <button
+        class="modal-close"
+        onclick="closeOverlay('plannerOverlay')"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+      <div class="modal-eyebrow">
+        LIFEOS / AI PLANNER
+      </div>
+
+      <h2>
+        Build your day.
+      </h2>
+
+      <p class="modal-description">
+        Tell LifeOS what you need to do. The system will organize
+        everything around your day.
+      </p>
+
+
+      <div class="planner-user">
+
+        <div>
+          ACTIVE ACCOUNT:
+          <strong id="plannerEmail">
+            —
+          </strong>
+        </div>
+
+        <button
+          class="logout-btn"
+          onclick="logoutAccount()"
+        >
+          LOG OUT
+        </button>
+
+      </div>
+
+
+      <textarea
+        class="planner-input"
+        id="plannerInput"
+        placeholder="Example: I have school from 8:00 to 14:00, I need to study math for an hour, exercise for 45 minutes, finish my homework and I want some free time tonight."
+      ></textarea>
+
+
+      <div class="planner-controls">
+
+        <div class="planner-hint">
+          NATURAL LANGUAGE INPUT<br>
+          Describe your real day. Don't overthink it.
+        </div>
+
+        <button
+          class="btn btn-primary"
+          id="planButton"
+          onclick="generatePlan()"
+        >
+          GENERATE PLAN →
+        </button>
+
+      </div>
+
+
+      <div
+        class="status"
+        id="plannerStatus"
+      ></div>
+
+
+      <div
+        class="plan-result"
+        id="planResult"
+      >
+
+        <div class="plan-header">
+
+          <h3>
+            Today's plan
+          </h3>
+
+          <span>
+            GENERATED
+          </span>
+
+        </div>
+
+        <div
+          class="plan-list"
+          id="planList"
+        ></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       PRO OVERLAY
+  ========================= -->
+
+  <div
+    class="overlay"
+    id="proOverlay"
+    onclick="closeOverlayOutside(event, 'proOverlay')"
+  >
+
+    <div class="modal">
+
+      <button
+        class="modal-close"
+        onclick="closeOverlay('proOverlay')"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+      <div class="pro-box">
+
+        <div class="modal-eyebrow">
+          LIFEOS / PRO
+        </div>
+
+        <h2>
+          More control.<br>
+          Less friction.
+        </h2>
+
+        <div class="pro-price">
+          $9.99
+          <small>/ month</small>
+        </div>
+
+        <div class="pro-features">
+
+          <div>
+            Advanced AI planning
+          </div>
+
+          <div>
+            Automatic replanning
+          </div>
+
+          <div>
+            SOS mode
+          </div>
+
+          <div>
+            Advanced productivity tools
+          </div>
+
+        </div>
+
+        <button
+          class="btn btn-primary"
+          style="width:100%;"
+          onclick="confirmPro()"
+        >
+          CONTINUE WITH PRO →
+        </button>
+
+        <div
+          class="status"
+          id="proStatus"
+        ></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================= -->
+
+  <script>
+
+    /*
+      LIFEOS AI
+      Frontend API integration
+
+      Backend endpoints currently available:
+
+      POST /api/register
+      POST /api/login
+      POST /api/logout
+      GET  /api/me
+    */
+
+
+    let authMode = "register";
+    let currentUser = null;
+
+
+    /* =========================
+       API HELPER
+    ========================= */
+
+    async function api(path, options = {}) {
+
+      const response = await fetch(path, {
+        credentials: "same-origin",
+
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        },
+
+        ...options
+      });
+
+
+      let data = {};
+
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
+
+
+      if (!response.ok) {
+
+        const message =
+          data.error ||
+          "Something went wrong. Please try again.";
+
+        throw new Error(message);
+      }
+
+
+      return data;
+    }
+
+
+    /* =========================
+       OVERLAYS
+    ========================= */
+
+    function openOverlay(id) {
+      document.getElementById(id).classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+
+    function closeOverlay(id) {
+      document.getElementById(id).classList.remove("active");
+
+      const anyOpen =
+        document.querySelector(".overlay.active");
+
+      if (!anyOpen) {
+        document.body.style.overflow = "";
+      }
+    }
+
+
+    function closeOverlayOutside(event, id) {
+
+      if (event.target.id === id) {
+        closeOverlay(id);
+      }
+
+    }
+
+
+    /* =========================
+       AUTH
+    ========================= */
+
+    function openAuth() {
+
+      const overlay =
+        document.getElementById("authOverlay");
+
+      overlay.classList.add("active");
+
+      document.body.style.overflow = "hidden";
+
+      clearAuthStatus();
+
+      document.getElementById("authEmail").focus();
+
+    }
+
+
+    function switchAuth(mode) {
+
+      authMode = mode;
+
+      const registerTab =
+        document.getElementById("registerTab");
+
+      const loginTab =
+        document.getElementById("loginTab");
+
+      const title =
+        document.getElementById("authTitle");
+
+      const description =
+        document.getElementById("authDescription");
+
+      const submit =
+        document.getElementById("authSubmit");
+
+      const password =
+        document.getElementById("authPassword");
+
+
+      clearAuthStatus();
+
+
+      if (mode === "register") {
+
+        registerTab.classList.add("active");
+        loginTab.classList.remove("active");
+
+        title.textContent =
+          "Create your account.";
+
+        description.textContent =
+          "Your personal planning system starts here.";
+
+        submit.textContent =
+          "CREATE ACCOUNT →";
+
+        password.autocomplete =
+          "new-password";
+
+      } else {
+
+        registerTab.classList.remove("active");
+        loginTab.classList.add("active");
+
+        title.textContent =
+          "Welcome back.";
+
+        description.textContent =
+          "Continue building your day with LifeOS.";
+
+        submit.textContent =
+          "LOG IN →";
+
+        password.autocomplete =
+          "current-password";
+      }
+
+    }
+
+
+    async function handleAuthSubmit(event) {
+
+      event.preventDefault();
+
+      clearAuthStatus();
+
+      const email =
+        document
+          .getElementById("authEmail")
+          .value
+          .trim()
+          .toLowerCase();
+
+      const password =
+        document
+          .getElementById("authPassword")
+          .value;
+
+
+      if (!email) {
+        showAuthStatus(
+          "Please enter your email.",
+          "error"
+        );
+        return;
+      }
+
+
+      if (password.length < 8) {
+
+        showAuthStatus(
+          "Password must contain at least 8 characters.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      const submit =
+        document.getElementById("authSubmit");
+
+
+      submit.disabled = true;
+
+
+      const originalText =
+        submit.textContent;
+
+
+      submit.textContent =
+        authMode === "register"
+          ? "CREATING ACCOUNT..."
+          : "LOGGING IN...";
+
+
+      try {
+
+        let result;
+
+
+        if (authMode === "register") {
+
+          result = await api(
+            "/api/register",
+            {
+              method: "POST",
+
+              body: JSON.stringify({
+                email,
+                password
+              })
+            }
+          );
+
+        } else {
+
+          result = await api(
+            "/api/login",
+            {
+              method: "POST",
+
+              body: JSON.stringify({
+                email,
+                password
+              })
+            }
+          );
+
+        }
+
+
+        currentUser =
+          result.user || null;
+
+
+        showAuthStatus(
+          authMode === "register"
+            ? "Account created successfully."
+            : "Login successful.",
+          "success"
+        );
+
+
+        setTimeout(() => {
+
+          closeOverlay("authOverlay");
+
+          openPlanner();
+
+        }, 450);
+
+
+      } catch (error) {
+
+        showAuthStatus(
+          error.message,
+          "error"
+        );
+
+      } finally {
+
+        submit.disabled = false;
+
+        submit.textContent =
+          originalText;
+
+      }
+
+    }
+
+
+    function showAuthStatus(message, type) {
+
+      const status =
+        document.getElementById("authStatus");
+
+      status.textContent = message;
+
+      status.className =
+        "status show " + type;
+
+    }
+
+
+    function clearAuthStatus() {
+
+      const status =
+        document.getElementById("authStatus");
+
+      status.textContent = "";
+
+      status.className =
+        "status";
+
+    }
+
+
+    /* =========================
+       CURRENT USER
+    ========================= */
+
+    async function getCurrentUser() {
+
+      try {
+
+        const result =
+          await api("/api/me", {
+            method: "GET"
+          });
+
+
+        if (
+          result.success &&
+          result.authenticated &&
+          result.user
+        ) {
+
+          currentUser =
+            result.user;
+
+          return currentUser;
+        }
+
+
+      } catch {
+        currentUser = null;
+      }
+
+
+      return null;
+    }
+
+
+    /* =========================
+       PLANNER
+    ========================= */
+
+    async function openPlanner() {
+
+      if (!currentUser) {
+
+        await getCurrentUser();
+
+      }
+
+
+      if (!currentUser) {
+
+        closeOverlay("plannerOverlay");
+
+        openAuth();
+
+        return;
+
+      }
+
+
+      document
+        .getElementById("plannerEmail")
+        .textContent =
+        currentUser.email;
+
+
+      openOverlay("plannerOverlay");
+
+      document
+        .getElementById("plannerInput")
+        .focus();
+
+    }
+
+
+    async function logoutAccount() {
+
+      try {
+
+        await api(
+          "/api/logout",
+          {
+            method: "POST"
+          }
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+      } finally {
+
+        currentUser = null;
+
+        closeOverlay("plannerOverlay");
+
+        switchAuth("login");
+
+        document
+          .getElementById("authEmail")
+          .value = "";
+
+        document
+          .getElementById("authPassword")
+          .value = "";
+
+        clearAuthStatus();
+
+      }
+
+    }
+
+
+    /* =========================
+       PLANNER DEMO ENGINE
+       This will later connect
+       to /api/plan + OpenAI.
+    ========================= */
+
+    async function generatePlan() {
+
+      const input =
+        document
+          .getElementById("plannerInput")
+          .value
+          .trim();
+
+
+      const button =
+        document.getElementById("planButton");
+
+      const status =
+        document.getElementById("plannerStatus");
+
+
+      if (!input) {
+
+        status.textContent =
+          "Tell LifeOS what you need to do first.";
+
+        status.className =
+          "status show error";
+
+        return;
+
+      }
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "BUILDING PLAN...";
+
+
+      status.textContent =
+        "Analyzing your day...";
+
+      status.className =
+        "status show";
+
+
+      /*
+        Temporary local planner.
+
+        The real AI endpoint will be connected
+        in the next backend step.
+      */
+
+      await new Promise(
+        resolve => setTimeout(resolve, 700)
+      );
+
+
+      const tasks =
+        parseBasicTasks(input);
+
+
+      renderPlan(tasks);
+
+
+      status.textContent =
+        "Plan generated.";
+
+      status.className =
+        "status show success";
+
+
+      button.disabled = false;
+
+      button.textContent =
+        "GENERATE PLAN →";
+
+    }
+
+
+    function parseBasicTasks(text) {
+
+      const sentences =
+        text
+          .split(/[.!?;\n]+/)
+          .map(item => item.trim())
+          .filter(Boolean);
+
+
+      if (sentences.length === 0) {
+
+        return [
+          {
+            time: "TODAY",
+            task: text,
+            detail: "Personal task"
+          }
+        ];
+
+      }
+
+
+      const result = [];
+
+
+      const times = [
+        "08:00",
+        "09:30",
+        "11:00",
+        "13:00",
+        "15:00",
+        "16:30",
+        "18:00",
+        "19:30"
+      ];
+
+
+      sentences
+        .slice(0, 8)
+        .forEach((sentence, index) => {
+
+          let task =
+            sentence
+              .replace(/^I\s+(have|need|want|must)\s+/i, "")
+              .trim();
+
+
+          if (!task) {
+            task = sentence;
+          }
+
+
+          result.push({
+
+            time:
+              times[index] || "LATER",
+
+            task:
+              capitalize(task),
+
+            detail:
+              "Scheduled by LifeOS"
+
+          });
+
+        });
+
+
+      return result;
+
+    }
+
+
+    function renderPlan(tasks) {
+
+      const result =
+        document.getElementById("planResult");
+
+      const list =
+        document.getElementById("planList");
+
+
+      list.innerHTML = "";
+
+
+      tasks.forEach(item => {
+
+        const row =
+          document.createElement("div");
+
+        row.className =
+          "plan-item";
+
+
+        row.innerHTML = `
+
+          <div class="plan-time">
+            ${escapeHtml(item.time)}
+          </div>
+
+          <div class="plan-task">
+            ${escapeHtml(item.task)}
+
+            <small>
+              ${escapeHtml(item.detail)}
+            </small>
+          </div>
+
+        `;
+
+
+        list.appendChild(row);
+
+      });
+
+
+      result.classList.add("show");
+
+    }
+
+
+    function capitalize(text) {
+
+      if (!text) {
+        return "";
+      }
+
+      return (
+        text.charAt(0).toUpperCase() +
+        text.slice(1)
+      );
+
+    }
+
+
+    /* =========================
+       PRO
+    ========================= */
+
+    function openPro() {
+
+      openOverlay("proOverlay");
+
+      const status =
+        document.getElementById("proStatus");
+
+      status.className =
+        "status";
+
+      status.textContent = "";
+
+    }
+
+
+    function confirmPro() {
+
+      const status =
+        document.getElementById("proStatus");
+
+
+      status.textContent =
+        "Pro payments will be connected after the core planning system is complete.";
+
+      status.className =
+        "status show success";
+
+    }
+
+
+    /* =========================
+       SECURITY / HTML ESCAPING
+    ========================= */
+
+    function escapeHtml(value) {
+
+      return String(value)
+
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+    }
+
+
+    /* =========================
+       STARTUP
+    ========================= */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      async () => {
+
+        const user =
+          await getCurrentUser();
+
+
+        if (user) {
+
+          console.log(
+            "LifeOS session active:",
+            user.email
+          );
+
+        } else {
+
+          console.log(
+            "LifeOS: no active session."
+          );
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       ESCAPE KEY
+    ========================= */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (event.key !== "Escape") {
+          return;
+        }
+
+
+        document
+          .querySelectorAll(".overlay.active")
+          .forEach(overlay => {
+
+            closeOverlay(overlay.id);
+
+          });
+
+      }
+    );
+
+  </script>
+
+</body>
+    </html>
