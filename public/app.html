@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,193 +7,161 @@
 <title>LifeOS AI</title>
 
 <style>
-
-:root {
+:root{
   --bg:#07090d;
-  --surface:#0d1118;
-  --line:#202936;
-  --text:#f3f7fb;
+  --card:#10151d;
+  --line:#26303d;
+  --text:#f5f7fb;
   --muted:#8995a5;
   --lime:#c7ff5e;
-  --cyan:#64e6ff;
 }
 
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+ box-sizing:border-box;
+ margin:0;
+ padding:0;
+ font-family:Arial,sans-serif;
 }
 
 body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-  height:100vh;
-  display:flex;
+ background:var(--bg);
+ color:var(--text);
+ height:100vh;
+ overflow:hidden;
 }
 
 
-/* SIDEBAR */
+/* MENU */
 
-.sidebar{
+.menu{
+ position:fixed;
+ top:0;
+ left:-290px;
+ width:270px;
+ height:100%;
+ background:rgba(16,21,29,.85);
+ backdrop-filter:blur(20px);
+ border-right:1px solid var(--line);
+ transition:.35s;
+ padding:25px;
+ z-index:10;
+}
 
-  width:260px;
-  background:var(--surface);
-  border-right:1px solid var(--line);
-  padding:20px;
+.menu.active{
+ left:0;
+}
 
+.menu h2{
+ margin-bottom:25px;
+}
+
+.menu-item{
+ padding:15px;
+ margin-bottom:10px;
+ border:1px solid var(--line);
+ border-radius:15px;
+ color:var(--muted);
 }
 
 
-.logo{
+/* TOP */
 
-font-size:20px;
-font-weight:800;
-color:var(--lime);
-margin-bottom:35px;
-
+.top{
+ height:70px;
+ display:flex;
+ align-items:center;
+ padding:15px;
+ border-bottom:1px solid var(--line);
 }
 
 
-.menu button{
-
-width:100%;
-padding:14px;
-margin-bottom:10px;
-
-background:transparent;
-
-border:1px solid var(--line);
-
-border-radius:10px;
-
-color:var(--text);
-
-text-align:left;
-
-cursor:pointer;
-
-}
-
-
-.menu button:hover{
-
-border-color:var(--lime);
-
+.menu-btn{
+ width:45px;
+ height:45px;
+ border-radius:50%;
+ border:1px solid var(--line);
+ background:
+ linear-gradient(135deg,#ffffff20,#ffffff05);
+ color:white;
+ font-size:22px;
+ backdrop-filter:blur(15px);
 }
 
 
 /* CHAT */
 
 .chat{
-
-flex:1;
-
-display:flex;
-
-flex-direction:column;
-
-}
-
-
-.chat-header{
-
-height:70px;
-
-border-bottom:1px solid var(--line);
-
-display:flex;
-
-align-items:center;
-
-padding:20px;
-
-font-weight:700;
-
-}
-
-
-.messages{
-
-flex:1;
-
-padding:25px;
-
-overflow:auto;
-
+ height:calc(100vh - 140px);
+ overflow-y:auto;
+ padding:20px;
+ display:flex;
+ flex-direction:column;
+ gap:15px;
 }
 
 
 .message{
-
-background:var(--surface);
-
-border:1px solid var(--line);
-
-padding:15px;
-
-border-radius:14px;
-
-max-width:600px;
-
-margin-bottom:15px;
-
+ max-width:80%;
+ padding:15px;
+ border-radius:18px;
+ line-height:1.5;
 }
 
 
 .ai{
-
-border-color:rgba(199,255,94,.3);
-
+ background:var(--card);
+ border:1px solid var(--line);
+ align-self:flex-start;
 }
 
 
-.input-area{
+.user{
+ background:var(--lime);
+ color:#111;
+ align-self:flex-end;
+}
 
-padding:20px;
 
-border-top:1px solid var(--line);
 
-display:flex;
+/* INPUT */
 
-gap:10px;
+.bottom{
+ position:fixed;
+ bottom:0;
+ left:0;
+ right:0;
+ padding:15px;
+ background:linear-gradient(transparent,var(--bg));
+}
 
+
+.box{
+ display:flex;
+ gap:10px;
+ background:var(--card);
+ border:1px solid var(--line);
+ padding:10px;
+ border-radius:25px;
 }
 
 
 input{
-
-flex:1;
-
-background:#090c11;
-
-border:1px solid var(--line);
-
-border-radius:12px;
-
-padding:15px;
-
-color:white;
-
+ flex:1;
+ background:none;
+ border:0;
+ outline:none;
+ color:white;
+ padding:10px;
 }
 
 
-.send{
-
-background:var(--lime);
-
-border:none;
-
-border-radius:12px;
-
-padding:15px 25px;
-
-font-weight:bold;
-
-cursor:pointer;
-
+button.send{
+ background:var(--lime);
+ border:0;
+ border-radius:50%;
+ width:45px;
+ height:45px;
 }
-
 
 </style>
 
@@ -203,72 +171,58 @@ cursor:pointer;
 <body>
 
 
-<aside class="sidebar">
+<div class="menu" id="menu">
 
+<h2>LifeOS</h2>
 
-<div class="logo">
-LIFEOS AI
+<div class="menu-item">
+📅 Día
 </div>
 
+<div class="menu-item">
+📆 Semana
+</div>
 
-<div class="menu">
+<div class="menu-item">
+🗓 Mes
+</div>
 
+<div class="menu-item">
+🚀 Proyectos
+</div>
 
-<button>
-📅 Today
-</button>
+<div class="menu-item">
+🎯 Metas
+</div>
 
-
-<button>
-📆 Weekly Plan
-</button>
-
-
-<button>
-🗓 Monthly
-</button>
-
-
-<button>
-🚀 Projects
-</button>
-
-
-<button>
-🎯 Goals
-</button>
-
-
-<button onclick="logout()">
-Log out
-</button>
-
+<div class="menu-item">
+📈 Año
+</div>
 
 </div>
 
 
-</aside>
 
+<div class="top">
 
-
-<main class="chat">
-
-
-<div class="chat-header">
-
-LifeOS AI Assistant
+<button class="menu-btn" onclick="toggleMenu()">
+☰
+</button>
 
 </div>
 
 
-<div class="messages" id="messages">
+
+<div class="chat" id="chat">
 
 
 <div class="message ai">
 
-Hola. Soy LifeOS AI.
+Hola 👋 Soy LifeOS AI.
 
-Cuéntame qué tienes que hacer y organizaré tu día.
+Cuéntame qué tienes que hacer hoy y crearé un plan inteligente para ti.
+
+También puedo ayudarte con metas, proyectos y organización.
 
 </div>
 
@@ -277,85 +231,90 @@ Cuéntame qué tienes que hacer y organizaré tu día.
 
 
 
-<div class="input-area">
 
+<div class="bottom">
+
+<div class="box">
 
 <input 
 id="input"
-placeholder="Tell LifeOS what you need..."
+placeholder="Planifica tu día con LifeOS..."
 >
 
 
 <button class="send" onclick="sendMessage()">
-
-Send
-
+➤
 </button>
 
 
 </div>
 
+</div>
 
-</main>
 
 
 
 <script>
 
 
+function toggleMenu(){
+
+document
+.getElementById("menu")
+.classList.toggle("active");
+
+}
+
+
+
 function sendMessage(){
 
-const input=document.getElementById("input");
+let input=document.getElementById("input");
 
-const text=input.value.trim();
-
+let text=input.value.trim();
 
 if(!text)return;
 
 
-
-const messages=document.getElementById("messages");
-
-
-messages.innerHTML += `
-
-<div class="message">
-
-${text}
-
-</div>
-
-<div class="message ai">
-
-Analizando tu información... Próximamente generaré tu plan inteligente.
-
-</div>
-
-`;
+addMessage(text,"user");
 
 
 input.value="";
 
 
-messages.scrollTop=messages.scrollHeight;
+setTimeout(()=>{
+
+
+addMessage(
+"Perfecto. Analizaré tu día. Antes de crear el plan dime: ¿quieres organizarlo como día, semana, mes, meta o proyecto?",
+"ai"
+);
+
+
+},700);
 
 
 }
 
 
 
-async function logout(){
+function addMessage(text,type){
 
-await fetch("/api/logout",{
-
-method:"POST",
-
-credentials:"same-origin"
-
-});
+let chat=document.getElementById("chat");
 
 
-window.location.href="/";
+let div=document.createElement("div");
+
+div.className="message "+type;
+
+div.innerText=text;
+
+
+chat.appendChild(div);
+
+
+chat.scrollTop=chat.scrollHeight;
+
 
 }
 
