@@ -2,9 +2,7 @@ export async function onRequestPost(context) {
 
   const { request, env } = context;
 
-
   const body = await request.json();
-
 
   const email = body.email;
   const password = body.password;
@@ -64,17 +62,54 @@ export async function onRequestPost(context) {
     .run();
 
 
+  const userId = result.meta.last_row_id;
 
-  return Response.json({
 
-    success: true,
+  // Crear sesión automáticamente
+  const sessionToken = crypto.randomUUID();
 
-    user: {
-      id: result.meta.last_row_id,
-      email
+
+  await env.DB
+    .prepare(
+      `
+      INSERT INTO sessions
+      (token, user_id)
+      VALUES (?, ?)
+      `
+    )
+    .bind(
+      sessionToken,
+      userId
+    )
+    .run();
+
+
+
+  return new Response(
+    JSON.stringify({
+
+      success: true,
+
+      redirect: "/app.html",
+
+      user: {
+        id: userId,
+        email
+      }
+
+    }),
+    {
+
+      headers: {
+        "Content-Type": "application/json",
+
+        "Set-Cookie":
+          `session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax`
+
+      }
+
     }
-
-  });
+  );
 
 
 }
@@ -105,4 +140,4 @@ async function hashPassword(password){
     )
     .join("");
 
-      }
+  }
