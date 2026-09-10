@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LifeOS AI</title>
+
+<style>
+
+:root {
+  --bg:#07090d;
+  --surface:#0d1118;
+  --line:#202936;
+  --text:#f3f7fb;
+  --muted:#8995a5;
+  --lime:#c7ff5e;
+  --cyan:#64e6ff;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+  height:100vh;
+  display:flex;
+}
+
+
+/* SIDEBAR */
+
+.sidebar{
+
+  width:260px;
+  background:var(--surface);
+  border-right:1px solid var(--line);
+  padding:20px;
+
+}
+
+
+.logo{
+
+font-size:20px;
+font-weight:800;
+color:var(--lime);
+margin-bottom:35px;
+
+}
+
+
+.menu button{
+
+width:100%;
+padding:14px;
+margin-bottom:10px;
+
+background:transparent;
+
+border:1px solid var(--line);
+
+border-radius:10px;
+
+color:var(--text);
+
+text-align:left;
+
+cursor:pointer;
+
+}
+
+
+.menu button:hover{
+
+border-color:var(--lime);
+
+}
+
+
+/* CHAT */
+
+.chat{
+
+flex:1;
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+
+.chat-header{
+
+height:70px;
+
+border-bottom:1px solid var(--line);
+
+display:flex;
+
+align-items:center;
+
+padding:20px;
+
+font-weight:700;
+
+}
+
+
+.messages{
+
+flex:1;
+
+padding:25px;
+
+overflow:auto;
+
+}
+
+
+.message{
+
+background:var(--surface);
+
+border:1px solid var(--line);
+
+padding:15px;
+
+border-radius:14px;
+
+max-width:600px;
+
+margin-bottom:15px;
+
+}
+
+
+.ai{
+
+border-color:rgba(199,255,94,.3);
+
+}
+
+
+.input-area{
+
+padding:20px;
+
+border-top:1px solid var(--line);
+
+display:flex;
+
+gap:10px;
+
+}
+
+
+input{
+
+flex:1;
+
+background:#090c11;
+
+border:1px solid var(--line);
+
+border-radius:12px;
+
+padding:15px;
+
+color:white;
+
+}
+
+
+.send{
+
+background:var(--lime);
+
+border:none;
+
+border-radius:12px;
+
+padding:15px 25px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<aside class="sidebar">
+
+
+<div class="logo">
+LIFEOS AI
+</div>
+
+
+<div class="menu">
+
+
+<button>
+📅 Today
+</button>
+
+
+<button>
+📆 Weekly Plan
+</button>
+
+
+<button>
+🗓 Monthly
+</button>
+
+
+<button>
+🚀 Projects
+</button>
+
+
+<button>
+🎯 Goals
+</button>
+
+
+<button onclick="logout()">
+Log out
+</button>
+
+
+</div>
+
+
+</aside>
+
+
+
+<main class="chat">
+
+
+<div class="chat-header">
+
+LifeOS AI Assistant
+
+</div>
+
+
+<div class="messages" id="messages">
+
+
+<div class="message ai">
+
+Hola. Soy LifeOS AI.
+
+Cuéntame qué tienes que hacer y organizaré tu día.
+
+</div>
+
+
+</div>
+
+
+
+<div class="input-area">
+
+
+<input 
+id="input"
+placeholder="Tell LifeOS what you need..."
+>
+
+
+<button class="send" onclick="sendMessage()">
+
+Send
+
+</button>
+
+
+</div>
+
+
+</main>
+
+
+
+<script>
+
+
+function sendMessage(){
+
+const input=document.getElementById("input");
+
+const text=input.value.trim();
+
+
+if(!text)return;
+
+
+
+const messages=document.getElementById("messages");
+
+
+messages.innerHTML += `
+
+<div class="message">
+
+${text}
+
+</div>
+
+<div class="message ai">
+
+Analizando tu información... Próximamente generaré tu plan inteligente.
+
+</div>
+
+`;
+
+
+input.value="";
+
+
+messages.scrollTop=messages.scrollHeight;
+
+
+}
+
+
+
+async function logout(){
+
+await fetch("/api/logout",{
+
+method:"POST",
+
+credentials:"same-origin"
+
+});
+
+
+window.location.href="/";
+
+}
+
+
+</script>
+
+
+</body>
+  </html>
