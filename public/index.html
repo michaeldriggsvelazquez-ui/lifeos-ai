@@ -834,8 +834,7 @@
       font-family: "DM Mono", monospace;
     }
 
-    .field input,
-    .planner-input {
+    .field input {
       width: 100%;
 
       border: 1px solid var(--line);
@@ -853,13 +852,11 @@
       transition: border-color .2s ease;
     }
 
-    .field input:focus,
-    .planner-input:focus {
+    .field input:focus {
       border-color: rgba(199,255,94,.45);
     }
 
-    .field input::placeholder,
-    .planner-input::placeholder {
+    .field input::placeholder {
       color: #4d5867;
     }
 
@@ -906,128 +903,6 @@
       line-height: 1.6;
       text-align: center;
       font-family: "DM Mono", monospace;
-    }
-
-    /* =========================
-       PLANNER
-    ========================= */
-
-    .planner-user {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      margin-top: 25px;
-      padding: 11px 13px;
-
-      border: 1px solid var(--line);
-      border-radius: 10px;
-
-      background: rgba(255,255,255,.015);
-
-      font-family: "DM Mono", monospace;
-      font-size: 9px;
-      color: var(--muted);
-    }
-
-    .planner-user strong {
-      color: var(--text);
-      font-weight: 400;
-    }
-
-    .logout-btn {
-      border: 0;
-      background: transparent;
-      color: var(--danger);
-      font-family: "DM Mono", monospace;
-      font-size: 9px;
-    }
-
-    .planner-input {
-      margin-top: 20px;
-      min-height: 145px;
-      resize: vertical;
-    }
-
-    .planner-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      margin-top: 13px;
-      gap: 15px;
-    }
-
-    .planner-hint {
-      color: #596575;
-      font-family: "DM Mono", monospace;
-      font-size: 9px;
-      line-height: 1.5;
-    }
-
-    .plan-result {
-      display: none;
-      margin-top: 22px;
-
-      border-top: 1px solid var(--line);
-      padding-top: 20px;
-    }
-
-    .plan-result.show {
-      display: block;
-    }
-
-    .plan-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      margin-bottom: 14px;
-    }
-
-    .plan-header h3 {
-      font-size: 16px;
-    }
-
-    .plan-header span {
-      color: var(--lime);
-      font-family: "DM Mono", monospace;
-      font-size: 9px;
-    }
-
-    .plan-list {
-      display: grid;
-      gap: 9px;
-    }
-
-    .plan-item {
-      display: grid;
-      grid-template-columns: 75px 1fr;
-
-      padding: 12px;
-
-      border: 1px solid rgba(255,255,255,.055);
-      border-radius: 9px;
-
-      background: rgba(255,255,255,.015);
-    }
-
-    .plan-time {
-      color: var(--lime);
-      font-family: "DM Mono", monospace;
-      font-size: 9px;
-    }
-
-    .plan-task {
-      color: var(--text);
-      font-size: 11px;
-    }
-
-    .plan-task small {
-      display: block;
-      color: #697586;
-      margin-top: 4px;
-      font-size: 9px;
     }
 
     /* =========================
@@ -1150,15 +1025,6 @@
 
       .modal {
         padding: 23px;
-      }
-
-      .planner-controls {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .planner-controls .btn {
-        width: 100%;
       }
     }
   </style>
@@ -1792,121 +1658,8 @@
 
 
   <!-- =========================
-       PLANNER OVERLAY
-  ========================= -->
-
-  <div
-    class="overlay"
-    id="plannerOverlay"
-    onclick="closeOverlayOutside(event, 'plannerOverlay')"
-  >
-
-    <div class="modal wide">
-
-      <button
-        class="modal-close"
-        onclick="closeOverlay('plannerOverlay')"
-        aria-label="Close"
-      >
-        ×
-      </button>
-
-      <div class="modal-eyebrow">
-        LIFEOS / AI PLANNER
-      </div>
-
-      <h2>
-        Build your day.
-      </h2>
-
-      <p class="modal-description">
-        Tell LifeOS what you need to do. The system will organize
-        everything around your day.
-      </p>
-
-
-      <div class="planner-user">
-
-        <div>
-          ACTIVE ACCOUNT:
-          <strong id="plannerEmail">
-            —
-          </strong>
-        </div>
-
-        <button
-          class="logout-btn"
-          onclick="logoutAccount()"
-        >
-          LOG OUT
-        </button>
-
-      </div>
-
-
-      <textarea
-        class="planner-input"
-        id="plannerInput"
-        placeholder="Example: I have school from 8:00 to 14:00, I need to study math for an hour, exercise for 45 minutes, finish my homework and I want some free time tonight."
-      ></textarea>
-
-
-      <div class="planner-controls">
-
-        <div class="planner-hint">
-          NATURAL LANGUAGE INPUT<br>
-          Describe your real day. Don't overthink it.
-        </div>
-
-        <button
-          class="btn btn-primary"
-          id="planButton"
-          onclick="generatePlan()"
-        >
-          GENERATE PLAN →
-        </button>
-
-      </div>
-
-
-      <div
-        class="status"
-        id="plannerStatus"
-      ></div>
-
-
-      <div
-        class="plan-result"
-        id="planResult"
-      >
-
-        <div class="plan-header">
-
-          <h3>
-            Today's plan
-          </h3>
-
-          <span>
-            GENERATED
-          </span>
-
-        </div>
-
-        <div
-          class="plan-list"
-          id="planList"
-        ></div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       PRO OVERLAY
-  ========================= -->
+       PRO MODAL
+    ========================= -->
 
   <div
     class="overlay"
@@ -2265,11 +2018,11 @@
 
         setTimeout(() => {
 
-  closeOverlay("authOverlay");
+          closeOverlay("authOverlay");
 
-  window.location.href = "/app.html";
+          window.location.href = "/app.html";
 
-}, 450);
+        }, 450);
 
 
       } catch (error) {
@@ -2354,303 +2107,6 @@
 
 
     /* =========================
-       PLANNER
-    ========================= */
-
-    async function openPlanner() {
-
-      if (!currentUser) {
-
-        await getCurrentUser();
-
-      }
-
-
-      if (!currentUser) {
-
-        closeOverlay("plannerOverlay");
-
-        openAuth();
-
-        return;
-
-      }
-
-
-      document
-        .getElementById("plannerEmail")
-        .textContent =
-        currentUser.email;
-
-
-      openOverlay("plannerOverlay");
-
-      document
-        .getElementById("plannerInput")
-        .focus();
-
-    }
-
-
-    async function logoutAccount() {
-
-      try {
-
-        await api(
-          "/api/logout",
-          {
-            method: "POST"
-          }
-        );
-
-      } catch (error) {
-
-        console.error(
-          "Logout error:",
-          error
-        );
-
-      } finally {
-
-        currentUser = null;
-
-        closeOverlay("plannerOverlay");
-
-        switchAuth("login");
-
-        document
-          .getElementById("authEmail")
-          .value = "";
-
-        document
-          .getElementById("authPassword")
-          .value = "";
-
-        clearAuthStatus();
-
-      }
-
-    }
-
-
-    /* =========================
-       PLANNER DEMO ENGINE
-       This will later connect
-       to /api/plan + OpenAI.
-    ========================= */
-
-    async function generatePlan() {
-
-      const input =
-        document
-          .getElementById("plannerInput")
-          .value
-          .trim();
-
-
-      const button =
-        document.getElementById("planButton");
-
-      const status =
-        document.getElementById("plannerStatus");
-
-
-      if (!input) {
-
-        status.textContent =
-          "Tell LifeOS what you need to do first.";
-
-        status.className =
-          "status show error";
-
-        return;
-
-      }
-
-
-      button.disabled = true;
-
-      button.textContent =
-        "BUILDING PLAN...";
-
-
-      status.textContent =
-        "Analyzing your day...";
-
-      status.className =
-        "status show";
-
-
-      /*
-        Temporary local planner.
-
-        The real AI endpoint will be connected
-        in the next backend step.
-      */
-
-      await new Promise(
-        resolve => setTimeout(resolve, 700)
-      );
-
-
-      const tasks =
-        parseBasicTasks(input);
-
-
-      renderPlan(tasks);
-
-
-      status.textContent =
-        "Plan generated.";
-
-      status.className =
-        "status show success";
-
-
-      button.disabled = false;
-
-      button.textContent =
-        "GENERATE PLAN →";
-
-    }
-
-
-    function parseBasicTasks(text) {
-
-      const sentences =
-        text
-          .split(/[.!?;\n]+/)
-          .map(item => item.trim())
-          .filter(Boolean);
-
-
-      if (sentences.length === 0) {
-
-        return [
-          {
-            time: "TODAY",
-            task: text,
-            detail: "Personal task"
-          }
-        ];
-
-      }
-
-
-      const result = [];
-
-
-      const times = [
-        "08:00",
-        "09:30",
-        "11:00",
-        "13:00",
-        "15:00",
-        "16:30",
-        "18:00",
-        "19:30"
-      ];
-
-
-      sentences
-        .slice(0, 8)
-        .forEach((sentence, index) => {
-
-          let task =
-            sentence
-              .replace(/^I\s+(have|need|want|must)\s+/i, "")
-              .trim();
-
-
-          if (!task) {
-            task = sentence;
-          }
-
-
-          result.push({
-
-            time:
-              times[index] || "LATER",
-
-            task:
-              capitalize(task),
-
-            detail:
-              "Scheduled by LifeOS"
-
-          });
-
-        });
-
-
-      return result;
-
-    }
-
-
-    function renderPlan(tasks) {
-
-      const result =
-        document.getElementById("planResult");
-
-      const list =
-        document.getElementById("planList");
-
-
-      list.innerHTML = "";
-
-
-      tasks.forEach(item => {
-
-        const row =
-          document.createElement("div");
-
-        row.className =
-          "plan-item";
-
-
-        row.innerHTML = `
-
-          <div class="plan-time">
-            ${escapeHtml(item.time)}
-          </div>
-
-          <div class="plan-task">
-            ${escapeHtml(item.task)}
-
-            <small>
-              ${escapeHtml(item.detail)}
-            </small>
-          </div>
-
-        `;
-
-
-        list.appendChild(row);
-
-      });
-
-
-      result.classList.add("show");
-
-    }
-
-
-    function capitalize(text) {
-
-      if (!text) {
-        return "";
-      }
-
-      return (
-        text.charAt(0).toUpperCase() +
-        text.slice(1)
-      );
-
-    }
-
-
-    /* =========================
        PRO
     ========================= */
 
@@ -2685,23 +2141,6 @@
 
 
     /* =========================
-       SECURITY / HTML ESCAPING
-    ========================= */
-
-    function escapeHtml(value) {
-
-      return String(value)
-
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-
-    }
-
-
-    /* =========================
        STARTUP
     ========================= */
 
@@ -2715,10 +2154,7 @@
 
         if (user) {
 
-          console.log(
-            "LifeOS session active:",
-            user.email
-          );
+          window.location.href = "/app.html";
 
         } else {
 
@@ -2759,4 +2195,4 @@
   </script>
 
 </body>
-    </html>
+</html>
