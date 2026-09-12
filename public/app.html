@@ -1,46 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>LifeOS AI</title>
 
 <style>
-:root{
-  --bg:#07090d;
-  --surface:#0d1118;
-  --card:#101722;
-  --card2:#141b26;
-  --line:#26303d;
-  --text:#f5f7fb;
-  --muted:#8995a5;
-  --lime:#c7ff5e;
-  --cyan:#64e6ff;
-  --danger:#ff5364;
-}
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial,sans-serif;
-  -webkit-tap-highlight-color:transparent;
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-html,
-body{
-  width:100%;
-  height:100%;
+:root{
+    --bg:#07090d;
+    --panel:#0d1118;
+    --panel2:#111722;
+    --border:rgba(255,255,255,.08);
+    --text:#f4f7fb;
+    --muted:#8993a3;
+    --lime:#c7ff5e;
+    --cyan:#64e6ff;
+    --danger:#ff6b7a;
 }
 
 body{
-  background:
-    radial-gradient(circle at 85% 10%,rgba(100,230,255,.06),transparent 30%),
-    radial-gradient(circle at 10% 90%,rgba(199,255,94,.045),transparent 30%),
-    var(--bg);
-  color:var(--text);
-  overflow:hidden;
+    background:
+        radial-gradient(circle at 80% 0%,rgba(100,230,255,.06),transparent 30%),
+        radial-gradient(circle at 20% 100%,rgba(199,255,94,.05),transparent 30%),
+        var(--bg);
+    color:var(--text);
+    font-family:Manrope,Arial,sans-serif;
+    min-height:100vh;
+    overflow:hidden;
 }
 
 /* =========================
@@ -48,259 +46,136 @@ body{
 ========================= */
 
 .app{
-  width:100%;
-  height:100vh;
-  position:relative;
+    display:flex;
+    height:100vh;
 }
 
 /* =========================
-   OVERLAY
+   SIDEBAR
 ========================= */
 
-.menu-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  backdrop-filter:blur(3px);
-  opacity:0;
-  pointer-events:none;
-  transition:.3s ease;
-  z-index:19;
+.sidebar{
+    width:250px;
+    height:100vh;
+    background:rgba(9,12,17,.88);
+    backdrop-filter:blur(24px);
+    border-right:1px solid var(--border);
+    padding:22px 15px;
+    display:flex;
+    flex-direction:column;
+    z-index:20;
 }
 
-.menu-overlay.active{
-  opacity:1;
-  pointer-events:auto;
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:5px 10px 28px;
 }
 
-/* =========================
-   SIDE MENU
-========================= */
+.logo-mark{
+    width:32px;
+    height:32px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--lime),#82d900);
+    box-shadow:0 0 25px rgba(199,255,94,.18);
+    position:relative;
+}
 
-.menu{
-  position:fixed;
-  top:0;
-  left:0;
-  width:290px;
-  max-width:86%;
-  height:100vh;
-  background:
-    linear-gradient(
-      145deg,
-      rgba(20,27,38,.96),
-      rgba(8,12,18,.97)
+.logo-mark:after{
+    content:"";
+    position:absolute;
+    width:11px;
+    height:11px;
+    border:2px solid #071006;
+    border-radius:50%;
+    left:9px;
+    top:8px;
+}
+
+.logo-text{
+    font-weight:800;
+    letter-spacing:-.5px;
+}
+
+.logo-text span{
+    color:var(--lime);
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+
+.nav-label{
+    font-family:"DM Mono",monospace;
+    font-size:10px;
+    color:#566070;
+    letter-spacing:1.5px;
+    padding:13px 11px 7px;
+}
+
+.nav button{
+    border:0;
+    background:transparent;
+    color:#8e98a7;
+    width:100%;
+    text-align:left;
+    padding:11px 12px;
+    border-radius:11px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:13px;
+    transition:.2s;
+}
+
+.nav button:hover{
+    background:rgba(255,255,255,.045);
+    color:white;
+}
+
+.nav button.active{
+    background:rgba(199,255,94,.09);
+    color:var(--lime);
+}
+
+.nav-icon{
+    display:inline-block;
+    width:24px;
+    font-size:15px;
+}
+
+.sidebar-bottom{
+    margin-top:auto;
+}
+
+.pro-button{
+    width:100%;
+    border:1px solid rgba(199,255,94,.2);
+    background:linear-gradient(
+        135deg,
+        rgba(199,255,94,.1),
+        rgba(100,230,255,.04)
     );
-  border-right:1px solid rgba(255,255,255,.09);
-  box-shadow:15px 0 60px rgba(0,0,0,.45);
-  backdrop-filter:blur(30px);
-  transform:translateX(-105%);
-  transition:transform .35s cubic-bezier(.2,.8,.2,1);
-  padding:22px 18px;
-  z-index:20;
-  display:flex;
-  flex-direction:column;
+    color:white;
+    border-radius:13px;
+    padding:13px;
+    cursor:pointer;
+    text-align:left;
+    font-family:inherit;
 }
 
-.menu.active{
-  transform:translateX(0);
+.pro-button strong{
+    display:block;
+    color:var(--lime);
+    font-size:12px;
+    margin-bottom:3px;
 }
 
-.menu-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:25px;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:19px;
-  font-weight:800;
-  letter-spacing:1px;
-}
-
-.brand-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:var(--lime);
-  box-shadow:0 0 16px rgba(199,255,94,.65);
-}
-
-.close-menu{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.035);
-  color:white;
-  font-size:22px;
-  cursor:pointer;
-}
-
-.menu-label{
-  font-size:10px;
-  color:#657182;
-  letter-spacing:2px;
-  margin:3px 10px 10px;
-  text-transform:uppercase;
-}
-
-.menu-list{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.menu-item{
-  width:100%;
-  display:flex;
-  align-items:center;
-  gap:13px;
-  padding:13px 14px;
-  border:1px solid transparent;
-  border-radius:15px;
-  background:transparent;
-  color:#b5bfcb;
-  cursor:pointer;
-  text-align:left;
-  transition:.2s ease;
-}
-
-.menu-item:hover{
-  background:rgba(255,255,255,.045);
-  border-color:rgba(255,255,255,.07);
-  color:white;
-}
-
-.menu-item.active{
-  background:rgba(199,255,94,.075);
-  border-color:rgba(199,255,94,.18);
-  color:white;
-}
-
-.menu-icon{
-  width:25px;
-  text-align:center;
-  font-size:18px;
-}
-
-.menu-text{
-  font-size:14px;
-  font-weight:600;
-}
-
-.menu-spacer{
-  flex:1;
-}
-
-.menu-bottom{
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-}
-
-/* =========================
-   MENU BOTTOM BUTTONS
-========================= */
-
-.logout-btn,
-.pro-btn{
-  width:100%;
-  min-height:48px;
-  border-radius:15px;
-  cursor:pointer;
-  font-weight:700;
-  font-size:14px;
-  transition:.2s ease;
-  backdrop-filter:blur(20px);
-}
-
-.logout-btn{
-  border:1px solid rgba(255,83,100,.28);
-  color:#ff6d7a;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255,83,100,.12),
-      rgba(255,83,100,.025)
-    );
-}
-
-.logout-btn:hover{
-  background:rgba(255,83,100,.17);
-  transform:translateY(-1px);
-}
-
-.pro-btn{
-  border:1px solid rgba(199,255,94,.25);
-  color:var(--lime);
-  background:
-    linear-gradient(
-      135deg,
-      rgba(199,255,94,.12),
-      rgba(100,230,255,.035)
-    );
-}
-
-.pro-btn:hover{
-  background:rgba(199,255,94,.16);
-  transform:translateY(-1px);
-}
-
-/* =========================
-   TOP BAR
-========================= */
-
-.top{
-  height:70px;
-  width:100%;
-  display:flex;
-  align-items:center;
-  padding:12px 16px;
-  border-bottom:1px solid rgba(255,255,255,.07);
-  background:rgba(7,9,13,.58);
-  backdrop-filter:blur(18px);
-  position:relative;
-  z-index:5;
-}
-
-.menu-btn{
-  width:45px;
-  height:45px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.1);
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255,255,255,.09),
-      rgba(255,255,255,.025)
-    );
-  color:white;
-  font-size:21px;
-  cursor:pointer;
-  backdrop-filter:blur(15px);
-  transition:.2s ease;
-}
-
-.menu-btn:hover{
-  border-color:rgba(199,255,94,.25);
-  transform:scale(1.03);
-}
-
-.top-title{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  font-weight:800;
-  letter-spacing:1.5px;
-  font-size:15px;
-}
-
-.top-title span{
-  color:var(--lime);
+.pro-button span{
+    color:#788291;
+    font-size:10px;
 }
 
 /* =========================
@@ -308,476 +183,372 @@ body{
 ========================= */
 
 .main{
-  height:calc(100vh - 70px);
-  position:relative;
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+}
+
+.topbar{
+    height:70px;
+    min-height:70px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px;
+    background:rgba(7,9,13,.55);
+    backdrop-filter:blur(18px);
+}
+
+.page-title{
+    font-size:14px;
+    font-weight:700;
+}
+
+.page-date{
+    font-family:"DM Mono",monospace;
+    font-size:10px;
+    color:#687383;
+    margin-top:3px;
+}
+
+.status{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-family:"DM Mono",monospace;
+    font-size:10px;
+    color:#6f7988;
+}
+
+.status-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--lime);
+    box-shadow:0 0 10px rgba(199,255,94,.7);
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content{
+    flex:1;
+    overflow:auto;
+    padding:30px;
 }
 
 .screen{
-  width:100%;
-  height:100%;
-  display:none;
-  overflow-y:auto;
-  padding:25px 20px 130px;
+    display:none;
+    max-width:1100px;
+    margin:auto;
 }
 
 .screen.active{
-  display:block;
+    display:block;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.hero-title{
+    font-size:clamp(30px,5vw,55px);
+    line-height:1;
+    letter-spacing:-2.8px;
+    margin-bottom:10px;
+}
+
+.hero-title span{
+    color:var(--lime);
+}
+
+.hero-sub{
+    color:var(--muted);
+    font-size:13px;
+    max-width:600px;
+    line-height:1.7;
+    margin-bottom:30px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-bottom:18px;
+}
+
+.card{
+    background:linear-gradient(
+        145deg,
+        rgba(255,255,255,.045),
+        rgba(255,255,255,.018)
+    );
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:20px;
+    backdrop-filter:blur(15px);
+}
+
+.card-label{
+    font-family:"DM Mono",monospace;
+    color:#667181;
+    font-size:9px;
+    letter-spacing:1.2px;
+    text-transform:uppercase;
+    margin-bottom:12px;
+}
+
+.card-number{
+    font-size:29px;
+    font-weight:800;
+}
+
+.card-small{
+    color:#697484;
+    font-size:11px;
+    margin-top:5px;
 }
 
 /* =========================
    CHAT
 ========================= */
 
+.chat-layout{
+    height:calc(100vh - 130px);
+    display:flex;
+    flex-direction:column;
+    max-width:900px;
+    margin:auto;
+}
+
+.chat-header{
+    padding:5px 0 20px;
+}
+
+.chat-header h1{
+    font-size:28px;
+    letter-spacing:-1.2px;
+}
+
+.chat-header p{
+    color:#707b8a;
+    font-size:12px;
+    margin-top:5px;
+}
+
 .chat{
-  height:100%;
-  overflow-y:auto;
-  padding:20px 20px 120px;
-  display:flex;
-  flex-direction:column;
-  gap:15px;
-  scroll-behavior:smooth;
-}
-
-.chat::-webkit-scrollbar,
-.screen::-webkit-scrollbar{
-  width:4px;
-}
-
-.chat::-webkit-scrollbar-thumb,
-.screen::-webkit-scrollbar-thumb{
-  background:#283340;
-  border-radius:10px;
+    flex:1;
+    overflow-y:auto;
+    padding:10px 5px 20px;
 }
 
 .message{
-  max-width:82%;
-  padding:15px 17px;
-  border-radius:18px;
-  line-height:1.55;
-  font-size:14px;
-  animation:messageIn .25s ease;
-  white-space:pre-wrap;
+    display:flex;
+    margin:12px 0;
 }
 
-@keyframes messageIn{
-  from{
-    opacity:0;
-    transform:translateY(8px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+.message.user{
+    justify-content:flex-end;
 }
 
-.ai{
-  background:
-    linear-gradient(
-      145deg,
-      rgba(16,23,34,.95),
-      rgba(13,18,27,.92)
-    );
-  border:1px solid rgba(255,255,255,.075);
-  align-self:flex-start;
-  box-shadow:0 8px 30px rgba(0,0,0,.12);
+.message.ai{
+    justify-content:flex-start;
 }
 
-.user{
-  background:var(--lime);
-  color:#11150b;
-  align-self:flex-end;
-  font-weight:600;
-  box-shadow:0 7px 25px rgba(199,255,94,.08);
+.bubble{
+    max-width:min(720px,85%);
+    padding:13px 16px;
+    border-radius:16px;
+    font-size:13px;
+    line-height:1.65;
+    white-space:pre-wrap;
 }
 
-/* =========================
-   INPUT
-========================= */
-
-.bottom{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  padding:14px 15px 18px;
-  background:
-    linear-gradient(
-      transparent,
-      rgba(7,9,13,.92) 35%,
-      var(--bg)
-    );
-  z-index:8;
+.user .bubble{
+    background:var(--lime);
+    color:#101408;
+    border-bottom-right-radius:5px;
 }
 
-.box{
-  max-width:900px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  gap:9px;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(18,25,36,.94),
-      rgba(11,16,23,.94)
-    );
-  border:1px solid rgba(255,255,255,.1);
-  padding:8px 8px 8px 13px;
-  border-radius:25px;
-  box-shadow:
-    0 10px 40px rgba(0,0,0,.35),
-    inset 0 1px rgba(255,255,255,.025);
-  backdrop-filter:blur(25px);
+.ai .bubble{
+    background:rgba(255,255,255,.045);
+    border:1px solid var(--border);
+    color:#dce1e8;
+    border-bottom-left-radius:5px;
 }
 
-input{
-  min-width:0;
-  flex:1;
-  background:none;
-  border:0;
-  outline:none;
-  color:white;
-  padding:10px 3px;
-  font-size:14px;
+.chat-input{
+    display:flex;
+    gap:10px;
+    padding-top:10px;
 }
 
-input::placeholder{
-  color:#697687;
+.chat-input input{
+    flex:1;
+    background:rgba(255,255,255,.045);
+    border:1px solid var(--border);
+    outline:none;
+    border-radius:15px;
+    padding:15px;
+    color:white;
+    font-family:inherit;
+    font-size:13px;
 }
 
-button.send{
-  flex:none;
-  background:var(--lime);
-  color:#111;
-  border:0;
-  border-radius:50%;
-  width:43px;
-  height:43px;
-  cursor:pointer;
-  font-size:18px;
-  font-weight:900;
-  transition:.2s ease;
+.chat-input input:focus{
+    border-color:rgba(199,255,94,.35);
 }
 
-button.send:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 20px rgba(199,255,94,.2);
+.send{
+    width:52px;
+    border:0;
+    border-radius:15px;
+    background:var(--lime);
+    color:#0b1007;
+    cursor:pointer;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.send:disabled{
+    opacity:.5;
+    cursor:not-allowed;
 }
 
 /* =========================
-   SCREEN HEADER
+   LIST SCREENS
 ========================= */
 
-.screen-header{
-  display:flex;
-  align-items:center;
-  gap:13px;
-  margin-bottom:25px;
+.section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:25px;
 }
 
-.back-btn{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.035);
-  color:white;
-  cursor:pointer;
-  font-size:20px;
+.section-head h1{
+    font-size:32px;
+    letter-spacing:-1.5px;
 }
 
-.screen-title{
-  font-size:25px;
-  font-weight:800;
+.section-head p{
+    color:#6d7786;
+    font-size:12px;
+    margin-top:5px;
 }
 
-.screen-subtitle{
-  margin-top:4px;
-  color:var(--muted);
-  font-size:12px;
-}
-
-/* =========================
-   CARDS
-========================= */
-
-.card{
-  background:
-    linear-gradient(
-      145deg,
-      rgba(17,24,35,.92),
-      rgba(12,17,25,.92)
-    );
-  border:1px solid rgba(255,255,255,.075);
-  border-radius:20px;
-  padding:18px;
-  margin-bottom:12px;
-  box-shadow:0 10px 35px rgba(0,0,0,.13);
-}
-
-.card-title{
-  font-weight:750;
-  font-size:15px;
-}
-
-.card-muted{
-  color:var(--muted);
-  font-size:12px;
-  margin-top:5px;
+.add-button{
+    border:1px solid rgba(199,255,94,.25);
+    background:rgba(199,255,94,.08);
+    color:var(--lime);
+    border-radius:10px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:11px;
 }
 
 .empty{
-  text-align:center;
-  padding:45px 20px;
-  color:var(--muted);
+    border:1px dashed rgba(255,255,255,.1);
+    border-radius:18px;
+    padding:50px 20px;
+    text-align:center;
+    color:#667181;
 }
 
-.empty-icon{
-  font-size:34px;
-  margin-bottom:12px;
+.empty strong{
+    display:block;
+    color:#a4acb8;
+    margin-bottom:7px;
 }
 
-.empty-title{
-  color:white;
-  font-weight:700;
-  margin-bottom:6px;
+.list{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
 }
 
-/* =========================
-   DAY
-========================= */
-
-.date-badge{
-  display:inline-block;
-  padding:7px 10px;
-  border-radius:10px;
-  background:rgba(199,255,94,.08);
-  border:1px solid rgba(199,255,94,.15);
-  color:var(--lime);
-  font-size:11px;
-  margin-bottom:14px;
-}
-
-.schedule{
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-}
-
-.schedule-row{
-  display:grid;
-  grid-template-columns:65px 1fr;
-  gap:10px;
-  align-items:center;
-  padding:13px;
-  border-radius:14px;
-  background:rgba(255,255,255,.025);
-  border:1px solid rgba(255,255,255,.045);
-}
-
-.time{
-  color:var(--cyan);
-  font-size:12px;
-  font-weight:700;
-}
-
-.schedule-task{
-  font-size:13px;
-}
-
-.schedule-status{
-  font-size:10px;
-  color:var(--muted);
-  margin-top:3px;
-}
-
-/* =========================
-   WEEK / MONTH / YEAR
-========================= */
-
-.period-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-
-.period-card{
-  min-height:115px;
-  padding:16px;
-  border-radius:17px;
-  background:rgba(255,255,255,.025);
-  border:1px solid rgba(255,255,255,.065);
-}
-
-.period-name{
-  font-size:11px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
-
-.period-number{
-  font-size:25px;
-  font-weight:800;
-  margin-top:12px;
-}
-
-.period-small{
-  color:var(--muted);
-  font-size:11px;
-  margin-top:3px;
-}
-
-.progress{
-  height:5px;
-  border-radius:10px;
-  background:#202934;
-  overflow:hidden;
-  margin-top:13px;
-}
-
-.progress-bar{
-  height:100%;
-  width:55%;
-  background:linear-gradient(90deg,var(--lime),var(--cyan));
-  border-radius:10px;
-}
-
-/* =========================
-   GOALS
-========================= */
-
-.goal{
-  position:relative;
-}
-
-.goal-top{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.goal-icon{
-  font-size:25px;
-}
-
-.goal-percent{
-  color:var(--lime);
-  font-size:12px;
-  font-weight:700;
-}
-
-.goal-progress{
-  margin-top:14px;
-  height:6px;
-  border-radius:10px;
-  background:#202934;
-  overflow:hidden;
-}
-
-.goal-progress div{
-  height:100%;
-  background:linear-gradient(90deg,var(--lime),var(--cyan));
-  border-radius:10px;
-}
-
-.goal-meta{
-  display:flex;
-  justify-content:space-between;
-  margin-top:8px;
-  font-size:10px;
-  color:var(--muted);
-}
-
-/* =========================
-   PROJECTS
-========================= */
-
-.project{
-  cursor:pointer;
-}
-
-.project-top{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.project-icon{
-  width:42px;
-  height:42px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:13px;
-  background:rgba(100,230,255,.07);
-  border:1px solid rgba(100,230,255,.14);
-  font-size:20px;
-}
-
-.project-info{
-  flex:1;
-}
-
-.project-progress{
-  margin-top:14px;
-  height:5px;
-  background:#202934;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.project-progress div{
-  height:100%;
-  background:linear-gradient(90deg,var(--cyan),var(--lime));
-}
-
-/* =========================
-   TASKS
-========================= */
-
-.task{
-  display:flex;
-  align-items:center;
-  gap:13px;
+.list-item{
+    background:rgba(255,255,255,.035);
+    border:1px solid var(--border);
+    padding:16px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
 }
 
 .check{
-  width:22px;
-  height:22px;
-  flex:none;
-  border-radius:7px;
-  border:1px solid #3a4655;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#0b0e0b;
-  font-size:12px;
-  cursor:pointer;
+    width:20px;
+    height:20px;
+    border-radius:6px;
+    border:1px solid #3d4652;
+    cursor:pointer;
+    background:transparent;
 }
 
-.task.done .check{
-  background:var(--lime);
-  border-color:var(--lime);
+.check.done{
+    background:var(--lime);
+    border-color:var(--lime);
 }
 
-.task-content{
-  flex:1;
+.item-main{
+    flex:1;
 }
 
-.task-name{
-  font-size:13px;
+.item-title{
+    font-size:13px;
+    font-weight:600;
 }
 
-.task.done .task-name{
-  color:#657180;
-  text-decoration:line-through;
+.item-meta{
+    color:#687382;
+    font-size:10px;
+    margin-top:4px;
 }
 
-.task-time{
-  font-size:10px;
-  color:var(--muted);
-  margin-top:3px;
+/* =========================
+   CALENDAR-LIKE
+========================= */
+
+.timeline{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.timeline-row{
+    display:grid;
+    grid-template-columns:75px 1fr;
+    gap:14px;
+}
+
+.time{
+    font-family:"DM Mono",monospace;
+    color:#596474;
+    font-size:10px;
+    padding-top:14px;
+}
+
+.event{
+    background:rgba(255,255,255,.035);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px;
+}
+
+.event strong{
+    font-size:12px;
+}
+
+.event span{
+    display:block;
+    color:#697483;
+    font-size:10px;
+    margin-top:4px;
 }
 
 /* =========================
@@ -785,1441 +556,1403 @@ button.send:hover{
 ========================= */
 
 .modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.65);
-  backdrop-filter:blur(8px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:50;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(15px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    padding:20px;
 }
 
-.modal.active{
-  display:flex;
+.modal.show{
+    display:flex;
 }
 
-.pro-modal{
-  width:100%;
-  max-width:420px;
-  background:
-    linear-gradient(
-      145deg,
-      rgba(21,29,40,.98),
-      rgba(8,12,18,.98)
-    );
-  border:1px solid rgba(199,255,94,.2);
-  border-radius:25px;
-  padding:27px;
-  box-shadow:
-    0 25px 90px rgba(0,0,0,.55),
-    0 0 50px rgba(199,255,94,.04);
-  animation:modalIn .25s ease;
+.modal-box{
+    width:min(470px,100%);
+    background:#0d1219;
+    border:1px solid rgba(199,255,94,.18);
+    border-radius:22px;
+    padding:30px;
+    box-shadow:0 25px 80px rgba(0,0,0,.5);
 }
 
-@keyframes modalIn{
-  from{
-    opacity:0;
-    transform:translateY(15px) scale(.97);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0) scale(1);
-  }
+.modal-box h2{
+    font-size:28px;
+    margin-bottom:7px;
 }
 
-.pro-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:20px;
+.modal-box p{
+    color:#788392;
+    font-size:12px;
+    line-height:1.6;
+    margin-bottom:22px;
 }
 
-.pro-badge{
-  color:var(--lime);
-  font-weight:900;
-  letter-spacing:1px;
-  font-size:13px;
+.close-modal{
+    float:right;
+    background:none;
+    border:0;
+    color:#7b8593;
+    font-size:20px;
+    cursor:pointer;
 }
 
-.modal-close{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.04);
-  color:white;
-  cursor:pointer;
+.pro-list{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+    margin-bottom:22px;
 }
 
-.pro-modal h2{
-  font-size:28px;
-  margin-bottom:9px;
+.pro-list div{
+    font-size:12px;
+    color:#b8c0ca;
 }
 
-.pro-modal p{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.55;
-  margin-bottom:20px;
+.pro-list div::before{
+    content:"✓";
+    color:var(--lime);
+    margin-right:9px;
 }
 
-.pro-feature{
-  padding:11px 0;
-  border-bottom:1px solid rgba(255,255,255,.06);
-  font-size:13px;
-}
-
-.pro-feature:last-child{
-  border-bottom:0;
-}
-
-.pro-coming{
-  margin-top:20px;
-  padding:13px;
-  border-radius:13px;
-  background:rgba(199,255,94,.055);
-  border:1px solid rgba(199,255,94,.12);
-  color:#bfe980;
-  font-size:11px;
-  line-height:1.45;
+.upgrade{
+    width:100%;
+    padding:13px;
+    border:0;
+    border-radius:12px;
+    background:var(--lime);
+    color:#101508;
+    font-weight:800;
+    cursor:pointer;
 }
 
 /* =========================
-   RESPONSIVE
+   MOBILE
 ========================= */
 
-@media(max-width:600px){
-
-  .menu{
-    width:285px;
-  }
-
-  .screen{
-    padding:20px 15px 110px;
-  }
-
-  .chat{
-    padding:17px 15px 115px;
-  }
-
-  .message{
-    max-width:88%;
-  }
-
-  .screen-title{
+.mobile-menu{
+    display:none;
+    border:0;
+    background:none;
+    color:white;
     font-size:22px;
-  }
-
-  .period-grid{
-    grid-template-columns:1fr 1fr;
-  }
+    cursor:pointer;
 }
+
+@media(max-width:800px){
+
+    .sidebar{
+        position:fixed;
+        left:-270px;
+        top:0;
+        transition:.25s;
+        box-shadow:20px 0 60px rgba(0,0,0,.5);
+    }
+
+    .sidebar.open{
+        left:0;
+    }
+
+    .mobile-menu{
+        display:block;
+        margin-right:12px;
+    }
+
+    .topbar{
+        padding:0 16px;
+    }
+
+    .content{
+        padding:20px 15px;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+    .hero-title{
+        font-size:38px;
+    }
+
+    .chat-layout{
+        height:calc(100vh - 110px);
+    }
+
+    .chat-header h1{
+        font-size:23px;
+    }
+
+    .bubble{
+        max-width:90%;
+    }
+
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+::-webkit-scrollbar{
+    width:6px;
+}
+
+::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#242b35;
+    border-radius:20px;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="app">
 
-  <!-- MENU OVERLAY -->
-  <div
-    class="menu-overlay"
-    id="menuOverlay"
-    onclick="closeMenu()">
-  </div>
+<!-- =========================
+     SIDEBAR
+========================= -->
 
-  <!-- SIDE MENU -->
-  <aside class="menu" id="menu">
+<aside class="sidebar" id="sidebar">
 
-    <div class="menu-top">
-      <div class="brand">
-        <div class="brand-dot"></div>
-        LIFEOS AI
-      </div>
+    <div class="logo">
 
-      <button
-        class="close-menu"
-        onclick="closeMenu()">
-        ×
-      </button>
-    </div>
+        <div class="logo-mark"></div>
 
-    <div class="menu-label">Organización</div>
-
-    <div class="menu-list">
-
-      <button
-        class="menu-item"
-        onclick="openScreen('day')">
-        <span class="menu-icon">📅</span>
-        <span class="menu-text">Hoy / Día</span>
-      </button>
-
-      <button
-        class="menu-item"
-        onclick="openScreen('week')">
-        <span class="menu-icon">📆</span>
-        <span class="menu-text">Semana</span>
-      </button>
-
-      <button
-        class="menu-item"
-        onclick="openScreen('month')">
-        <span class="menu-icon">🗓</span>
-        <span class="menu-text">Mes</span>
-      </button>
-
-      <button
-        class="menu-item"
-        onclick="openScreen('year')">
-        <span class="menu-icon">📈</span>
-        <span class="menu-text">Año</span>
-      </button>
-
-      <button
-        class="menu-item"
-        onclick="openScreen('goals')">
-        <span class="menu-icon">🎯</span>
-        <span class="menu-text">Metas</span>
-      </button>
-
-      <button
-        class="menu-item"
-        onclick="openScreen('projects')">
-        <span class="menu-icon">🚀</span>
-        <span class="menu-text">Proyectos</span>
-      </button>
-
-      <button
-        class="menu-item"
-        onclick="openScreen('tasks')">
-        <span class="menu-icon">✓</span>
-        <span class="menu-text">Tareas</span>
-      </button>
+        <div class="logo-text">
+            LIFEOS<span>AI</span>
+        </div>
 
     </div>
 
-    <div class="menu-spacer"></div>
+    <nav class="nav">
 
-    <div class="menu-bottom">
+        <div class="nav-label">
+            SYSTEM
+        </div>
 
-      <button
-        class="logout-btn"
-        onclick="logout()">
-        ⎋ &nbsp; Cerrar sesión
-      </button>
+        <button class="active"
+                data-screen="today"
+                onclick="showScreen('today',this)">
+            <span class="nav-icon">◉</span>
+            Hoy
+        </button>
 
-      <button
-        class="pro-btn"
-        onclick="openPro()">
-        ✦ &nbsp; Obtener Pro
-      </button>
+        <button data-screen="chat"
+                onclick="showScreen('chat',this)">
+            <span class="nav-icon">✦</span>
+            LifeOS AI
+        </button>
+
+        <div class="nav-label">
+            PLANNING
+        </div>
+
+        <button data-screen="week"
+                onclick="showScreen('week',this)">
+            <span class="nav-icon">▦</span>
+            Semana
+        </button>
+
+        <button data-screen="month"
+                onclick="showScreen('month',this)">
+            <span class="nav-icon">□</span>
+            Mes
+        </button>
+
+        <button data-screen="year"
+                onclick="showScreen('year',this)">
+            <span class="nav-icon">◇</span>
+            Año
+        </button>
+
+        <div class="nav-label">
+            LIFE
+        </div>
+
+        <button data-screen="goals"
+                onclick="showScreen('goals',this)">
+            <span class="nav-icon">◎</span>
+            Metas
+        </button>
+
+        <button data-screen="projects"
+                onclick="showScreen('projects',this)">
+            <span class="nav-icon">▣</span>
+            Proyectos
+        </button>
+
+        <button data-screen="tasks"
+                onclick="showScreen('tasks',this)">
+            <span class="nav-icon">✓</span>
+            Tareas
+        </button>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <button class="pro-button"
+                onclick="openPro()">
+
+            <strong>
+                LIFEOS PRO
+            </strong>
+
+            <span>
+                Unlock the full system →
+            </span>
+
+        </button>
+
+        <button
+            onclick="logout()"
+            style="
+            width:100%;
+            margin-top:10px;
+            background:none;
+            border:0;
+            color:#626c7a;
+            padding:9px;
+            text-align:left;
+            cursor:pointer;
+            font-family:inherit;
+            font-size:11px;
+            ">
+
+            ↪ Cerrar sesión
+
+        </button>
 
     </div>
 
-  </aside>
+</aside>
 
 
-  <!-- TOP BAR -->
-  <header class="top">
+<!-- =========================
+     MAIN
+========================= -->
 
-    <button
-      class="menu-btn"
-      onclick="toggleMenu()">
-      ☰
-    </button>
+<main class="main">
 
-    <div class="top-title">
-      LIFEOS <span>AI</span>
-    </div>
+<header class="topbar">
 
-  </header>
-
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- =====================
-         CHAT SCREEN
-    ====================== -->
-
-    <section
-      class="screen active"
-      id="screen-chat"
-      style="padding:0;">
-
-      <div
-        class="chat"
-        id="chat">
-
-        <div class="message ai">
-Hola 👋 Soy LifeOS AI.
-
-Cuéntame qué tienes que hacer y organizaré tu tiempo de forma inteligente.
-
-Puedes decirme tus tareas, objetivos, proyectos o simplemente contarme cómo es tu día.
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================
-         DAY
-    ====================== -->
-
-    <section
-      class="screen"
-      id="screen-day">
-
-      <div class="screen-header">
+    <div style="display:flex;align-items:center;">
 
         <button
-          class="back-btn"
-          onclick="showChat()">
-          ←
+            class="mobile-menu"
+            onclick="toggleSidebar()">
+            ☰
         </button>
 
         <div>
-          <div class="screen-title">Hoy</div>
-          <div class="screen-subtitle">
-            Tu planificación del día
-          </div>
-        </div>
 
-      </div>
-
-      <div class="date-badge" id="todayDate">
-        HOY
-      </div>
-
-      <div class="card">
-
-        <div class="card-title">
-          Plan del día
-        </div>
-
-        <div class="card-muted">
-          Tu horario aparecerá aquí cuando LifeOS cree tu plan.
-        </div>
-
-        <div class="schedule">
-
-          <div class="schedule-row">
-
-            <div class="time">
-              16:00
-            </div>
-
-            <div>
-              <div class="schedule-task">
-                Matemáticas
-              </div>
-
-              <div class="schedule-status">
-                Ejemplo de tarea
-              </div>
-            </div>
-
-          </div>
-
-          <div class="schedule-row">
-
-            <div class="time">
-              17:15
-            </div>
-
-            <div>
-              <div class="schedule-task">
-                Entrenamiento
-              </div>
-
-              <div class="schedule-status">
-                Ejemplo de actividad
-              </div>
-            </div>
-
-          </div>
-
-          <div class="schedule-row">
-
-            <div class="time">
-              18:45
-            </div>
-
-            <div>
-              <div class="schedule-task">
-                Inglés
-              </div>
-
-              <div class="schedule-status">
-                Ejemplo de estudio
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================
-         WEEK
-    ====================== -->
-
-    <section
-      class="screen"
-      id="screen-week">
-
-      <div class="screen-header">
-
-        <button
-          class="back-btn"
-          onclick="showChat()">
-          ←
-        </button>
-
-        <div>
-          <div class="screen-title">Semana</div>
-          <div class="screen-subtitle">
-            Vista general de tu semana
-          </div>
-        </div>
-
-      </div>
-
-      <div class="period-grid">
-
-        <div class="period-card">
-          <div class="period-name">Lunes</div>
-          <div class="period-number">4</div>
-          <div class="period-small">tareas</div>
-          <div class="progress">
             <div
-              class="progress-bar"
-              style="width:75%">
+                class="page-title"
+                id="pageTitle">
+                Hoy
             </div>
-          </div>
-        </div>
 
-        <div class="period-card">
-          <div class="period-name">Martes</div>
-          <div class="period-number">3</div>
-          <div class="period-small">tareas</div>
-          <div class="progress">
             <div
-              class="progress-bar"
-              style="width:50%">
-            </div>
-          </div>
-        </div>
-
-        <div class="period-card">
-          <div class="period-name">Miércoles</div>
-          <div class="period-number">5</div>
-          <div class="period-small">tareas</div>
-          <div class="progress">
-            <div
-              class="progress-bar"
-              style="width:30%">
-            </div>
-          </div>
-        </div>
-
-        <div class="period-card">
-          <div class="period-name">Jueves</div>
-          <div class="period-number">2</div>
-          <div class="period-small">tareas</div>
-          <div class="progress">
-            <div
-              class="progress-bar"
-              style="width:65%">
-            </div>
-          </div>
-        </div>
-
-        <div class="period-card">
-          <div class="period-name">Viernes</div>
-          <div class="period-number">3</div>
-          <div class="period-small">tareas</div>
-          <div class="progress">
-            <div
-              class="progress-bar"
-              style="width:40%">
-            </div>
-          </div>
-        </div>
-
-        <div class="period-card">
-          <div class="period-name">Fin de semana</div>
-          <div class="period-number">—</div>
-          <div class="period-small">descanso / libre</div>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================
-         MONTH
-    ====================== -->
-
-    <section
-      class="screen"
-      id="screen-month">
-
-      <div class="screen-header">
-
-        <button
-          class="back-btn"
-          onclick="showChat()">
-          ←
-        </button>
-
-        <div>
-          <div class="screen-title">Mes</div>
-          <div class="screen-subtitle">
-            Tu visión mensual
-          </div>
-        </div>
-
-      </div>
-
-      <div class="card">
-
-        <div class="card-title">
-          Progreso del mes
-        </div>
-
-        <div class="card-muted">
-          Mantén el control de tus objetivos y proyectos.
-        </div>
-
-        <div class="progress"
-             style="margin-top:18px;">
-          <div
-            class="progress-bar"
-            style="width:42%">
-          </div>
-        </div>
-
-        <div class="goal-meta">
-          <span>42% completado</span>
-          <span>Mes actual</span>
-        </div>
-
-      </div>
-
-      <div class="card">
-
-        <div class="card-title">
-          Enfoques principales
-        </div>
-
-        <div class="schedule"
-             style="margin-top:12px;">
-
-          <div class="schedule-row">
-            <div class="time">01</div>
-            <div>
-              <div class="schedule-task">
-                Estudios
-              </div>
-              <div class="schedule-status">
-                Mantener constancia
-              </div>
-            </div>
-          </div>
-
-          <div class="schedule-row">
-            <div class="time">02</div>
-            <div>
-              <div class="schedule-task">
-                Fitness
-              </div>
-              <div class="schedule-status">
-                Progreso semanal
-              </div>
-            </div>
-          </div>
-
-          <div class="schedule-row">
-            <div class="time">03</div>
-            <div>
-              <div class="schedule-task">
-                Proyectos personales
-              </div>
-              <div class="schedule-status">
-                Avanzar cada semana
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================
-         YEAR
-    ====================== -->
-
-    <section
-      class="screen"
-      id="screen-year">
-
-      <div class="screen-header">
-
-        <button
-          class="back-btn"
-          onclick="showChat()">
-          ←
-        </button>
-
-        <div>
-          <div class="screen-title">Año</div>
-          <div class="screen-subtitle">
-            Tu dirección a largo plazo
-          </div>
-        </div>
-
-      </div>
-
-      <div class="card">
-
-        <div class="card-title">
-          2026
-        </div>
-
-        <div class="card-muted">
-          Grandes objetivos, divididos en pasos pequeños.
-        </div>
-
-        <div class="progress"
-             style="margin-top:18px;">
-          <div
-            class="progress-bar"
-            style="width:35%">
-          </div>
-        </div>
-
-        <div class="goal-meta">
-          <span>35% del año planificado</span>
-          <span>2026</span>
-        </div>
-
-      </div>
-
-      <div class="period-grid">
-
-        <div class="period-card">
-          <div class="period-name">Metas</div>
-          <div class="period-number">4</div>
-          <div class="period-small">
-            objetivos activos
-          </div>
-        </div>
-
-        <div class="period-card">
-          <div class="period-name">Proyectos</div>
-          <div class="period-number">3</div>
-          <div class="period-small">
-            proyectos activos
-          </div>
-        </div>
-
-        <div class="period-card">
-          <div class="period-name">Tareas</div>
-          <div class="period-number">28</div>
-          <div class="period-small">
-            organizadas
-          </div>
-        </div>
-
-        <div class="period-card">
-          <div class="period-name">Progreso</div>
-          <div class="period-number">35%</div>
-          <div class="period-small">
-            planificación
-          </div>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================
-         GOALS
-    ====================== -->
-
-    <section
-      class="screen"
-      id="screen-goals">
-
-      <div class="screen-header">
-
-        <button
-          class="back-btn"
-          onclick="showChat()">
-          ←
-        </button>
-
-        <div>
-          <div class="screen-title">Metas</div>
-          <div class="screen-subtitle">
-            Lo que quieres conseguir
-          </div>
-        </div>
-
-      </div>
-
-      <div class="card goal">
-
-        <div class="goal-top">
-
-          <div>
-            <div class="card-title">
-              🇬🇧 Aprender inglés
+                class="page-date"
+                id="pageDate">
             </div>
 
-            <div class="card-muted">
-              Meta a largo plazo
-            </div>
-          </div>
-
-          <div class="goal-percent">
-            35%
-          </div>
-
         </div>
-
-        <div class="goal-progress">
-          <div style="width:35%"></div>
-        </div>
-
-        <div class="goal-meta">
-          <span>Progreso</span>
-          <span>En curso</span>
-        </div>
-
-      </div>
-
-
-      <div class="card goal">
-
-        <div class="goal-top">
-
-          <div>
-            <div class="card-title">
-              💰 Ahorrar dinero
-            </div>
-
-            <div class="card-muted">
-              Meta financiera
-            </div>
-          </div>
-
-          <div class="goal-percent">
-            20%
-          </div>
-
-        </div>
-
-        <div class="goal-progress">
-          <div style="width:20%"></div>
-        </div>
-
-        <div class="goal-meta">
-          <span>Progreso</span>
-          <span>En curso</span>
-        </div>
-
-      </div>
-
-
-      <div class="card goal">
-
-        <div class="goal-top">
-
-          <div>
-            <div class="card-title">
-              💪 Mejorar fitness
-            </div>
-
-            <div class="card-muted">
-              Salud y rendimiento
-            </div>
-          </div>
-
-          <div class="goal-percent">
-            60%
-          </div>
-
-        </div>
-
-        <div class="goal-progress">
-          <div style="width:60%"></div>
-        </div>
-
-        <div class="goal-meta">
-          <span>Progreso</span>
-          <span>En curso</span>
-        </div>
-
-      </div>
-
-
-      <div class="card goal">
-
-        <div class="goal-top">
-
-          <div>
-            <div class="card-title">
-              ✈️ Preparar un viaje
-            </div>
-
-            <div class="card-muted">
-              Planificación personal
-            </div>
-          </div>
-
-          <div class="goal-percent">
-            15%
-          </div>
-
-        </div>
-
-        <div class="goal-progress">
-          <div style="width:15%"></div>
-        </div>
-
-        <div class="goal-meta">
-          <span>Progreso</span>
-          <span>En curso</span>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================
-         PROJECTS
-    ====================== -->
-
-    <section
-      class="screen"
-      id="screen-projects">
-
-      <div class="screen-header">
-
-        <button
-          class="back-btn"
-          onclick="showChat()">
-          ←
-        </button>
-
-        <div>
-          <div class="screen-title">Proyectos</div>
-          <div class="screen-subtitle">
-            Grandes cosas, divididas en pasos
-          </div>
-        </div>
-
-      </div>
-
-
-      <div class="card project">
-
-        <div class="project-top">
-
-          <div class="project-icon">
-            ✈️
-          </div>
-
-          <div class="project-info">
-
-            <div class="card-title">
-              Planificar viaje
-            </div>
-
-            <div class="card-muted">
-              3 de 8 pasos completados
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="project-progress">
-          <div style="width:37.5%"></div>
-        </div>
-
-      </div>
-
-
-      <div class="card project">
-
-        <div class="project-top">
-
-          <div class="project-icon">
-            🚀
-          </div>
-
-          <div class="project-info">
-
-            <div class="card-title">
-              LifeOS AI
-            </div>
-
-            <div class="card-muted">
-              Construcción del producto
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="project-progress">
-          <div style="width:45%"></div>
-        </div>
-
-      </div>
-
-
-      <div class="card project">
-
-        <div class="project-top">
-
-          <div class="project-icon">
-            📚
-          </div>
-
-          <div class="project-info">
-
-            <div class="card-title">
-              Mejorar estudios
-            </div>
-
-            <div class="card-muted">
-              Organización académica
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="project-progress">
-          <div style="width:60%"></div>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================
-         TASKS
-    ====================== -->
-
-    <section
-      class="screen"
-      id="screen-tasks">
-
-      <div class="screen-header">
-
-        <button
-          class="back-btn"
-          onclick="showChat()">
-          ←
-        </button>
-
-        <div>
-          <div class="screen-title">Tareas</div>
-          <div class="screen-subtitle">
-            Todo lo que tienes pendiente
-          </div>
-        </div>
-
-      </div>
-
-
-      <div class="card">
-
-        <div class="task">
-
-          <div
-            class="check"
-            onclick="toggleTask(this)">
-          </div>
-
-          <div class="task-content">
-
-            <div class="task-name">
-              Terminar matemáticas
-            </div>
-
-            <div class="task-time">
-              Hoy · 16:00
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="card">
-
-        <div class="task">
-
-          <div
-            class="check"
-            onclick="toggleTask(this)">
-          </div>
-
-          <div class="task-content">
-
-            <div class="task-name">
-              Estudiar inglés
-            </div>
-
-            <div class="task-time">
-              Hoy · 18:45
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="card">
-
-        <div class="task done">
-
-          <div
-            class="check"
-            onclick="toggleTask(this)">
-            ✓
-          </div>
-
-          <div class="task-content">
-
-            <div class="task-name">
-              Preparar mochila
-            </div>
-
-            <div class="task-time">
-              Completada
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- =====================
-       CHAT INPUT
-  ====================== -->
-
-  <div
-    class="bottom"
-    id="chatBottom">
-
-    <div class="box">
-
-      <input
-        id="input"
-        type="text"
-        autocomplete="off"
-        placeholder="Planifica tu día con LifeOS...">
-
-      <button
-        class="send"
-        onclick="sendMessage()">
-        ➤
-      </button>
 
     </div>
 
-  </div>
+    <div class="status">
+
+        <div class="status-dot"></div>
+
+        LIFEOS ONLINE
+
+    </div>
+
+</header>
 
 
-  <!-- =====================
-       PRO MODAL
-  ====================== -->
+<div class="content">
 
-  <div
-    class="modal"
+
+<!-- =========================
+     TODAY
+========================= -->
+
+<section
+    id="screen-today"
+    class="screen active">
+
+    <h1 class="hero-title">
+        Tu día.<br>
+        <span>Diseñado.</span>
+    </h1>
+
+    <p class="hero-sub">
+        LifeOS convierte lo que tienes que hacer
+        en un plan realista. Dile qué necesitas.
+        Nosotros organizamos el resto.
+    </p>
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="card-label">
+                TASKS
+            </div>
+
+            <div
+                class="card-number"
+                id="taskCount">
+                0
+            </div>
+
+            <div class="card-small">
+                tareas pendientes
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-label">
+                COMPLETED
+            </div>
+
+            <div
+                class="card-number"
+                id="completedCount">
+                0
+            </div>
+
+            <div class="card-small">
+                completadas
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-label">
+                FOCUS
+            </div>
+
+            <div class="card-number">
+                AI
+            </div>
+
+            <div class="card-small">
+                planificación inteligente
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-label">
+            TODAY'S PLAN
+        </div>
+
+        <div
+            id="todayPlan"
+            class="timeline">
+
+            <div class="empty">
+
+                <strong>
+                    Tu día todavía está vacío
+                </strong>
+
+                Dile a LifeOS qué tienes que hacer
+                y construiremos el plan.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CHAT
+========================= -->
+
+<section
+    id="screen-chat"
+    class="screen">
+
+    <div class="chat-layout">
+
+        <div class="chat-header">
+
+            <h1>
+                LifeOS <span style="color:var(--lime)">AI</span>
+            </h1>
+
+            <p>
+                Cuéntame qué necesitas organizar.
+            </p>
+
+        </div>
+
+
+        <div
+            id="chat"
+            class="chat">
+
+            <div class="message ai">
+
+                <div class="bubble">
+
+                    Hola. Soy LifeOS AI.
+
+                    Dime qué tienes que hacer,
+                    cuándo tienes que hacerlo o
+                    qué quieres conseguir.
+
+                    Yo me encargo de organizarlo.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <form
+            class="chat-input"
+            onsubmit="event.preventDefault();sendMessage();">
+
+            <input
+                id="input"
+                autocomplete="off"
+                placeholder="Ej. Tengo matemáticas, inglés y quiero entrenar hoy...">
+
+            <button
+                id="sendButton"
+                class="send"
+                type="submit">
+
+                ↑
+
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     WEEK
+========================= -->
+
+<section
+    id="screen-week"
+    class="screen">
+
+    <div class="section-head">
+
+        <div>
+
+            <h1>
+                Semana
+            </h1>
+
+            <p>
+                Mira tu semana de un vistazo.
+            </p>
+
+        </div>
+
+        <button
+            class="add-button"
+            onclick="showScreen('chat')">
+            + Organizar
+        </button>
+
+    </div>
+
+    <div class="card">
+
+        <div class="empty">
+
+            <strong>
+                Tu semana se construirá aquí
+            </strong>
+
+            Usa LifeOS AI para decirme
+            qué necesitas hacer esta semana.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     MONTH
+========================= -->
+
+<section
+    id="screen-month"
+    class="screen">
+
+    <div class="section-head">
+
+        <div>
+
+            <h1>
+                Mes
+            </h1>
+
+            <p>
+                Objetivos y planificación mensual.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="empty">
+
+            <strong>
+                Plan mensual
+            </strong>
+
+            Todavía no tienes elementos
+            programados para este mes.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     YEAR
+========================= -->
+
+<section
+    id="screen-year"
+    class="screen">
+
+    <div class="section-head">
+
+        <div>
+
+            <h1>
+                Año
+            </h1>
+
+            <p>
+                La visión general de tu año.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="card-label">
+                YEAR
+            </div>
+
+            <div
+                class="card-number"
+                id="currentYear">
+                2026
+            </div>
+
+            <div class="card-small">
+                tu año actual
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-label">
+                GOALS
+            </div>
+
+            <div class="card-number">
+                0
+            </div>
+
+            <div class="card-small">
+                metas activas
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-label">
+                PROJECTS
+            </div>
+
+            <div class="card-number">
+                0
+            </div>
+
+            <div class="card-small">
+                proyectos
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     GOALS
+========================= -->
+
+<section
+    id="screen-goals"
+    class="screen">
+
+    <div class="section-head">
+
+        <div>
+
+            <h1>
+                Metas
+            </h1>
+
+            <p>
+                Lo que quieres conseguir.
+            </p>
+
+        </div>
+
+        <button
+            class="add-button"
+            onclick="showScreen('chat')">
+            + Nueva meta
+        </button>
+
+    </div>
+
+    <div class="list">
+
+        <div class="empty">
+
+            <strong>
+                Sin metas todavía
+            </strong>
+
+            Puedes decirle a LifeOS algo como:
+            “Quiero conseguir X antes de diciembre”.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     PROJECTS
+========================= -->
+
+<section
+    id="screen-projects"
+    class="screen">
+
+    <div class="section-head">
+
+        <div>
+
+            <h1>
+                Proyectos
+            </h1>
+
+            <p>
+                Grandes cosas divididas en pasos.
+            </p>
+
+        </div>
+
+        <button
+            class="add-button"
+            onclick="showScreen('chat')">
+            + Proyecto
+        </button>
+
+    </div>
+
+    <div class="empty">
+
+        <strong>
+            No hay proyectos todavía
+        </strong>
+
+        Cuéntale a LifeOS qué quieres construir
+        y podremos organizarlo.
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     TASKS
+========================= -->
+
+<section
+    id="screen-tasks"
+    class="screen">
+
+    <div class="section-head">
+
+        <div>
+
+            <h1>
+                Tareas
+            </h1>
+
+            <p>
+                Todo lo que tienes pendiente.
+            </p>
+
+        </div>
+
+        <button
+            class="add-button"
+            onclick="showScreen('chat')">
+            + Nueva tarea
+        </button>
+
+    </div>
+
+    <div
+        id="taskList"
+        class="list">
+
+        <div class="empty">
+
+            <strong>
+                No hay tareas
+            </strong>
+
+            Escríbele a LifeOS y crea tu primera.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</div>
+
+</main>
+
+</div>
+
+
+<!-- =========================
+     PRO MODAL
+========================= -->
+
+<div
     id="proModal"
-    onclick="closeProOutside(event)">
+    class="modal">
 
-    <div class="pro-modal">
+    <div class="modal-box">
 
-      <div class="pro-top">
+        <button
+            class="close-modal"
+            onclick="closePro()">
+            ×
+        </button>
 
-        <div class="pro-badge">
-          LIFEOS PRO
+        <h2>
+            LifeOS <span style="color:var(--lime)">PRO</span>
+        </h2>
+
+        <p>
+            Lleva tu sistema personal al siguiente nivel
+            con las funciones avanzadas.
+        </p>
+
+        <div class="pro-list">
+
+            <div>
+                AI planning avanzado
+            </div>
+
+            <div>
+                Auto-replan inteligente
+            </div>
+
+            <div>
+                SOS mode
+            </div>
+
+            <div>
+                Planificación mensual y anual avanzada
+            </div>
+
+            <div>
+                Proyectos y objetivos inteligentes
+            </div>
+
         </div>
 
         <button
-          class="modal-close"
-          onclick="closePro()">
-          ×
+            class="upgrade">
+            Próximamente
         </button>
 
-      </div>
-
-      <h2>
-        Lleva tu organización más lejos.
-      </h2>
-
-      <p>
-        LifeOS Pro desbloqueará funciones avanzadas
-        para convertir tu vida en un sistema todavía
-        más inteligente.
-      </p>
-
-      <div class="pro-feature">
-        ✦ Planificación avanzada con IA
-      </div>
-
-      <div class="pro-feature">
-        ✦ Replanificación inteligente
-      </div>
-
-      <div class="pro-feature">
-        ✦ Metas y proyectos avanzados
-      </div>
-
-      <div class="pro-feature">
-        ✦ Estadísticas y progreso
-      </div>
-
-      <div class="pro-feature">
-        ✦ Más automatización
-      </div>
-
-      <div class="pro-coming">
-        El sistema de pagos todavía no está conectado.
-        Esta pantalla es la estructura visual de Pro.
-      </div>
-
     </div>
-
-  </div>
 
 </div>
 
 
 <script>
 
-/* =========================
-   MENU
-========================= */
+/* =====================================================
+   LIFEOS AI
+===================================================== */
 
-function toggleMenu(){
+let conversationId = null;
+let sending = false;
 
-  const menu =
-    document.getElementById("menu");
 
-  const overlay =
-    document.getElementById("menuOverlay");
+/* =====================================================
+   SCREEN NAVIGATION
+===================================================== */
 
-  menu.classList.toggle("active");
-  overlay.classList.toggle("active");
+const screenNames = {
+
+    today:"Hoy",
+    chat:"LifeOS AI",
+    week:"Semana",
+    month:"Mes",
+    year:"Año",
+    goals:"Metas",
+    projects:"Proyectos",
+    tasks:"Tareas"
+
+};
+
+
+function showScreen(name, button){
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+
+    const target =
+        document.getElementById(
+            "screen-" + name
+        );
+
+
+    if(target){
+
+        target.classList.add("active");
+
+    }
+
+
+    document
+        .querySelectorAll(".nav button")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+
+    if(button){
+
+        button.classList.add("active");
+
+    }else{
+
+        const navButton =
+            document.querySelector(
+                `.nav button[data-screen="${name}"]`
+            );
+
+        if(navButton){
+
+            navButton.classList.add("active");
+
+        }
+
+    }
+
+
+    document.getElementById("pageTitle")
+        .textContent =
+        screenNames[name] || "LifeOS";
+
+
+    closeSidebar();
 
 }
 
 
-function closeMenu(){
+/* =====================================================
+   SIDEBAR MOBILE
+===================================================== */
 
-  document
-    .getElementById("menu")
-    .classList.remove("active");
+function toggleSidebar(){
 
-  document
-    .getElementById("menuOverlay")
-    .classList.remove("active");
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
 
 }
 
 
-/* =========================
-   SCREENS
-========================= */
+function closeSidebar(){
 
-function openScreen(name){
+    document
+        .getElementById("sidebar")
+        .classList.remove("open");
 
-  closeMenu();
+}
 
-  const screens =
-    document.querySelectorAll(".screen");
 
-  screens.forEach(screen=>{
-    screen.classList.remove("active");
-  });
+/* =====================================================
+   DATE
+===================================================== */
 
-  const target =
+function updateDate(){
+
+    const now = new Date();
+
+    const date =
+        now.toLocaleDateString(
+            "es-ES",
+            {
+                weekday:"long",
+                day:"numeric",
+                month:"long",
+                year:"numeric"
+            }
+        );
+
     document.getElementById(
-      "screen-" + name
-    );
+        "pageDate"
+    ).textContent = date;
 
-  if(target){
-    target.classList.add("active");
-  }
-
-  document
-    .getElementById("chatBottom")
-    .style.display = "none";
-
-  window.scrollTo(0,0);
+    document.getElementById(
+        "currentYear"
+    ).textContent =
+        now.getFullYear();
 
 }
 
 
-function showChat(){
-
-  const screens =
-    document.querySelectorAll(".screen");
-
-  screens.forEach(screen=>{
-    screen.classList.remove("active");
-  });
-
-  document
-    .getElementById("screen-chat")
-    .classList.add("active");
-
-  document
-    .getElementById("chatBottom")
-    .style.display = "block";
-
-}
-
-
-/* =========================
-   CHAT
-========================= */
-
-function sendMessage(){
-
-  const input =
-    document.getElementById("input");
-
-  const text =
-    input.value.trim();
-
-  if(!text) return;
-
-  addMessage(text,"user");
-
-  input.value = "";
-
-  setTimeout(()=>{
-
-    addMessage(
-`Perfecto. He recibido lo que necesitas.
-
-Cuando conectemos el motor de IA, LifeOS analizará tus tareas, tiempos, prioridades y objetivos para construir el plan adecuado.
-
-Por ahora dime qué quieres organizar: tu día, una semana, una meta o un proyecto.`,
-      "ai"
-    );
-
-  },700);
-
-}
-
+/* =====================================================
+   CHAT MESSAGE
+===================================================== */
 
 function addMessage(text,type){
 
-  const chat =
-    document.getElementById("chat");
+    const chat =
+        document.getElementById("chat");
 
-  const div =
-    document.createElement("div");
 
-  div.className =
-    "message " + type;
+    const wrapper =
+        document.createElement("div");
 
-  div.innerText = text;
+    wrapper.className =
+        "message " + type;
 
-  chat.appendChild(div);
 
-  chat.scrollTop =
-    chat.scrollHeight;
+    const bubble =
+        document.createElement("div");
+
+    bubble.className =
+        "bubble";
+
+
+    bubble.textContent = text;
+
+
+    wrapper.appendChild(bubble);
+
+    chat.appendChild(wrapper);
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+
+    return wrapper;
 
 }
 
 
-/* ENTER PARA ENVIAR */
+/* =====================================================
+   SEND MESSAGE TO BACKEND
+===================================================== */
 
-document
-  .getElementById("input")
-  .addEventListener("keydown",function(event){
+async function sendMessage(){
 
-    if(event.key === "Enter"){
-      event.preventDefault();
-      sendMessage();
+    if(sending){
+
+        return;
+
     }
 
-  });
+
+    const input =
+        document.getElementById("input");
+
+    const sendButton =
+        document.getElementById("sendButton");
 
 
-/* =========================
-   TASKS
-========================= */
+    const text =
+        input.value.trim();
 
-function toggleTask(element){
 
-  const task =
-    element.closest(".task");
+    if(!text){
 
-  if(!task) return;
+        return;
 
-  task.classList.toggle("done");
+    }
 
-  if(task.classList.contains("done")){
-    element.innerText = "✓";
-  }else{
-    element.innerText = "";
-  }
+
+    sending = true;
+
+    sendButton.disabled = true;
+
+
+    addMessage(
+        text,
+        "user"
+    );
+
+
+    input.value = "";
+
+
+    const loadingMessage =
+        addMessage(
+            "LifeOS está pensando...",
+            "ai"
+        );
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/chat",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials:"include",
+
+                    body:JSON.stringify({
+
+                        message:text,
+
+                        conversationId:
+                            conversationId
+
+                    })
+
+                }
+            );
+
+
+        let data;
+
+        try{
+
+            data =
+                await response.json();
+
+        }catch{
+
+            data = {};
+
+        }
+
+
+        if(!response.ok){
+
+            if(response.status === 401){
+
+                loadingMessage.remove();
+
+                addMessage(
+                    "Tu sesión ha expirado. Inicia sesión nuevamente.",
+                    "ai"
+                );
+
+                setTimeout(()=>{
+
+                    window.location.href =
+                        "index.html";
+
+                },1500);
+
+                return;
+
+            }
+
+
+            throw new Error(
+                data.error ||
+                "Error al conectar con LifeOS"
+            );
+
+        }
+
+
+        conversationId =
+            data.conversationId ||
+            conversationId;
+
+
+        loadingMessage.remove();
+
+
+        addMessage(
+            data.message ||
+            "No recibí una respuesta de LifeOS.",
+            "ai"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "LifeOS Chat Error:",
+            error
+        );
+
+
+        loadingMessage.remove();
+
+
+        addMessage(
+            "No pude conectar con la inteligencia de LifeOS. Inténtalo nuevamente.",
+            "ai"
+        );
+
+    }finally{
+
+        sending = false;
+
+        sendButton.disabled = false;
+
+        input.focus();
+
+    }
 
 }
 
 
-/* =========================
+/* =====================================================
+   ENTER
+===================================================== */
+
+document
+    .getElementById("input")
+    .addEventListener(
+        "keydown",
+        function(event){
+
+            if(
+                event.key === "Enter" &&
+                !event.shiftKey
+            ){
+
+                event.preventDefault();
+
+                sendMessage();
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
    PRO
-========================= */
+===================================================== */
 
 function openPro(){
 
-  closeMenu();
-
-  document
-    .getElementById("proModal")
-    .classList.add("active");
+    document
+        .getElementById("proModal")
+        .classList.add("show");
 
 }
 
 
 function closePro(){
 
-  document
+    document
+        .getElementById("proModal")
+        .classList.remove("show");
+
+}
+
+
+document
     .getElementById("proModal")
-    .classList.remove("active");
+    .addEventListener(
+        "click",
+        function(event){
 
-}
+            if(event.target === this){
+
+                closePro();
+
+            }
+
+        }
+    );
 
 
-function closeProOutside(event){
-
-  if(event.target.id === "proModal"){
-    closePro();
-  }
-
-}
-
-
-/* =========================
+/* =====================================================
    LOGOUT
-========================= */
+===================================================== */
 
 async function logout(){
 
-  try{
+    try{
 
-    await fetch(
-      "/api/logout",
-      {
-        method:"POST",
-        credentials:"include"
-      }
-    );
+        await fetch(
+            "/api/logout",
+            {
+                method:"POST",
+                credentials:"include"
+            }
+        );
 
-  }catch(error){
+    }catch(error){
 
-    console.log(
-      "Logout request failed:",
-      error
-    );
-
-  }
-
-  window.location.href =
-    "/index.html";
-
-}
-
-
-/* =========================
-   DATE
-========================= */
-
-function updateDate(){
-
-  const element =
-    document.getElementById("todayDate");
-
-  if(!element) return;
-
-  const now =
-    new Date();
-
-  const date =
-    now.toLocaleDateString(
-      "es-ES",
-      {
-        weekday:"long",
-        day:"numeric",
-        month:"long"
-      }
-    );
-
-  element.innerText =
-    date.toUpperCase();
-
-}
-
-updateDate();
-
-
-/* =========================
-   ESCAPE
-========================= */
-
-document.addEventListener(
-  "keydown",
-  function(event){
-
-    if(event.key === "Escape"){
-
-      closeMenu();
-      closePro();
+        console.error(error);
 
     }
 
-  }
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* =====================================================
+   CHECK SESSION
+===================================================== */
+
+async function checkSession(){
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/me",
+                {
+                    method:"GET",
+                    credentials:"include"
+                }
+            );
+
+
+        if(!response.ok){
+
+            window.location.href =
+                "index.html";
+
+            return;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "LifeOS session:",
+            data
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Session check:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+updateDate();
+
+checkSession();
+
+
+/* =====================================================
+   WELCOME
+===================================================== */
+
+console.log(
+    "%c LIFEOS AI ",
+    "background:#c7ff5e;color:#07090d;font-weight:bold;padding:5px 10px;border-radius:5px;"
+);
+
+console.log(
+    "LifeOS AI initialized."
 );
 
 </script>
