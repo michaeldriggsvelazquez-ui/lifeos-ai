@@ -165,7 +165,7 @@ export async function onRequestPost(context) {
 
     /*
     --------------------------------
-    6. PREPARAR MENSAJES PARA IA
+    6. PREPARAR MENSAJES PARA GROQ
     --------------------------------
     */
 
@@ -176,25 +176,49 @@ export async function onRequestPost(context) {
 
     /*
     --------------------------------
-    7. LLAMAR A OPENAI
+    7. COMPROBAR API KEY DE GROQ
+    --------------------------------
+    */
+
+    if (!env.GROQ_API_KEY) {
+
+      return Response.json(
+        {
+          error: "GROQ_API_KEY is not configured"
+        },
+        {
+          status: 500
+        }
+      );
+
+    }
+
+    /*
+    --------------------------------
+    8. LLAMAR A GROQ
     --------------------------------
     */
 
     const aiResponse = await fetch(
-      "https://api.openai.com/v1/responses",
+      "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
 
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${env.OPENAI_API_KEY}`
+          "Authorization": `Bearer ${env.GROQ_API_KEY}`
         },
 
         body: JSON.stringify({
 
-          model: "gpt-5.6-luna",
+          model: "openai/gpt-oss-120b",
 
-          instructions: `
+          messages: [
+
+            {
+              role: "system",
+
+              content: `
 You are LifeOS AI.
 
 You are a personal operating system designed to help users organize their lives.
@@ -221,29 +245,41 @@ When the user gives several tasks, help organize them logically.
 When a task has a deadline, respect it.
 
 When the user says they missed something, help reorganize the remaining schedule.
-`,
 
-          input
+LifeOS should feel like an intelligent personal operating system, not a generic chatbot.
+`
+            },
+
+            ...input
+
+          ]
 
         })
       }
     );
+
+    /*
+    --------------------------------
+    9. COMPROBAR RESPUESTA DE GROQ
+    --------------------------------
+    */
 
     if (!aiResponse.ok) {
 
       const errorText = await aiResponse.text();
 
       console.error(
-        "OpenAI error:",
+        "Groq error:",
         errorText
       );
 
       return Response.json(
         {
-          error: "AI request failed"
+          error: "AI request failed",
+          detail: errorText
         },
         {
-          status: 500
+          status: 502
         }
       );
 
@@ -253,17 +289,17 @@ When the user says they missed something, help reorganize the remaining schedule
 
     /*
     --------------------------------
-    8. OBTENER RESPUESTA
+    10. OBTENER RESPUESTA
     --------------------------------
     */
 
     const answer =
-      aiData.output_text ||
+      aiData.choices?.[0]?.message?.content ||
       "No pude generar una respuesta.";
 
     /*
     --------------------------------
-    9. GUARDAR RESPUESTA DE LIFEOS
+    11. GUARDAR RESPUESTA DE LIFEOS
     --------------------------------
     */
 
@@ -286,7 +322,7 @@ When the user says they missed something, help reorganize the remaining schedule
 
     /*
     --------------------------------
-    10. ACTUALIZAR CONVERSACIÓN
+    12. ACTUALIZAR CONVERSACIÓN
     --------------------------------
     */
 
@@ -304,7 +340,7 @@ When the user says they missed something, help reorganize the remaining schedule
 
     /*
     --------------------------------
-    11. RESPUESTA AL FRONTEND
+    13. RESPUESTA AL FRONTEND
     --------------------------------
     */
 
@@ -368,4 +404,4 @@ function getCookie(cookieHeader, name) {
 
   return null;
 
-      }
+          }
