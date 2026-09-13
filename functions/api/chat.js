@@ -4,16 +4,24 @@ export async function onRequestPost(context) {
 
   try {
 
-    const body = await request.json();
+    const body =
+      await request.json();
 
-    const message = body.message;
-    const conversationId = body.conversationId || null;
+    const message =
+      body.message;
 
-    if (!message || !message.trim()) {
+    const conversationId =
+      body.conversationId || null;
+
+    if (
+      !message ||
+      !message.trim()
+    ) {
 
       return Response.json(
         {
-          error: "Message required"
+          error:
+            "Message required"
         },
         {
           status: 400
@@ -22,19 +30,20 @@ export async function onRequestPost(context) {
 
     }
 
-    /*
-    --------------------------------
-    1. COMPROBAR SESIÓN
-    --------------------------------
-    */
 
-    const cookie = request.headers.get("Cookie");
+    // ========================================
+    // 1. COMPROBAR SESIÓN
+    // ========================================
+
+    const cookie =
+      request.headers.get("Cookie");
 
     if (!cookie) {
 
       return Response.json(
         {
-          error: "Not authenticated"
+          error:
+            "Not authenticated"
         },
         {
           status: 401
@@ -43,19 +52,18 @@ export async function onRequestPost(context) {
 
     }
 
-    /*
-    --------------------------------
-    2. OBTENER USUARIO
-    --------------------------------
-    */
+    const sessionToken =
+      getCookie(
+        cookie,
+        "lifeos_session"
+      );
 
-    const sessionId = getCookie(cookie, "session");
-
-    if (!sessionId) {
+    if (!sessionToken) {
 
       return Response.json(
         {
-          error: "Not authenticated"
+          error:
+            "Not authenticated"
         },
         {
           status: 401
@@ -64,24 +72,38 @@ export async function onRequestPost(context) {
 
     }
 
-    const session = await env.DB
-      .prepare(`
-        SELECT user_id
-        FROM sessions
-        WHERE id = ?
-        AND expires_at > ?
-      `)
-      .bind(
-        sessionId,
-        new Date().toISOString()
-      )
-      .first();
+    const sessionId =
+      await sha256(
+        sessionToken
+      );
+
+
+    // ========================================
+    // 2. OBTENER USUARIO
+    // ========================================
+
+    const session =
+      await env.DB
+        .prepare(
+          `
+          SELECT user_id
+          FROM sessions
+          WHERE id = ?
+          AND expires_at > ?
+          `
+        )
+        .bind(
+          sessionId,
+          new Date().toISOString()
+        )
+        .first();
 
     if (!session) {
 
       return Response.json(
         {
-          error: "Session expired"
+          error:
+            "Session expired"
         },
         {
           status: 401
@@ -90,28 +112,33 @@ export async function onRequestPost(context) {
 
     }
 
-    const userId = session.user_id;
+    const userId =
+      session.user_id;
 
-    /*
-    --------------------------------
-    3. CREAR CONVERSACIÓN
-    --------------------------------
-    */
 
-    let currentConversationId = conversationId;
+    // ========================================
+    // 3. CREAR CONVERSACIÓN
+    // ========================================
+
+    let currentConversationId =
+      conversationId;
 
     if (!currentConversationId) {
 
-      currentConversationId = crypto.randomUUID();
+      currentConversationId =
+        crypto.randomUUID();
 
-      const now = new Date().toISOString();
+      const now =
+        new Date().toISOString();
 
       await env.DB
-        .prepare(`
+        .prepare(
+          `
           INSERT INTO conversations
           (id, user_id, title, created_at, updated_at)
           VALUES (?, ?, ?, ?, ?)
-        `)
+          `
+        )
         .bind(
           currentConversationId,
           userId,
@@ -123,20 +150,22 @@ export async function onRequestPost(context) {
 
     }
 
-    /*
-    --------------------------------
-    4. GUARDAR MENSAJE DEL USUARIO
-    --------------------------------
-    */
 
-    const messageId = crypto.randomUUID();
+    // ========================================
+    // 4. GUARDAR MENSAJE DEL USUARIO
+    // ========================================
+
+    const messageId =
+      crypto.randomUUID();
 
     await env.DB
-      .prepare(`
+      .prepare(
+        `
         INSERT INTO messages
         (id, conversation_id, role, content, created_at)
         VALUES (?, ?, ?, ?, ?)
-      `)
+        `
+      )
       .bind(
         messageId,
         currentConversationId,
@@ -146,79 +175,47 @@ export async function onRequestPost(context) {
       )
       .run();
 
-    /*
-    --------------------------------
-    5. OBTENER HISTORIAL
-    --------------------------------
-    */
 
-    const history = await env.DB
-      .prepare(`
-        SELECT role, content
-        FROM messages
-        WHERE conversation_id = ?
-        ORDER BY created_at ASC
-        LIMIT 30
-      `)
-      .bind(currentConversationId)
-      .all();
+    // ========================================
+    // 5. OBTENER HISTORIAL
+    // ========================================
 
-    /*
-    --------------------------------
-    6. PREPARAR MENSAJES PARA GROQ
-    --------------------------------
-    */
+    const history =
+      await env.DB
+        .prepare(
+          `
+          SELECT role, content
+          FROM messages
+          WHERE conversation_id = ?
+          ORDER BY created_at ASC
+          LIMIT 30
+          `
+        )
+        .bind(
+          currentConversationId
+        )
+        .all();
 
-    const input = history.results.map(row => ({
-      role: row.role,
-      content: row.content
-    }));
 
-    /*
-    --------------------------------
-    7. COMPROBAR API KEY DE GROQ
-    --------------------------------
-    */
+    // ========================================
+    // 6. PREPARAR MENSAJES PARA GROQ
+    // ========================================
 
-    if (!env.GROQ_API_KEY) {
-
-      return Response.json(
-        {
-          error: "GROQ_API_KEY is not configured"
-        },
-        {
-          status: 500
-        }
+    const input =
+      history.results.map(
+        row => ({
+          role: row.role,
+          content: row.content
+        })
       );
 
-    }
 
-    /*
-    --------------------------------
-    8. LLAMAR A GROQ
-    --------------------------------
-    */
+    const messages = [
 
-    const aiResponse = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
       {
-        method: "POST",
+        role: "system",
 
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${env.GROQ_API_KEY}`
-        },
-
-        body: JSON.stringify({
-
-          model: "openai/gpt-oss-120b",
-
-          messages: [
-
-            {
-              role: "system",
-
-              content: `
+        content: `
 You are LifeOS AI.
 
 You are a personal operating system designed to help users organize their lives.
@@ -245,28 +242,71 @@ When the user gives several tasks, help organize them logically.
 When a task has a deadline, respect it.
 
 When the user says they missed something, help reorganize the remaining schedule.
-
-LifeOS should feel like an intelligent personal operating system, not a generic chatbot.
 `
-            },
+      },
 
-            ...input
+      ...input
 
-          ]
+    ];
 
-        })
-      }
-    );
 
-    /*
-    --------------------------------
-    9. COMPROBAR RESPUESTA DE GROQ
-    --------------------------------
-    */
+    // ========================================
+    // 7. COMPROBAR GROQ KEY
+    // ========================================
+
+    if (!env.GROQ_API_KEY) {
+
+      return Response.json(
+        {
+          error:
+            "GROQ_API_KEY is not configured"
+        },
+        {
+          status: 500
+        }
+      );
+
+    }
+
+
+    // ========================================
+    // 8. LLAMAR A GROQ
+    // ========================================
+
+    const aiResponse =
+      await fetch(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+
+            "Authorization":
+              `Bearer ${env.GROQ_API_KEY}`
+          },
+
+          body: JSON.stringify({
+
+            model:
+              "openai/gpt-oss-120b",
+
+            messages
+
+          })
+        }
+      );
+
+
+    // ========================================
+    // 9. COMPROBAR RESPUESTA DE GROQ
+    // ========================================
 
     if (!aiResponse.ok) {
 
-      const errorText = await aiResponse.text();
+      const errorText =
+        await aiResponse.text();
 
       console.error(
         "Groq error:",
@@ -275,8 +315,11 @@ LifeOS should feel like an intelligent personal operating system, not a generic 
 
       return Response.json(
         {
-          error: "AI request failed",
-          detail: errorText
+          error:
+            "AI request failed",
+
+          detail:
+            errorText
         },
         {
           status: 502
@@ -285,32 +328,35 @@ LifeOS should feel like an intelligent personal operating system, not a generic 
 
     }
 
-    const aiData = await aiResponse.json();
 
-    /*
-    --------------------------------
-    10. OBTENER RESPUESTA
-    --------------------------------
-    */
+    const aiData =
+      await aiResponse.json();
+
+
+    // ========================================
+    // 10. OBTENER RESPUESTA
+    // ========================================
 
     const answer =
-      aiData.choices?.[0]?.message?.content ||
+      aiData?.choices?.[0]?.message?.content ||
       "No pude generar una respuesta.";
 
-    /*
-    --------------------------------
-    11. GUARDAR RESPUESTA DE LIFEOS
-    --------------------------------
-    */
 
-    const aiMessageId = crypto.randomUUID();
+    // ========================================
+    // 11. GUARDAR RESPUESTA DE LIFEOS
+    // ========================================
+
+    const aiMessageId =
+      crypto.randomUUID();
 
     await env.DB
-      .prepare(`
+      .prepare(
+        `
         INSERT INTO messages
         (id, conversation_id, role, content, created_at)
         VALUES (?, ?, ?, ?, ?)
-      `)
+        `
+      )
       .bind(
         aiMessageId,
         currentConversationId,
@@ -320,29 +366,29 @@ LifeOS should feel like an intelligent personal operating system, not a generic 
       )
       .run();
 
-    /*
-    --------------------------------
-    12. ACTUALIZAR CONVERSACIÓN
-    --------------------------------
-    */
+
+    // ========================================
+    // 12. ACTUALIZAR CONVERSACIÓN
+    // ========================================
 
     await env.DB
-      .prepare(`
+      .prepare(
+        `
         UPDATE conversations
         SET updated_at = ?
         WHERE id = ?
-      `)
+        `
+      )
       .bind(
         new Date().toISOString(),
         currentConversationId
       )
       .run();
 
-    /*
-    --------------------------------
-    13. RESPUESTA AL FRONTEND
-    --------------------------------
-    */
+
+    // ========================================
+    // 13. RESPUESTA AL FRONTEND
+    // ========================================
 
     return Response.json({
 
@@ -351,9 +397,11 @@ LifeOS should feel like an intelligent personal operating system, not a generic 
       conversationId:
         currentConversationId,
 
-      message: answer
+      message:
+        answer
 
     });
+
 
   } catch (error) {
 
@@ -364,7 +412,12 @@ LifeOS should feel like an intelligent personal operating system, not a generic 
 
     return Response.json(
       {
-        error: "Internal server error"
+        error:
+          "Internal server error",
+
+        detail:
+          error?.message ||
+          String(error)
       },
       {
         status: 500
@@ -376,20 +429,26 @@ LifeOS should feel like an intelligent personal operating system, not a generic 
 }
 
 
-/*
---------------------------------
-COOKIE HELPER
---------------------------------
-*/
+// ============================================
+// COOKIE HELPER
+// ============================================
 
-function getCookie(cookieHeader, name) {
+function getCookie(
+  cookieHeader,
+  name
+) {
 
   const cookies =
     cookieHeader.split(";");
 
-  for (const cookie of cookies) {
+  for (
+    const cookie of cookies
+  ) {
 
-    const [key, ...value] =
+    const [
+      key,
+      ...value
+    ] =
       cookie.trim().split("=");
 
     if (key === name) {
@@ -403,5 +462,59 @@ function getCookie(cookieHeader, name) {
   }
 
   return null;
+}
 
-          }
+
+// ============================================
+// SHA-256
+// ============================================
+
+async function sha256(value) {
+
+  const encoder =
+    new TextEncoder();
+
+  const data =
+    encoder.encode(value);
+
+  const hash =
+    await crypto.subtle.digest(
+      "SHA-256",
+      data
+    );
+
+  return bytesToBase64Url(
+    new Uint8Array(hash)
+  );
+
+}
+
+
+// ============================================
+// BASE64 URL
+// ============================================
+
+function bytesToBase64(bytes) {
+
+  let binary = "";
+
+  for (const byte of bytes) {
+
+    binary +=
+      String.fromCharCode(byte);
+
+  }
+
+  return btoa(binary);
+
+}
+
+
+function bytesToBase64Url(bytes) {
+
+  return bytesToBase64(bytes)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+
+  }
