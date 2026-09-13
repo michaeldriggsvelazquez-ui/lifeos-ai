@@ -1,550 +1,554 @@
-import { onRequestPost as chat } from "../functions/api/chat.js";
-
-const SESSION_DAYS = 30;
-const PBKDF2_ITERATIONS = 100000;
+import { onRequestPost as chat } from "./chat.js";
 
 export default {
   async fetch(request, env) {
-
     const url = new URL(request.url);
 
-    try {
+    // =========================
+    // CORS / HEADERS
+    // =========================
 
-      // ==============================
-      // API ROUTES
-      // ==============================
-
-      if (
-        url.pathname === "/api/register" &&
-        request.method === "POST"
-      ) {
-        return await register(request, env);
-      }
-
-      if (
-        url.pathname === "/api/login" &&
-        request.method === "POST"
-      ) {
-        return await login(request, env);
-      }
-
-      if (
-        url.pathname === "/api/logout" &&
-        request.method === "POST"
-      ) {
-        return await logout(request, env);
-      }
-
-      if (
-        url.pathname === "/api/me" &&
-        request.method === "GET"
-      ) {
-        return await me(request, env);
-      }
-
-      // ==============================
-      // CHAT / AI
-      // ==============================
-
-      if (
-        url.pathname === "/api/chat" &&
-        request.method === "POST"
-      ) {
-        return await chat({
-          request,
-          env
-        });
-      }
-
-      // ==============================
-      // STATIC FRONTEND
-      // ==============================
-
-      return env.ASSETS.fetch(request);
-
-    } catch (error) {
-
-      console.error(
-        "Worker error:",
-        error
-      );
-
-      return json(
-        {
-          success: false,
-          error: "Internal server error"
-        },
-        500
-      );
-
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          "Access-Control-Allow-Origin": url.origin,
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Credentials": "true"
+        }
+      });
     }
 
+    // =========================
+    // REGISTER
+    // =========================
+
+    if (
+      url.pathname === "/api/register" &&
+      request.method === "POST"
+    ) {
+      return await register(request, env);
+    }
+
+    // =========================
+    // LOGIN
+    // =========================
+
+    if (
+      url.pathname === "/api/login" &&
+      request.method === "POST"
+    ) {
+      return await login(request, env);
+    }
+
+    // =========================
+    // LOGOUT
+    // =========================
+
+    if (
+      url.pathname === "/api/logout" &&
+      request.method === "POST"
+    ) {
+      return await logout(request, env);
+    }
+
+    // =========================
+    // ME
+    // =========================
+
+    if (
+      url.pathname === "/api/me" &&
+      request.method === "GET"
+    ) {
+      return await me(request, env);
+    }
+
+    // =========================
+    // CHAT
+    // =========================
+
+    if (
+      url.pathname === "/api/chat" &&
+      request.method === "POST"
+    ) {
+      return await chat({
+        request,
+        env
+      });
+    }
+
+    // =========================
+    // STATIC ASSETS
+    // =========================
+
+    return env.ASSETS.fetch(request);
   }
 };
 
 
-// ============================================
+// ========================================
 // REGISTER
-// ============================================
+// ========================================
 
 async function register(request, env) {
+  try {
+    const body = await request.json();
 
-  const body =
-    await readJson(request);
+    const email =
+      typeof body.email === "string"
+        ? body.email.trim().toLowerCase()
+        : "";
 
-  const email =
-    normalizeEmail(body.email);
+    const password =
+      typeof body.password === "string"
+        ? body.password
+        : "";
 
-  const password =
-    typeof body.password === "string"
-      ? body.password
-      : "";
+    if (!email || !password) {
+      return json(
+        {
+          error: "Email y contraseña son obligatorios."
+        },
+        400
+      );
+    }
 
-  if (!isValidEmail(email)) {
+    if (password.length < 6) {
+      return json(
+        {
+          error: "La contraseña debe tener al menos 6 caracteres."
+        },
+        400
+      );
+    }
 
-    return json(
-      {
-        success: false,
-        error: "Please enter a valid email."
-      },
-      400
-    );
-
-  }
-
-  if (password.length < 8) {
-
-    return json(
-      {
-        success: false,
-        error:
-          "Password must contain at least 8 characters."
-      },
-      400
-    );
-
-  }
-
-  const existingUser =
-    await env.DB
-      .prepare(
-        "SELECT id FROM users WHERE email = ? LIMIT 1"
-      )
+    const existingUser = await env.DB.prepare(`
+      SELECT id
+      FROM users
+      WHERE email = ?
+    `)
       .bind(email)
       .first();
 
-  if (existingUser) {
+    if (existingUser) {
+      return json(
+        {
+          error: "Ya existe una cuenta con ese email."
+        },
+        409
+      );
+    }
 
-    return json(
-      {
-        success: false,
-        error:
-          "An account with this email already exists."
-      },
-      409
-    );
+    const userId = crypto.randomUUID();
 
-  }
-
-  const userId =
-    crypto.randomUUID();
-
-  const salt =
-    crypto.getRandomValues(
+    const salt = crypto.getRandomValues(
       new Uint8Array(16)
     );
 
-  const passwordHash =
-    await hashPassword(
-      password,
-      salt
-    );
+    const passwordHash =
+      await hashPassword(password, salt);
 
-  const createdAt =
-    new Date().toISOString();
+    const saltEncoded =
+      bytesToBase64Url(salt);
 
-  await env.DB
-    .prepare(
-      `
-      INSERT INTO users
-      (id, email, password_hash, password_salt, created_at)
+    await env.DB.prepare(`
+      INSERT INTO users (
+        id,
+        email,
+        password_hash,
+        password_salt,
+        created_at
+      )
       VALUES (?, ?, ?, ?, ?)
-      `
-    )
-    .bind(
-      userId,
-      email,
-      passwordHash,
-      bytesToBase64(salt),
-      createdAt
-    )
-    .run();
+    `)
+      .bind(
+        userId,
+        email,
+        passwordHash,
+        saltEncoded,
+        new Date().toISOString()
+      )
+      .run();
 
-  // Create login session immediately
+    const sessionToken =
+      generateSessionToken();
 
-  const sessionToken =
-    randomToken();
+    const sessionId =
+      await sha256(sessionToken);
 
-  const sessionId =
-    await sha256(sessionToken);
+    const expiresAt =
+      new Date(
+        Date.now() +
+        1000 * 60 * 60 * 24 * 30
+      ).toISOString();
 
-  const expiresAt =
-    new Date(
-      Date.now() +
-      SESSION_DAYS *
-      24 *
-      60 *
-      60 *
-      1000
-    ).toISOString();
-
-  await env.DB
-    .prepare(
-      `
-      INSERT INTO sessions
-      (id, user_id, expires_at, created_at)
+    await env.DB.prepare(`
+      INSERT INTO sessions (
+        id,
+        user_id,
+        expires_at,
+        created_at
+      )
       VALUES (?, ?, ?, ?)
-      `
-    )
-    .bind(
-      sessionId,
-      userId,
-      expiresAt,
-      createdAt
-    )
-    .run();
-
-  return json(
-    {
-      success: true,
-
-      message:
-        "Account created successfully.",
-
-      user: {
-        id: userId,
-        email
-      }
-    },
-    201,
-    {
-      "Set-Cookie":
-        createSessionCookie(
-          sessionToken
-        )
-    }
-  );
-}
-
-
-// ============================================
-// LOGIN
-// ============================================
-
-async function login(request, env) {
-
-  const body =
-    await readJson(request);
-
-  const email =
-    normalizeEmail(body.email);
-
-  const password =
-    typeof body.password === "string"
-      ? body.password
-      : "";
-
-  if (
-    !isValidEmail(email) ||
-    !password
-  ) {
-
-    return json(
-      {
-        success: false,
-        error:
-          "Invalid email or password."
-      },
-      400
-    );
-
-  }
-
-  const user =
-    await env.DB
-      .prepare(
-        `
-        SELECT
-          id,
-          email,
-          password_hash,
-          password_salt
-        FROM users
-        WHERE email = ?
-        LIMIT 1
-        `
+    `)
+      .bind(
+        sessionId,
+        userId,
+        expiresAt,
+        new Date().toISOString()
       )
-      .bind(email)
-      .first();
-
-  if (!user) {
-
-    return json(
-      {
-        success: false,
-        error:
-          "Invalid email or password."
-      },
-      401
-    );
-
-  }
-
-  const salt =
-    base64ToBytes(
-      user.password_salt
-    );
-
-  const passwordHash =
-    await hashPassword(
-      password,
-      salt
-    );
-
-  const passwordMatches =
-    await safeEqual(
-      passwordHash,
-      user.password_hash
-    );
-
-  if (!passwordMatches) {
-
-    return json(
-      {
-        success: false,
-        error:
-          "Invalid email or password."
-      },
-      401
-    );
-
-  }
-
-  // Create new session
-
-  const sessionToken =
-    randomToken();
-
-  const sessionId =
-    await sha256(sessionToken);
-
-  const createdAt =
-    new Date().toISOString();
-
-  const expiresAt =
-    new Date(
-      Date.now() +
-      SESSION_DAYS *
-      24 *
-      60 *
-      60 *
-      1000
-    ).toISOString();
-
-  await env.DB
-    .prepare(
-      `
-      INSERT INTO sessions
-      (id, user_id, expires_at, created_at)
-      VALUES (?, ?, ?, ?)
-      `
-    )
-    .bind(
-      sessionId,
-      user.id,
-      expiresAt,
-      createdAt
-    )
-    .run();
-
-  return json(
-    {
-      success: true,
-
-      message:
-        "Login successful.",
-
-      user: {
-        id: user.id,
-        email: user.email
-      }
-    },
-    200,
-    {
-      "Set-Cookie":
-        createSessionCookie(
-          sessionToken
-        )
-    }
-  );
-}
-
-
-// ============================================
-// CURRENT USER
-// ============================================
-
-async function me(request, env) {
-
-  const sessionToken =
-    getSessionToken(request);
-
-  if (!sessionToken) {
-
-    return json(
-      {
-        success: false,
-        authenticated: false
-      },
-      401
-    );
-
-  }
-
-  const sessionId =
-    await sha256(
-      sessionToken
-    );
-
-  const session =
-    await env.DB
-      .prepare(
-        `
-        SELECT
-          sessions.user_id,
-          sessions.expires_at,
-          users.email
-        FROM sessions
-        INNER JOIN users
-          ON users.id = sessions.user_id
-        WHERE sessions.id = ?
-        LIMIT 1
-        `
-      )
-      .bind(sessionId)
-      .first();
-
-  if (!session) {
-
-    return json(
-      {
-        success: false,
-        authenticated: false
-      },
-      401
-    );
-
-  }
-
-  if (
-    new Date(
-      session.expires_at
-    ).getTime() <= Date.now()
-  ) {
-
-    await env.DB
-      .prepare(
-        "DELETE FROM sessions WHERE id = ?"
-      )
-      .bind(sessionId)
       .run();
 
     return json(
       {
-        success: false,
-        authenticated: false
+        success: true,
+        user: {
+          id: userId,
+          email
+        }
       },
-      401
+      201,
+      {
+        "Set-Cookie": createSessionCookie(
+          sessionToken,
+          expiresAt
+        )
+      }
     );
 
+  } catch (error) {
+    console.error(
+      "Register Error:",
+      error
+    );
+
+    return json(
+      {
+        error: "No se pudo crear la cuenta.",
+        detail:
+          error?.message ||
+          String(error)
+      },
+      500
+    );
   }
+}
 
-  return json(
-    {
-      success: true,
 
+// ========================================
+// LOGIN
+// ========================================
+
+async function login(request, env) {
+  try {
+    const body = await request.json();
+
+    const email =
+      typeof body.email === "string"
+        ? body.email.trim().toLowerCase()
+        : "";
+
+    const password =
+      typeof body.password === "string"
+        ? body.password
+        : "";
+
+    if (!email || !password) {
+      return json(
+        {
+          error: "Email y contraseña son obligatorios."
+        },
+        400
+      );
+    }
+
+    const user = await env.DB.prepare(`
+      SELECT
+        id,
+        email,
+        password_hash,
+        password_salt
+      FROM users
+      WHERE email = ?
+    `)
+      .bind(email)
+      .first();
+
+    if (!user) {
+      return json(
+        {
+          error: "Email o contraseña incorrectos."
+        },
+        401
+      );
+    }
+
+    const salt =
+      base64UrlToBytes(
+        user.password_salt
+      );
+
+    const passwordHash =
+      await hashPassword(
+        password,
+        salt
+      );
+
+    if (
+      passwordHash !==
+      user.password_hash
+    ) {
+      return json(
+        {
+          error: "Email o contraseña incorrectos."
+        },
+        401
+      );
+    }
+
+    const sessionToken =
+      generateSessionToken();
+
+    const sessionId =
+      await sha256(sessionToken);
+
+    const expiresAt =
+      new Date(
+        Date.now() +
+        1000 * 60 * 60 * 24 * 30
+      ).toISOString();
+
+    await env.DB.prepare(`
+      INSERT INTO sessions (
+        id,
+        user_id,
+        expires_at,
+        created_at
+      )
+      VALUES (?, ?, ?, ?)
+    `)
+      .bind(
+        sessionId,
+        user.id,
+        expiresAt,
+        new Date().toISOString()
+      )
+      .run();
+
+    return json(
+      {
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email
+        }
+      },
+      200,
+      {
+        "Set-Cookie": createSessionCookie(
+          sessionToken,
+          expiresAt
+        )
+      }
+    );
+
+  } catch (error) {
+    console.error(
+      "Login Error:",
+      error
+    );
+
+    return json(
+      {
+        error: "No se pudo iniciar sesión.",
+        detail:
+          error?.message ||
+          String(error)
+      },
+      500
+    );
+  }
+}
+
+
+// ========================================
+// LOGOUT
+// ========================================
+
+async function logout(request, env) {
+  try {
+    const cookieHeader =
+      request.headers.get("Cookie") || "";
+
+    const match =
+      cookieHeader.match(
+        /(?:^|;\s*)lifeos_session=([^;]+)/
+      );
+
+    if (match) {
+      const sessionToken =
+        match[1];
+
+      const sessionId =
+        await sha256(sessionToken);
+
+      await env.DB.prepare(`
+        DELETE FROM sessions
+        WHERE id = ?
+      `)
+        .bind(sessionId)
+        .run();
+    }
+
+    return json(
+      {
+        success: true
+      },
+      200,
+      {
+        "Set-Cookie":
+          "lifeos_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"
+      }
+    );
+
+  } catch (error) {
+    console.error(
+      "Logout Error:",
+      error
+    );
+
+    return json(
+      {
+        error: "No se pudo cerrar sesión."
+      },
+      500
+    );
+  }
+}
+
+
+// ========================================
+// ME
+// ========================================
+
+async function me(request, env) {
+  try {
+    const cookieHeader =
+      request.headers.get("Cookie") || "";
+
+    const match =
+      cookieHeader.match(
+        /(?:^|;\s*)lifeos_session=([^;]+)/
+      );
+
+    if (!match) {
+      return json(
+        {
+          authenticated: false
+        },
+        401
+      );
+    }
+
+    const sessionToken =
+      match[1];
+
+    const sessionId =
+      await sha256(sessionToken);
+
+    const session =
+      await env.DB.prepare(`
+        SELECT
+          s.user_id,
+          s.expires_at,
+          u.email
+        FROM sessions s
+        JOIN users u
+          ON u.id = s.user_id
+        WHERE s.id = ?
+      `)
+        .bind(sessionId)
+        .first();
+
+    if (!session) {
+      return json(
+        {
+          authenticated: false
+        },
+        401
+      );
+    }
+
+    if (
+      session.expires_at &&
+      new Date(session.expires_at) <=
+        new Date()
+    ) {
+      await env.DB.prepare(`
+        DELETE FROM sessions
+        WHERE id = ?
+      `)
+        .bind(sessionId)
+        .run();
+
+      return json(
+        {
+          authenticated: false
+        },
+        401
+      );
+    }
+
+    return json({
       authenticated: true,
-
       user: {
         id: session.user_id,
         email: session.email
       }
-    }
-  );
-}
+    });
 
+  } catch (error) {
+    console.error(
+      "ME Error:",
+      error
+    );
 
-// ============================================
-// LOGOUT
-// ============================================
-
-async function logout(request, env) {
-
-  const sessionToken =
-    getSessionToken(request);
-
-  if (sessionToken) {
-
-    const sessionId =
-      await sha256(
-        sessionToken
-      );
-
-    await env.DB
-      .prepare(
-        "DELETE FROM sessions WHERE id = ?"
-      )
-      .bind(sessionId)
-      .run();
-
+    return json(
+      {
+        error: "No se pudo comprobar la sesión.",
+        detail:
+          error?.message ||
+          String(error)
+      },
+      500
+    );
   }
-
-  return json(
-    {
-      success: true,
-      message: "Logged out."
-    },
-    200,
-    {
-      "Set-Cookie":
-        clearSessionCookie()
-    }
-  );
 }
 
 
-// ============================================
-// PASSWORD HASHING
-// ============================================
+// ========================================
+// PASSWORD HASH
+// ========================================
 
 async function hashPassword(
   password,
   salt
 ) {
-
   const encoder =
     new TextEncoder();
 
-  const passwordBytes =
-    encoder.encode(password);
-
-  const keyMaterial =
+  const passwordKey =
     await crypto.subtle.importKey(
       "raw",
-      passwordBytes,
-      "PBKDF2",
+      encoder.encode(password),
+      {
+        name: "PBKDF2"
+      },
       false,
-      ["deriveBits"]
+      [
+        "deriveBits"
+      ]
     );
 
   const derivedBits =
@@ -552,15 +556,14 @@ async function hashPassword(
       {
         name: "PBKDF2",
         salt,
-        iterations:
-          PBKDF2_ITERATIONS,
+        iterations: 100000,
         hash: "SHA-256"
       },
-      keyMaterial,
+      passwordKey,
       256
     );
 
-  return bytesToBase64(
+  return bytesToBase64Url(
     new Uint8Array(
       derivedBits
     )
@@ -568,182 +571,108 @@ async function hashPassword(
 }
 
 
-// ============================================
-// CONSTANT-TIME COMPARISON
-// ============================================
-
-async function safeEqual(a, b) {
-
-  const encoder =
-    new TextEncoder();
-
-  const aBytes =
-    encoder.encode(a);
-
-  const bBytes =
-    encoder.encode(b);
-
-  if (
-    aBytes.length !==
-    bBytes.length
-  ) {
-    return false;
-  }
-
-  let result = 0;
-
-  for (
-    let i = 0;
-    i < aBytes.length;
-    i++
-  ) {
-
-    result |=
-      aBytes[i] ^
-      bBytes[i];
-
-  }
-
-  return result === 0;
-}
-
-
-// ============================================
+// ========================================
 // SESSION TOKEN
-// ============================================
+// ========================================
 
-function randomToken() {
-
+function generateSessionToken() {
   const bytes =
     crypto.getRandomValues(
       new Uint8Array(32)
     );
 
-  return bytesToBase64Url(
-    bytes
-  );
+  return bytesToBase64Url(bytes);
 }
 
 
-// ============================================
-// COOKIE
-// ============================================
+// ========================================
+// SESSION COOKIE
+// ========================================
 
-function createSessionCookie(token) {
-
+function createSessionCookie(
+  token,
+  expiresAt
+) {
   return [
     `lifeos_session=${token}`,
-    "Path=/",
     "HttpOnly",
     "Secure",
     "SameSite=Lax",
-    `Max-Age=${SESSION_DAYS * 24 * 60 * 60}`
-  ].join("; ");
-
-}
-
-
-function clearSessionCookie() {
-
-  return [
-    "lifeos_session=",
     "Path=/",
-    "HttpOnly",
-    "Secure",
-    "SameSite=Lax",
-    "Max-Age=0"
+    `Expires=${new Date(expiresAt).toUTCString()}`
   ].join("; ");
-
 }
 
 
-function getSessionToken(request) {
-
-  const cookieHeader =
-    request.headers.get("Cookie");
-
-  if (!cookieHeader) {
-    return null;
-  }
-
-  const cookies =
-    cookieHeader.split(";");
-
-  for (const cookie of cookies) {
-
-    const [
-      name,
-      ...valueParts
-    ] =
-      cookie.trim().split("=");
-
-    if (
-      name === "lifeos_session"
-    ) {
-
-      return (
-        valueParts.join("=") ||
-        null
-      );
-
-    }
-
-  }
-
-  return null;
-}
-
-
-// ============================================
-// CRYPTO HELPERS
-// ============================================
+// ========================================
+// SHA-256
+// ========================================
 
 async function sha256(value) {
-
-  const encoder =
-    new TextEncoder();
-
   const data =
-    encoder.encode(value);
+    new TextEncoder().encode(value);
 
-  const hash =
+  const hashBuffer =
     await crypto.subtle.digest(
       "SHA-256",
       data
     );
 
   return bytesToBase64Url(
-    new Uint8Array(hash)
+    new Uint8Array(
+      hashBuffer
+    )
   );
 }
 
 
-function bytesToBase64(bytes) {
-
-  let binary = "";
-
-  for (const byte of bytes) {
-
-    binary += String.fromCharCode(
-      byte
-    );
-
-  }
-
-  return btoa(binary);
-}
-
+// ========================================
+// BASE64 URL
+// ========================================
 
 function bytesToBase64Url(bytes) {
+  let binary = "";
 
-  return bytesToBase64(bytes)
+  const chunkSize = 0x8000;
+
+  for (
+    let i = 0;
+    i < bytes.length;
+    i += chunkSize
+  ) {
+    binary += String.fromCharCode(
+      ...bytes.subarray(
+        i,
+        Math.min(
+          i + chunkSize,
+          bytes.length
+        )
+      )
+    );
+  }
+
+  return btoa(binary)
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
     .replace(/=+$/g, "");
 }
 
 
-function base64ToBytes(base64) {
+// ========================================
+// BASE64 URL → BYTES
+// ========================================
+
+function base64UrlToBytes(value) {
+  let base64 =
+    value
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+
+  while (
+    base64.length % 4 !== 0
+  ) {
+    base64 += "=";
+  }
 
   const binary =
     atob(base64);
@@ -758,81 +687,32 @@ function base64ToBytes(base64) {
     i < binary.length;
     i++
   ) {
-
     bytes[i] =
       binary.charCodeAt(i);
-
   }
 
   return bytes;
 }
 
 
-// ============================================
-// VALIDATION
-// ============================================
-
-function normalizeEmail(email) {
-
-  if (
-    typeof email !== "string"
-  ) {
-    return "";
-  }
-
-  return email
-    .trim()
-    .toLowerCase();
-}
-
-
-function isValidEmail(email) {
-
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    .test(email);
-}
-
-
-async function readJson(request) {
-
-  try {
-
-    return await request.json();
-
-  } catch {
-
-    return {};
-
-  }
-
-}
-
-
-// ============================================
+// ========================================
 // JSON RESPONSE
-// ============================================
+// ========================================
 
 function json(
   data,
   status = 200,
   extraHeaders = {}
 ) {
-
   return new Response(
     JSON.stringify(data),
     {
       status,
-
       headers: {
         "Content-Type":
-          "application/json; charset=UTF-8",
-
-        "Cache-Control":
-          "no-store",
-
+          "application/json",
         ...extraHeaders
       }
     }
   );
-
-        }
+      }
