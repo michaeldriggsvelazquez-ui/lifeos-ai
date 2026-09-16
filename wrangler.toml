@@ -1,7 +1,7 @@
 name = "lifeos-ai"
 main = "./src/index.js"
 compatibility_date = "2026-09-08"
-no_bundle = true
+no_bundle = false
 
 [assets]
 directory = "./public"
