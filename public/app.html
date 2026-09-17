@@ -1335,8 +1335,12 @@
 
             const thinkingMessage = addThinkingMessage();
 
+            let response;
+            let responseText = "";
+            let data = null;
+
             try {
-                const response = await fetch("/api/chat", {
+                response = await fetch("/api/chat", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -1348,34 +1352,69 @@
                     })
                 });
 
-                let data = {};
+                responseText = await response.text();
+
                 try {
-                    data = await response.json();
-                } catch (e) {
-                    data = {};
+                    data = responseText ? JSON.parse(responseText) : null;
+                } catch (parseError) {
+                    data = null;
+                }
+
+                console.log("LifeOS Chat response:", {
+                    status: response.status,
+                    ok: response.ok,
+                    data: data,
+                    raw: responseText
+                });
+
+                if (response.status === 401) {
+                    thinkingMessage.remove();
+                    addMessage("Tu sesión ha expirado. Redirigiendo...", "ai");
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 1200);
+                    return;
                 }
 
                 if (!response.ok) {
-                    if (response.status === 401) {
-                        thinkingMessage.remove();
-                        addMessage("Tu sesión ha expirado. Redirigiendo...", "ai");
-                        setTimeout(() => {
-                            window.location.href = "index.html";
-                        }, 1200);
-                        return;
+                    let serverError = "Error desconocido del servidor.";
+                    if (data?.detail) {
+                        serverError = data.detail;
+                    } else if (data?.error) {
+                        serverError = data.error;
+                    } else if (responseText) {
+                        serverError = responseText;
                     }
-                    throw new Error(data.error || "Error al conectar con LifeOS");
+                    throw new Error(`Error del servidor (${response.status}): ${serverError}`);
                 }
 
-                conversationId = data.conversationId || conversationId;
-                thinkingMessage.remove();
+                if (!data) {
+                    throw new Error(`El servidor respondió con contenido no válido (${response.status}): ${responseText || 'Vacío'}`);
+                }
 
-                addMessage(data.message || "No recibí respuesta de LifeOS.", "ai");
+                if (!data.message) {
+                    throw new Error("El servidor respondió correctamente, pero no devolvió ningún mensaje de LifeOS AI.");
+                }
+
+                if (data.conversationId) {
+                    conversationId = data.conversationId;
+                }
+
+                thinkingMessage.remove();
+                addMessage(data.message, "ai");
 
             } catch (error) {
                 console.error("LifeOS Chat Error:", error);
-                thinkingMessage.remove();
-                addMessage("No pude conectar con la inteligencia de LifeOS. Inténtalo de nuevo.", "ai");
+                if (thinkingMessage && thinkingMessage.parentNode) {
+                    thinkingMessage.remove();
+                }
+
+                let errorMsg = error.message;
+                if (!errorMsg || errorMsg === "Failed to fetch") {
+                    errorMsg = "Error de red: No se pudo conectar con el servidor.";
+                }
+
+                addMessage(errorMsg, "ai");
             } finally {
                 sending = false;
                 sendButton.disabled = false;
