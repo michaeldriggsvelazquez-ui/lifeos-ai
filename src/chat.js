@@ -159,33 +159,40 @@ export async function onRequestPost(context) {
               role: "system",
 
               content: `
-Eres LifeOS AI, un asistente personal inteligente.
+Eres LifeOS AI, un sistema operativo personal inteligente. Tu propósito es comprender lenguaje natural, gestionar tareas, horarios, fechas y prioridades, y crear planes realistas adaptados al usuario.
 
-Tu objetivo es ayudar al usuario a organizar su vida de forma realista,
-clara y adaptable.
+Responde SIEMPRE y ÚNICAMENTE en formato JSON válido, sin bloques de código Markdown (\`\`\`json) y sin texto adicional fuera del JSON.
 
-Puedes ayudar con:
+La estructura del JSON debe ser exactamente esta:
+{
+  "type": "message | daily_plan | task | replan | suggestion",
+  "title": "string o null",
+  "subtitle": "string o null",
+  "message": "string o null",
+  "tasks": [
+    {
+      "id": "string",
+      "time": "string o null",
+      "title": "string",
+      "duration": "number o null",
+      "priority": "low | medium | high",
+      "status": "pending | completed | missed | in_progress"
+    }
+  ],
+  "suggestions": [
+    "string"
+  ]
+}
 
-- planificación diaria
-- tareas
-- horarios
-- estudios
-- entrenamientos
-- metas
-- proyectos
-- prioridades
-- organización semanal
-- reorganización cuando algo cambia
-
-Si el usuario te da varias tareas, ayúdalo a convertirlas en un plan
-realista teniendo en cuenta prioridades, tiempo y descansos.
-
-Si el usuario dice que no pudo completar una tarea, ayúdalo a reorganizar
-lo que queda del día.
-
-Habla de forma natural, clara y útil.
-
-No respondas como un robot.
+Reglas de comportamiento y estilo:
+- Sé natural, humano, claro, inteligente, directo, útil y ligeramente dinámico.
+- No suenes robótico ni uses lenguaje corporativo o frases genéricas predecibles.
+- Evita párrafos enormes y no llenes cada respuesta con emojis innecesarios.
+- Si el usuario simplemente conversa, usa type "message" sin inventar horarios ni planes diarios.
+- Si pide organizar o estructurar tareas, usa type "daily_plan", distribuyendo tareas de forma realista con descansos y espacio libre.
+- Si algo cambia, se retrasa o se pierde, usa type "replan" adaptando solo lo necesario sin descartar todo el día.
+- Si aportas una recomendación puntual, usa type "suggestion".
+- No termines todas tus respuestas con preguntas innecesarias ni uses "Quieres que...?" a menos que sea estrictamente necesario.
               `.trim()
             },
 
@@ -212,10 +219,10 @@ No respondas como un robot.
       );
     }
 
-    const aiMessage =
+    let rawAiMessage =
       groqData?.choices?.[0]?.message?.content;
 
-    if (!aiMessage) {
+    if (!rawAiMessage) {
       return json(
         {
           error: "Groq no devolvió una respuesta."
@@ -223,6 +230,26 @@ No respondas como un robot.
         502
       );
     }
+
+    // Limpieza por si el modelo incluye bloques de código Markdown a pesar de las instrucciones
+    rawAiMessage = rawAiMessage.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/, "").trim();
+
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(rawAiMessage);
+    } catch (e) {
+      // Si la respuesta no es un JSON válido, la encapsulamos en la estructura type: "message"
+      parsedResponse = {
+        type: "message",
+        title: null,
+        subtitle: null,
+        message: rawAiMessage,
+        tasks: [],
+        suggestions: []
+      };
+    }
+
+    const aiMessageString = JSON.stringify(parsedResponse);
 
     await env.DB.prepare(`
       INSERT INTO messages (
@@ -238,7 +265,7 @@ No respondas como un robot.
         crypto.randomUUID(),
         conversationId,
         "assistant",
-        aiMessage,
+        aiMessageString,
         new Date().toISOString()
       )
       .run();
@@ -259,7 +286,7 @@ No respondas como un robot.
     return json({
       success: true,
       conversationId,
-      message: aiMessage
+      message: parsedResponse
     });
 
   } catch (error) {
@@ -330,4 +357,4 @@ function json(data, status = 200) {
       }
     }
   );
-        }
+}
