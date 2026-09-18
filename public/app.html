@@ -320,7 +320,6 @@
             flex-direction: column;
         }
 
-        /* Specific screen override for chat layout fill */
         #screen-chat {
             padding: 0;
             overflow: hidden;
@@ -468,7 +467,6 @@
             border-bottom-left-radius: 4px;
         }
 
-        /* Thinking indicator */
         .thinking-bubble {
             display: flex;
             align-items: center;
@@ -562,7 +560,103 @@
         }
 
         /* =========================
-           STANDARD SCREENS (Hoy, etc.)
+           LIFEOS RESPONSE STYLES
+        ========================= */
+        .lifeos-response {
+            max-width: min(720px, 90%);
+        }
+
+        .lifeos-response-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .lifeos-response-subtitle {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .lifeos-response-message {
+            color: #e2e8f0;
+            line-height: 1.65;
+            white-space: pre-wrap;
+        }
+
+        .lifeos-tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .lifeos-task-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 10px;
+        }
+
+        .lifeos-task-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #f4f7fb;
+        }
+
+        .lifeos-task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+            font-family: "DM Mono", monospace;
+            font-size: 9px;
+            color: #7f8a99;
+            text-transform: uppercase;
+        }
+
+        .priority-high {
+            color: var(--danger);
+        }
+
+        .priority-medium {
+            color: #e8d76b;
+        }
+
+        .priority-low {
+            color: var(--cyan);
+        }
+
+        .lifeos-task-status {
+            font-family: "DM Mono", monospace;
+            font-size: 9px;
+            color: var(--lime);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .lifeos-suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 14px;
+        }
+
+        .lifeos-suggestion {
+            padding: 9px 11px;
+            border-left: 2px solid var(--lime);
+            background: rgba(199, 255, 94, 0.04);
+            color: #aeb7c4;
+            font-size: 11px;
+        }
+
+        /* =========================
+           STANDARD SCREENS
         ========================= */
         .hero-title {
             font-size: clamp(28px, 4vw, 42px);
@@ -676,39 +770,6 @@
             gap: 10px;
         }
 
-        .timeline-row {
-            display: grid;
-            grid-template-columns: 70px 1fr;
-            gap: 12px;
-        }
-
-        .time {
-            font-family: "DM Mono", monospace;
-            color: #596474;
-            font-size: 10px;
-            padding-top: 12px;
-        }
-
-        .event-box {
-            background: rgba(255, 255, 255, 0.025);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 14px;
-        }
-
-        .event-box strong {
-            font-size: 12px;
-            display: block;
-        }
-
-        .event-box span {
-            display: block;
-            color: #697483;
-            font-size: 10px;
-            margin-top: 2px;
-        }
-
-        /* Week grid preview */
         .week-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -833,7 +894,6 @@
             opacity: 0.9;
         }
 
-        /* Overlay for mobile drawer */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -847,9 +907,6 @@
             display: block;
         }
 
-        /* =========================
-           RESPONSIVE DESIGN
-        ========================= */
         @media (max-width: 800px) {
             .sidebar {
                 position: fixed;
@@ -883,7 +940,6 @@
             }
         }
 
-        /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 5px;
             height: 5px;
@@ -908,9 +964,6 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <div class="app">
-        <!-- =========================
-             SIDEBAR
-        ========================= -->
         <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <div class="logo-mark"></div>
@@ -978,9 +1031,6 @@
             </div>
         </aside>
 
-        <!-- =========================
-             MAIN CONTENT AREA
-        ========================= -->
         <main class="main">
             <header class="topbar">
                 <div class="topbar-left">
@@ -1000,10 +1050,6 @@
             </header>
 
             <div class="content">
-
-                <!-- =========================
-                     CHAT SCREEN (DEFAULT)
-                ========================= -->
                 <section id="screen-chat" class="screen active">
                     <div class="chat-layout">
                         <div class="chat-header-compact">
@@ -1037,9 +1083,6 @@
                     </div>
                 </section>
 
-                <!-- =========================
-                     TODAY SCREEN
-                ========================= -->
                 <section id="screen-today" class="screen">
                     <h1 class="hero-title">Tu día.<br><span>Diseñado.</span></h1>
                     <p class="hero-sub">LifeOS convierte tus obligaciones en un plan claro y realista para hoy.</p>
@@ -1073,9 +1116,6 @@
                     </div>
                 </section>
 
-                <!-- =========================
-                     WEEK SCREEN
-                ========================= -->
                 <section id="screen-week" class="screen">
                     <div class="section-head">
                         <div>
@@ -1086,7 +1126,6 @@
                     </div>
 
                     <div class="week-grid" id="weekGrid">
-                        <!-- Generado dinámicamente o por defecto -->
                         <div class="week-day-card"><div class="week-day-name">Lun</div><div class="week-day-num">-</div></div>
                         <div class="week-day-card"><div class="week-day-name">Mar</div><div class="week-day-num">-</div></div>
                         <div class="week-day-card"><div class="week-day-name">Mié</div><div class="week-day-num">-</div></div>
@@ -1104,9 +1143,6 @@
                     </div>
                 </section>
 
-                <!-- =========================
-                     MONTH SCREEN
-                ========================= -->
                 <section id="screen-month" class="screen">
                     <div class="section-head">
                         <div>
@@ -1122,9 +1158,6 @@
                     </div>
                 </section>
 
-                <!-- =========================
-                     GOALS SCREEN
-                ========================= -->
                 <section id="screen-goals" class="screen">
                     <div class="section-head">
                         <div>
@@ -1139,9 +1172,6 @@
                     </div>
                 </section>
 
-                <!-- =========================
-                     PROJECTS SCREEN
-                ========================= -->
                 <section id="screen-projects" class="screen">
                     <div class="section-head">
                         <div>
@@ -1156,9 +1186,6 @@
                     </div>
                 </section>
 
-                <!-- =========================
-                     TASKS SCREEN
-                ========================= -->
                 <section id="screen-tasks" class="screen">
                     <div class="section-head">
                         <div>
@@ -1174,14 +1201,10 @@
                         </div>
                     </div>
                 </section>
-
             </div>
         </main>
     </div>
 
-    <!-- =========================
-         PRO MODAL
-    ========================= -->
     <div id="proModal" class="modal">
         <div class="modal-box">
             <button class="close-modal" onclick="closePro()">×</button>
@@ -1199,9 +1222,6 @@
         </div>
     </div>
 
-    <!-- =========================
-         JAVASCRIPT LOGIC
-    ========================= -->
     <script>
         let conversationId = null;
         let sending = false;
@@ -1216,7 +1236,6 @@
             tasks: "Tareas"
         };
 
-        // Navigation Engine
         function showScreen(name, button) {
             document.querySelectorAll(".screen").forEach(screen => {
                 screen.classList.remove("active");
@@ -1244,7 +1263,6 @@
             closeSidebar();
         }
 
-        // Sidebar Handling
         function toggleSidebar() {
             document.getElementById("sidebar").classList.toggle("open");
             document.getElementById("sidebarOverlay").classList.toggle("active");
@@ -1255,7 +1273,6 @@
             document.getElementById("sidebarOverlay").classList.remove("active");
         }
 
-        // Date Initializer
         function updateDate() {
             const now = new Date();
             const dateStr = now.toLocaleDateString("es-ES", {
@@ -1267,7 +1284,6 @@
             document.getElementById("pageDate").textContent = dateStr;
         }
 
-        // Chat Interface Helpers
         function addMessage(text, type) {
             const chatMessages = document.getElementById("chatMessages");
             const welcome = document.getElementById("welcomeContainer");
@@ -1310,13 +1326,126 @@
             return wrapper;
         }
 
+        function renderLifeOSResponse(response) {
+            const chatMessages = document.getElementById("chatMessages");
+
+            const welcome = document.getElementById("welcomeContainer");
+            if (welcome) {
+                welcome.remove();
+            }
+
+            if (typeof response === "string") {
+                addMessage(response, "ai");
+                return;
+            }
+
+            if (!response || typeof response !== "object") {
+                addMessage("LifeOS no pudo interpretar la respuesta.", "ai");
+                return;
+            }
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "message ai";
+
+            const bubble = document.createElement("div");
+            bubble.className = "bubble lifeos-response";
+
+            if (response.title) {
+                const title = document.createElement("div");
+                title.className = "lifeos-response-title";
+                title.textContent = response.title;
+                bubble.appendChild(title);
+            }
+
+            if (response.subtitle) {
+                const subtitle = document.createElement("div");
+                subtitle.className = "lifeos-response-subtitle";
+                subtitle.textContent = response.subtitle;
+                bubble.appendChild(subtitle);
+            }
+
+            if (response.message) {
+                const message = document.createElement("div");
+                message.className = "lifeos-response-message";
+                message.textContent = response.message;
+                bubble.appendChild(message);
+            }
+
+            if (Array.isArray(response.tasks) && response.tasks.length > 0) {
+                const tasksContainer = document.createElement("div");
+                tasksContainer.className = "lifeos-tasks";
+
+                response.tasks.forEach(task => {
+                    const taskCard = document.createElement("div");
+                    taskCard.className = "lifeos-task-card";
+
+                    const taskTitle = document.createElement("div");
+                    taskTitle.className = "lifeos-task-title";
+                    taskTitle.textContent = task.title || "Tarea";
+
+                    const meta = document.createElement("div");
+                    meta.className = "lifeos-task-meta";
+
+                    if (task.time) {
+                        const time = document.createElement("span");
+                        time.textContent = task.time;
+                        meta.appendChild(time);
+                    }
+
+                    if (task.duration) {
+                        const duration = document.createElement("span");
+                        duration.textContent = `${task.duration} min`;
+                        meta.appendChild(duration);
+                    }
+
+                    if (task.priority) {
+                        const priority = document.createElement("span");
+                        priority.textContent = task.priority;
+                        priority.className = `priority-${task.priority}`;
+                        meta.appendChild(priority);
+                    }
+
+                    taskCard.appendChild(taskTitle);
+                    taskCard.appendChild(meta);
+
+                    if (task.status) {
+                        const status = document.createElement("span");
+                        status.className = "lifeos-task-status";
+                        status.textContent = task.status;
+                        taskCard.appendChild(status);
+                    }
+
+                    tasksContainer.appendChild(taskCard);
+                });
+
+                bubble.appendChild(tasksContainer);
+            }
+
+            if (Array.isArray(response.suggestions) && response.suggestions.length > 0) {
+                const suggestions = document.createElement("div");
+                suggestions.className = "lifeos-suggestions";
+
+                response.suggestions.forEach(item => {
+                    const suggestion = document.createElement("div");
+                    suggestion.className = "lifeos-suggestion";
+                    suggestion.textContent = item;
+                    suggestions.appendChild(suggestion);
+                });
+
+                bubble.appendChild(suggestions);
+            }
+
+            wrapper.appendChild(bubble);
+            chatMessages.appendChild(wrapper);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
         function sendSuggestion(text) {
             const input = document.getElementById("chatInput");
             input.value = text;
             sendMessage();
         }
 
-        // API Chat Execution
         async function sendMessage() {
             if (sending) return;
 
@@ -1360,13 +1489,6 @@
                     data = null;
                 }
 
-                console.log("LifeOS Chat response:", {
-                    status: response.status,
-                    ok: response.ok,
-                    data: data,
-                    raw: responseText
-                });
-
                 if (response.status === 401) {
                     thinkingMessage.remove();
                     addMessage("Tu sesión ha expirado. Redirigiendo...", "ai");
@@ -1388,12 +1510,8 @@
                     throw new Error(`Error del servidor (${response.status}): ${serverError}`);
                 }
 
-                if (!data) {
-                    throw new Error(`El servidor respondió con contenido no válido (${response.status}): ${responseText || 'Vacío'}`);
-                }
-
-                if (!data.message) {
-                    throw new Error("El servidor respondió correctamente, pero no devolvió ningún mensaje de LifeOS AI.");
+                if (!data || !data.message) {
+                    throw new Error("El servidor respondió correctamente, pero no devolvió ningún mensaje.");
                 }
 
                 if (data.conversationId) {
@@ -1401,7 +1519,7 @@
                 }
 
                 thinkingMessage.remove();
-                addMessage(data.message, "ai");
+                renderLifeOSResponse(data.message);
 
             } catch (error) {
                 console.error("LifeOS Chat Error:", error);
@@ -1422,7 +1540,6 @@
             }
         }
 
-        // Textarea Auto-resize & Key Listeners
         const chatInput = document.getElementById("chatInput");
         chatInput.addEventListener("input", function() {
             this.style.height = "auto";
@@ -1436,7 +1553,6 @@
             }
         });
 
-        // PRO Modal Controllers
         function openPro() {
             document.getElementById("proModal").classList.add("show");
         }
@@ -1451,7 +1567,6 @@
             }
         });
 
-        // Logout Flow
         async function logout() {
             try {
                 await fetch("/api/logout", {
@@ -1464,7 +1579,6 @@
             window.location.href = "index.html";
         }
 
-        // Session Verification
         async function checkSession() {
             try {
                 const response = await fetch("/api/me", {
@@ -1476,21 +1590,14 @@
                     window.location.href = "index.html";
                     return;
                 }
-
-                const data = await response.json();
-                console.log("LifeOS session verified:", data);
-
             } catch (error) {
                 console.error("Session verification error:", error);
                 window.location.href = "index.html";
             }
         }
 
-        // Initialization
         updateDate();
         checkSession();
-
-        console.log("%c LIFEOS AI ", "background:#c7ff5e;color:#07090d;font-weight:bold;padding:4px 8px;border-radius:4px;");
     </script>
 </body>
 </html>
