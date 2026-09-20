@@ -1,4 +1,4 @@
--- LIFEOS AI
+-- SCARPE AI
 -- Migration 0002
 -- Core planning, chat and user data
 
