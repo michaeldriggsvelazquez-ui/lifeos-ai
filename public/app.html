@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LifeOS AI</title>
+    <title>Scarpe AI</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
 
@@ -967,7 +967,7 @@
         <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <div class="logo-mark"></div>
-                <div class="logo-text">LIFEOS<span>AI</span></div>
+                <div class="logo-text">SCARPE<span>AI</span></div>
             </div>
 
             <nav class="nav">
@@ -976,7 +976,7 @@
                     <span class="nav-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                     </span>
-                    LifeOS AI
+                    Scarpe AI
                 </button>
                 <button data-screen="today" onclick="showScreen('today', this)">
                     <span class="nav-icon">
@@ -1022,7 +1022,7 @@
 
             <div class="sidebar-bottom">
                 <button class="pro-button" onclick="openPro()">
-                    <strong>LIFEOS PRO</strong>
+                    <strong>SCARPE PRO</strong>
                     <span>Desbloquear funciones avanzadas →</span>
                 </button>
                 <button class="logout-btn" onclick="logout()">
@@ -1038,14 +1038,14 @@
                         ☰
                     </button>
                     <div>
-                        <div class="page-title" id="pageTitle">LifeOS AI</div>
+                        <div class="page-title" id="pageTitle">Scarpe AI</div>
                         <div class="page-date" id="pageDate"></div>
                     </div>
                 </div>
 
                 <div class="status">
                     <div class="status-dot"></div>
-                    LIFEOS ONLINE
+                    SCARPE ONLINE
                 </div>
             </header>
 
@@ -1054,7 +1054,7 @@
                     <div class="chat-layout">
                         <div class="chat-header-compact">
                             <div>
-                                <h1>LifeOS <span>AI</span></h1>
+                                <h1>Scarpe <span>AI</span></h1>
                                 <p>Tu vida, organizada con inteligencia.</p>
                             </div>
                         </div>
@@ -1085,7 +1085,7 @@
 
                 <section id="screen-today" class="screen">
                     <h1 class="hero-title">Tu día.<br><span>Diseñado.</span></h1>
-                    <p class="hero-sub">LifeOS convierte tus obligaciones en un plan claro y realista para hoy.</p>
+                    <p class="hero-sub">Scarpe convierte tus obligaciones en un plan claro y realista para hoy.</p>
 
                     <div class="cards-grid">
                         <div class="card">
@@ -1110,7 +1110,7 @@
                         <div id="todayPlan" class="timeline">
                             <div class="empty-state">
                                 <strong>Tu día todavía está vacío</strong>
-                                Usa LifeOS AI para indicarnos tus tareas y estructuraremos tu jornada.
+                                Usa Scarpe AI para indicarnos tus tareas y estructuraremos tu jornada.
                             </div>
                         </div>
                     </div>
@@ -1138,7 +1138,7 @@
                     <div class="card" style="margin-top: 10px;">
                         <div class="empty-state">
                             <strong>Sin planificación semanal detallada</strong>
-                            Cuéntale a LifeOS AI qué compromisos tienes esta semana para organizarla paso a paso.
+                            Cuéntale a Scarpe AI qué compromisos tienes esta semana para organizarla paso a paso.
                         </div>
                     </div>
                 </section>
@@ -1168,7 +1168,7 @@
                     </div>
                     <div class="empty-state">
                         <strong>Sin metas activas</strong>
-                        Dile a LifeOS algo como: “Quiero aprobar mis exámenes antes de verano”.
+                        Dile a Scarpe algo como: “Quiero aprobar mis exámenes antes de verano”.
                     </div>
                 </section>
 
@@ -1182,7 +1182,7 @@
                     </div>
                     <div class="empty-state">
                         <strong>No hay proyectos todavía</strong>
-                        Inicia una conversación en LifeOS AI para idear y estructurar tus proyectos.
+                        Inicia una conversación en Scarpe AI para idear y estructurar tus proyectos.
                     </div>
                 </section>
 
@@ -1208,7 +1208,7 @@
     <div id="proModal" class="modal">
         <div class="modal-box">
             <button class="close-modal" onclick="closePro()">×</button>
-            <h2>LifeOS <span style="color:var(--lime)">PRO</span></h2>
+            <h2>Scarpe <span style="color:var(--lime)">PRO</span></h2>
             <p>Lleva tu rendimiento al siguiente nivel con automatizaciones impulsadas por IA.</p>
             
             <div class="pro-list">
@@ -1227,7 +1227,7 @@
         let sending = false;
 
         const screenNames = {
-            chat: "LifeOS AI",
+            chat: "Scarpe AI",
             today: "Hoy",
             week: "Semana",
             month: "Mes",
@@ -1259,7 +1259,7 @@
                 }
             }
 
-            document.getElementById("pageTitle").textContent = screenNames[name] || "LifeOS";
+            document.getElementById("pageTitle").textContent = screenNames[name] || "Scarpe";
             closeSidebar();
         }
 
@@ -1340,7 +1340,7 @@
             }
 
             if (!response || typeof response !== "object") {
-                addMessage("LifeOS no pudo interpretar la respuesta.", "ai");
+                addMessage("Scarpe no pudo interpretar la respuesta.", "ai");
                 return;
             }
 
@@ -1522,7 +1522,7 @@
                 renderLifeOSResponse(data.message);
 
             } catch (error) {
-                console.error("LifeOS Chat Error:", error);
+                console.error("Scarpe Chat Error:", error);
                 if (thinkingMessage && thinkingMessage.parentNode) {
                     thinkingMessage.remove();
                 }
