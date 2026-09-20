@@ -216,7 +216,7 @@ export async function onRequestPost(context) {
         role: "system",
 
         content: `
-You are LifeOS AI.
+You are Scarpe AI.
 
 You are a personal operating system designed to help users organize their lives.
 
@@ -343,7 +343,7 @@ When the user says they missed something, help reorganize the remaining schedule
 
 
     // ========================================
-    // 11. GUARDAR RESPUESTA DE LIFEOS
+    // 11. GUARDAR RESPUESTA DE SCARPE
     // ========================================
 
     const aiMessageId =
@@ -517,4 +517,4 @@ function bytesToBase64Url(bytes) {
     .replace(/\//g, "_")
     .replace(/=+$/g, "");
 
-  }
+}
