@@ -1,0 +1,315 @@
+/* Scarpe AI - Responsive System */
+
+/*
+    Este archivo controla únicamente la adaptación
+    de la interfaz a diferentes tamaños de pantalla.
+*/
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .sidebar {
+        width: 230px;
+    }
+
+    .main {
+        margin-left: 230px;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .chat-layout {
+        max-width: 820px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    body {
+        overflow-x: hidden;
+    }
+
+    /*
+        Sidebar móvil:
+        permanece fuera de pantalla hasta que
+        JavaScript añada .open
+    */
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+
+        width: min(82vw, 320px);
+        height: 100vh;
+
+        margin: 0;
+
+        transform: translateX(-105%);
+
+        z-index: 1000;
+
+        transition:
+            transform 0.28s ease,
+            box-shadow 0.28s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+
+        box-shadow:
+            20px 0 60px rgba(0, 0, 0, 0.38);
+    }
+
+    /*
+        Capa detrás del sidebar
+    */
+
+    .sidebar.open::after {
+        content: "";
+
+        position: fixed;
+
+        top: 0;
+        left: 100%;
+
+        width: 100vw;
+        height: 100vh;
+
+        background: rgba(0, 0, 0, 0.38);
+
+        pointer-events: none;
+    }
+
+    .main {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    /*
+        Topbar
+    */
+
+    .topbar {
+        min-height: 62px;
+        padding: 12px 16px;
+    }
+
+    .mobile-menu {
+        display: inline-flex;
+    }
+
+    .page-title {
+        font-size: 17px;
+    }
+
+    .page-date {
+        display: none;
+    }
+
+    /*
+        Contenido
+    */
+
+    .content {
+        padding: 16px;
+    }
+
+    .screen {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /*
+        Dashboard
+    */
+
+    .hero {
+        padding: 22px;
+    }
+
+    .hero h1 {
+        font-size: clamp(25px, 7vw, 36px);
+    }
+
+    /*
+        Tarjetas
+    */
+
+    .cards,
+    .dashboard-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .content {
+        padding: 13px;
+    }
+
+    .topbar {
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+
+    .hero {
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .hero h1 {
+        font-size: 27px;
+        line-height: 1.08;
+    }
+
+    .hero p {
+        font-size: 13px;
+    }
+
+    /*
+        Navegación
+    */
+
+    .nav button {
+        min-height: 46px;
+    }
+
+    /*
+        Logo
+    */
+
+    .logo {
+        padding: 18px 16px;
+    }
+
+    /*
+        Modales
+    */
+
+    .modal,
+    .pro-modal,
+    .modal-content {
+        width: calc(100vw - 26px);
+        max-width: none;
+    }
+
+    /*
+        Formularios
+    */
+
+    input,
+    textarea,
+    select,
+    button {
+        max-width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .content {
+        padding: 10px;
+    }
+
+    .topbar {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .page-title {
+        font-size: 15px;
+    }
+
+    .hero {
+        padding: 15px;
+    }
+
+    .hero h1 {
+        font-size: 24px;
+    }
+
+    .sidebar {
+        width: 88vw;
+    }
+
+}
+
+
+/* =========================================================
+   LANDSCAPE MOBILE
+   ========================================================= */
+
+@media (max-width: 800px) and (orientation: landscape) {
+
+    .sidebar {
+        width: min(300px, 72vw);
+    }
+
+    .topbar {
+        min-height: 56px;
+    }
+
+    .content {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   TOUCH DEVICES
+   ========================================================= */
+
+@media (hover: none) and (pointer: coarse) {
+
+    button,
+    a,
+    .nav button,
+    .message-action {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+        touch-action: manipulation;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sidebar {
+        transition: none;
+    }
+
+      }
