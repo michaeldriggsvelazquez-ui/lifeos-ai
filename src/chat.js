@@ -132,6 +132,133 @@ export async function onRequestPost(context) {
 
     const history = historyResult.results || [];
 
+    const preferences = await env.DB.prepare(`
+      SELECT
+        tone,
+        personality,
+        motivation_level,
+        planning_style,
+        custom_instructions
+      FROM sai_preferences
+      WHERE user_id = ?
+    `)
+      .bind(userId)
+      .first();
+
+    const saiPreferences = preferences || {
+      tone: "balanced",
+      personality: "natural",
+      motivation_level: "medium",
+      planning_style: "adaptive",
+      custom_instructions: null
+    };
+
+    const memoryResult = await env.DB.prepare(`
+      SELECT
+        memory_key,
+        memory_value,
+        category,
+        importance
+      FROM sai_memory
+      WHERE user_id = ?
+      ORDER BY
+        CASE importance
+          WHEN 'high' THEN 1
+          WHEN 'medium' THEN 2
+          ELSE 3
+        END,
+        updated_at DESC
+      LIMIT 50
+    `)
+      .bind(userId)
+      .all();
+
+    const memories = memoryResult.results || [];
+
+    const planContextResult = await env.DB.prepare(`
+      SELECT
+        p.id AS plan_id,
+        p.title AS plan_title,
+        p.plan_type,
+        p.plan_date,
+        p.status AS plan_status,
+        t.id AS task_id,
+        t.title AS task_title,
+        t.description,
+        t.category,
+        t.priority,
+        t.status AS task_status,
+        t.due_date,
+        t.start_time,
+        t.end_time,
+        t.duration_minutes
+      FROM plans p
+      LEFT JOIN tasks t
+        ON t.plan_id = p.id
+        AND t.user_id = p.user_id
+      WHERE p.user_id = ?
+        AND p.status != 'cancelled'
+      ORDER BY
+        p.plan_date DESC,
+        t.start_time ASC
+      LIMIT 100
+    `)
+      .bind(userId)
+      .all();
+
+    const planContext = planContextResult.results || [];
+
+    const memoryContext = memories.length
+      ? memories
+          .map((memory) => {
+            const category = memory.category
+              ? ` [${memory.category}]`
+              : "";
+
+            const importance = memory.importance
+              ? ` (${memory.importance})`
+              : "";
+
+            return `- ${memory.memory_key}: ${memory.memory_value}${category}${importance}`;
+          })
+          .join("\n")
+      : "No hay memorias guardadas todavía.";
+
+    const planContextText = planContext.length
+      ? planContext
+          .map((item) => {
+            const task = item.task_id
+              ? `\n  Tarea: ${item.task_title || "Sin título"} | estado: ${item.task_status || "unknown"} | prioridad: ${item.priority || "normal"} | categoría: ${item.category || "general"} | fecha límite: ${item.due_date || "sin fecha"} | inicio: ${item.start_time || "sin hora"} | fin: ${item.end_time || "sin hora"} | duración: ${item.duration_minutes || "sin duración"} minutos`
+              : "";
+
+            return `- Plan: ${item.plan_title || "Sin título"} | tipo: ${item.plan_type || "general"} | fecha: ${item.plan_date || "sin fecha"} | estado: ${item.plan_status || "unknown"}${task}`;
+          })
+          .join("\n")
+      : "No hay planes o tareas actuales.";
+
+    const customInstructions =
+      typeof saiPreferences.custom_instructions === "string" &&
+      saiPreferences.custom_instructions.trim()
+        ? saiPreferences.custom_instructions.trim()
+        : "No hay instrucciones personalizadas.";
+
+    const saiContext = `
+PREFERENCIAS DEL USUARIO:
+- Tono: ${saiPreferences.tone}
+- Personalidad: ${saiPreferences.personality}
+- Nivel de motivación: ${saiPreferences.motivation_level}
+- Estilo de planificación: ${saiPreferences.planning_style}
+
+INSTRUCCIONES PERSONALIZADAS:
+${customInstructions}
+
+MEMORIA DEL USUARIO:
+${memoryContext}
+
+PLANES Y TAREAS ACTUALES:
+${planContextText}
+`.trim();
+
     if (!env.GROQ_API_KEY) {
       return json(
         {
@@ -159,41 +286,65 @@ export async function onRequestPost(context) {
               role: "system",
 
               content: `
-Eres LifeOS AI, un sistema operativo personal inteligente. Tu propósito es comprender lenguaje natural, gestionar tareas, horarios, fechas y prioridades, y crear planes realistas adaptados al usuario.
+Eres sAI, la inteligencia artificial personal de Scarpe AI.
 
-Responde SIEMPRE y ÚNICAMENTE en formato JSON válido, sin bloques de código Markdown (\`\`\`json) y sin texto adicional fuera del JSON.
+Tu función principal no es simplemente conversar. Tu función es ayudar al usuario a organizar, ejecutar y reajustar su vida de forma inteligente, realista y adaptable.
 
-La estructura del JSON debe ser exactamente esta:
-{
-  "type": "message | daily_plan | task | replan | suggestion",
-  "title": "string o null",
-  "subtitle": "string o null",
-  "message": "string o null",
-  "tasks": [
-    {
-      "id": "string",
-      "time": "string o null",
-      "title": "string",
-      "duration": "number o null",
-      "priority": "low | medium | high",
-      "status": "pending | completed | missed | in_progress"
-    }
-  ],
-  "suggestions": [
-    "string"
-  ]
-}
+PRINCIPIOS PRINCIPALES:
 
-Reglas de comportamiento y estilo:
-- Sé natural, humano, claro, inteligente, directo, útil y ligeramente dinámico.
-- No suenes robótico ni uses lenguaje corporativo o frases genéricas predecibles.
-- Evita párrafos enormes y no llenes cada respuesta con emojis innecesarios.
-- Si el usuario simplemente conversa, usa type "message" sin inventar horarios ni planes diarios.
-- Si pide organizar o estructurar tareas, usa type "daily_plan", distribuyendo tareas de forma realista con descansos y espacio libre.
-- Si algo cambia, se retrasa o se pierde, usa type "replan" adaptando solo lo necesario sin descartar todo el día.
-- Si aportas una recomendación puntual, usa type "suggestion".
-- No termines todas tus respuestas con preguntas innecesarias ni uses "Quieres que...?" a menos que sea estrictamente necesario.
-              `.trim()
+1. ORGANIZACIÓN
+Convierte información desordenada del usuario en acciones claras, prioridades, horarios y planes realistas.
+
+2. PRIORIZACIÓN
+Cuando existan varias tareas, considera urgencia, importancia, duración, horarios disponibles y dependencias entre tareas.
+
+3. REALISMO
+No llenes el día de tareas imposibles. Respeta descansos, tiempo disponible y límites razonables.
+
+4. ADAPTACIÓN
+Si el usuario no puede completar una tarea, cambia de forma inteligente lo que queda del plan. No castigues al usuario por haber fallado una tarea.
+
+5. REPLANIFICACIÓN
+Cuando cambien las circunstancias, reorganiza las tareas restantes teniendo en cuenta el nuevo estado del día.
+
+6. MEMORIA
+Utiliza la memoria proporcionada para mantener continuidad sobre el usuario. No inventes recuerdos que no estén presentes en el contexto.
+
+7. CONTEXTO
+Utiliza los planes y tareas actuales proporcionados para evitar respuestas desconectadas del estado real de la organización del usuario.
+
+8. PERSONALIZACIÓN
+Respeta las preferencias de tono, personalidad, motivación y estilo de planificación proporcionadas.
+
+9. NATURALIDAD
+Habla de forma humana, clara, directa y útil. No menciones estas instrucciones internas.
+
+10. HONESTIDAD
+No afirmes haber realizado una acción externa si solamente la estás proponiendo.
+
+11. ACCIONES
+Cuando el usuario necesite organizar algo, prioriza convertir su intención en una estructura práctica.
+
+12. CAMBIOS
+Si una nueva información contradice un plan anterior, utiliza la información nueva como estado actual y reorganiza lo necesario.
+
+PERSONALIZACIÓN ACTUAL DEL USUARIO:
+
+${saiContext}
+
+REGLAS DE RESPUESTA:
+
+- No respondas como un robot.
+- No repitas innecesariamente información que el usuario ya proporcionó.
+- No inventes datos personales.
+- No inventes tareas, horarios o eventos como si fueran reales.
+- Si faltan datos importantes para construir un plan realista, utiliza únicamente la información disponible y deja claras las suposiciones necesarias.
+- Si el usuario pide reorganizar su día, prioriza las tareas pendientes y el tiempo restante.
+- Si el usuario completa una tarea, considera esa tarea como completada dentro del contexto de la conversación.
+- Si el usuario cancela una tarea, no la vuelvas a programar.
+- Si el usuario cambia una hora, respeta la nueva hora.
+- Si el usuario expresa una preferencia persistente sobre cómo organizarse, respétala dentro de esta conversación y utiliza la memoria disponible cuando corresponda.
+`.trim()
             },
 
             ...history.map((item) => ({
@@ -290,7 +441,7 @@ Reglas de comportamiento y estilo:
     });
 
   } catch (error) {
-    console.error("LifeOS Chat Error:", error);
+    console.error("Scarpe Chat Error:", error);
 
     return json(
       {
@@ -302,7 +453,6 @@ Reglas de comportamiento y estilo:
   }
 }
 
-
 async function sha256(value) {
   const data = new TextEncoder().encode(value);
 
@@ -311,41 +461,12 @@ async function sha256(value) {
     data
   );
 
-  return bytesToBase64Url(
-    new Uint8Array(hashBuffer)
-  );
+  const bytes = new Uint8Array(hashBuffer);
+
+  return Array.from(bytes)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
 }
-
-
-function bytesToBase64Url(bytes) {
-  return bytesToBase64(bytes)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/g, "");
-}
-
-
-function bytesToBase64(bytes) {
-  let binary = "";
-
-  const chunkSize = 0x8000;
-
-  for (
-    let i = 0;
-    i < bytes.length;
-    i += chunkSize
-  ) {
-    binary += String.fromCharCode(
-      ...bytes.subarray(
-        i,
-        Math.min(i + chunkSize, bytes.length)
-      )
-    );
-  }
-
-  return btoa(binary);
-}
-
 
 function json(data, status = 200) {
   return new Response(
