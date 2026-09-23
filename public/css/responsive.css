@@ -63,13 +63,38 @@
         transition:
             transform 0.28s ease,
             box-shadow 0.28s ease;
+
+        /*
+            Liquid Glass
+        */
+
+        background:
+            rgba(9, 12, 17, 0.78);
+
+        border-right:
+            1px solid var(
+                --glass-border,
+                rgba(255, 255, 255, 0.12)
+            );
+
+        box-shadow:
+            20px 0 60px rgba(0, 0, 0, 0.28);
+
+        backdrop-filter:
+            blur(var(--glass-blur-strong, 32px))
+            saturate(145%);
+
+        -webkit-backdrop-filter:
+            blur(var(--glass-blur-strong, 32px))
+            saturate(145%);
     }
 
     .sidebar.open {
         transform: translateX(0);
 
         box-shadow:
-            20px 0 60px rgba(0, 0, 0, 0.38);
+            20px 0 60px rgba(0, 0, 0, 0.38),
+            inset -1px 0 0 rgba(255, 255, 255, 0.05);
     }
 
     /*
@@ -87,7 +112,8 @@
         width: 100vw;
         height: 100vh;
 
-        background: rgba(0, 0, 0, 0.38);
+        background:
+            rgba(0, 0, 0, 0.38);
 
         pointer-events: none;
     }
@@ -104,6 +130,23 @@
     .topbar {
         min-height: 62px;
         padding: 12px 16px;
+
+        background:
+            rgba(7, 9, 13, 0.62);
+
+        border-bottom:
+            1px solid var(
+                --glass-border-soft,
+                rgba(255, 255, 255, 0.07)
+            );
+
+        backdrop-filter:
+            blur(18px)
+            saturate(140%);
+
+        -webkit-backdrop-filter:
+            blur(18px)
+            saturate(140%);
     }
 
     .mobile-menu {
@@ -151,6 +194,15 @@
     .dashboard-grid,
     .stats-grid {
         grid-template-columns: 1fr;
+    }
+
+    /*
+        Chat
+    */
+
+    .chat-layout {
+        width: 100%;
+        max-width: 100%;
     }
 
 }
@@ -223,6 +275,19 @@
         max-width: 100%;
     }
 
+    /*
+        Chat
+    */
+
+    .chat-layout {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .bubble {
+        max-width: 94%;
+    }
+
 }
 
 
@@ -257,6 +322,19 @@
         width: 88vw;
     }
 
+    /*
+        Chat
+    */
+
+    .chat {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .chat-input {
+        border-radius: 15px;
+    }
+
 }
 
 
@@ -277,6 +355,10 @@
     .content {
         padding-top: 12px;
         padding-bottom: 12px;
+    }
+
+    .chat-layout {
+        min-height: 0;
     }
 
 }
@@ -312,4 +394,4 @@
         transition: none;
     }
 
-      }
+                }
