@@ -168,6 +168,15 @@ export async function onRequestPost(context) {
       custom_instructions: null
     };
 
+    /*
+     * =========================================================
+     * USER MEMORY
+     * =========================================================
+     *
+     * Limitamos las memorias a las 15 más relevantes según
+     * importancia y fecha de actualización.
+     */
+
     const memoryResult = await env.DB.prepare(`
       SELECT
         memory_key,
@@ -189,6 +198,14 @@ export async function onRequestPost(context) {
       .all();
 
     const memories = memoryResult.results || [];
+
+    /*
+     * =========================================================
+     * PLAN AND TASK CONTEXT
+     * =========================================================
+     *
+     * Limitamos el contexto enviado al modelo a 30 registros.
+     */
 
     const planContextResult = await env.DB.prepare(`
       SELECT
@@ -295,6 +312,17 @@ ${planContextText}
 
         body: JSON.stringify({
           model: "openai/gpt-oss-120b",
+
+          /*
+           * =====================================================
+           * TOKEN LIMIT
+           * =====================================================
+           *
+           * Evita que una respuesta excesivamente larga
+           * consuma innecesariamente el límite de Groq.
+           */
+
+          max_completion_tokens: 1000,
 
           messages: [
             {
@@ -498,4 +526,4 @@ function json(data, status = 200) {
       }
     }
   );
-      }
+  }
