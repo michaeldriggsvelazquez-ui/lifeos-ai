@@ -120,12 +120,27 @@ export async function onRequestPost(context) {
       )
       .run();
 
+    /*
+     * =========================================================
+     * CONVERSATION HISTORY
+     * =========================================================
+     *
+     * Solo enviamos los 10 mensajes más recientes a Groq.
+     * Primero obtenemos los últimos mensajes y después los
+     * volvemos a ordenar cronológicamente para que el modelo
+     * los reciba en el orden correcto.
+     */
+
     const historyResult = await env.DB.prepare(`
       SELECT role, content
-      FROM messages
-      WHERE conversation_id = ?
+      FROM (
+        SELECT role, content, created_at
+        FROM messages
+        WHERE conversation_id = ?
+        ORDER BY created_at DESC
+        LIMIT 10
+      )
       ORDER BY created_at ASC
-      LIMIT 30
     `)
       .bind(conversationId)
       .all();
@@ -383,9 +398,14 @@ REGLAS DE RESPUESTA:
     }
 
     // Limpieza por si el modelo incluye bloques de código Markdown a pesar de las instrucciones
-    rawAiMessage = rawAiMessage.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/, "").trim();
+    rawAiMessage = rawAiMessage
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/\s*```$/, "")
+      .trim();
 
     let parsedResponse;
+
     try {
       parsedResponse = JSON.parse(rawAiMessage);
     } catch (e) {
@@ -478,4 +498,4 @@ function json(data, status = 200) {
       }
     }
   );
-}
+      }
