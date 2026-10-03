@@ -183,7 +183,7 @@ export async function onRequestPost(context) {
           ELSE 3
         END,
         updated_at DESC
-      LIMIT 50
+      LIMIT 15
     `)
       .bind(userId)
       .all();
