@@ -253,10 +253,25 @@ export default {
           return json({ error: "Email y contraseña requeridos" }, 400, setCorsHeaders(request));
         }
 
-        const user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
+        const user = await env.DB.prepare(
+          "SELECT * FROM users WHERE email = ?"
+        ).bind(email).first();
+
         if (!user) {
-          return json({ error: "Credenciales inválidas" }, 401, setCorsHeaders(request));
+          return json({
+            error: "DEBUG",
+            user_found: false
+          }, 401, setCorsHeaders(request));
         }
+
+        return json({
+          error: "DEBUG",
+          user_found: true,
+          has_salt: !!user.password_salt,
+          salt_length: user.password_salt ? user.password_salt.length : 0,
+          has_hash: !!user.password_hash,
+          hash_length: user.password_hash ? user.password_hash.length : 0
+        }, 401, setCorsHeaders(request));
 
         const testHash = await hashPassword(password, user.password_salt);
         if (testHash !== user.password_hash) {
@@ -1057,3 +1072,21 @@ export default {
     }
   }
 };
+
+Qué cambia exactamente
+
+Solo el login. Todo lo demás es idéntico al código que me enviaste.
+
+Después de subirlo a GitHub, intenta iniciar sesión. La respuesta nos dará algo como:
+
+user_found: true
+has_salt: true
+salt_length: 32
+has_hash: true
+hash_length: 64
+
+o nos mostrará cuál de esas piezas está fallando.
+
+No dejes esta versión como definitiva, porque mientras esté puesta, el login deliberadamente se detiene antes de comprobar la contraseña y crear la sesión. Es una radiografía temporal, no una operación a corazón abierto con el paciente mandado a casa.
+
+Cuando tengamos esos cinco valores, hacemos la corrección real y eliminamos el diagnóstico.
