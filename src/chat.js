@@ -216,7 +216,7 @@ export async function onRequestPost(context) {
       ORDER BY
         p.plan_date DESC,
         t.start_time ASC
-      LIMIT 100
+      LIMIT 30
     `)
       .bind(userId)
       .all();
