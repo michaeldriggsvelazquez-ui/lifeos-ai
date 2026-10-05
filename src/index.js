@@ -13,6 +13,11 @@ const ROLE_HIERARCHY = {
 
 import { onRequestPost as chat } from "./chat.js";
 
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
 async function parseJsonBody(request) {
   try {
     return await request.json();
@@ -32,31 +37,49 @@ function json(data, status = 200, headers = {}) {
 }
 
 function isNonEmptyString(value, maxLength = 255) {
-  return typeof value === "string" &&
+  return (
+    typeof value === "string" &&
     value.trim().length > 0 &&
-    value.trim().length <= maxLength;
+    value.trim().length <= maxLength
+  );
 }
 
 function isValidEmail(value) {
   if (!isNonEmptyString(value, 255)) return false;
-
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
 function isValidIsoDate(value) {
-  if (value === null || value === undefined || value === "") return true;
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+    return true;
+  }
+
   if (typeof value !== "string") return false;
+
   return !Number.isNaN(Date.parse(value));
 }
 
 function isValidTime(value) {
-  if (value === null || value === undefined || value === "") return true;
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+    return true;
+  }
+
   if (typeof value !== "string") return false;
+
   return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
 }
 
 function getCookie(request, name) {
   const cookieHeader = request.headers.get("Cookie");
+
   if (!cookieHeader) return null;
 
   const match = cookieHeader.match(
@@ -102,10 +125,11 @@ async function hashPassword(password, salt) {
 async function sha256(message) {
   const encoder = new TextEncoder();
   const data = encoder.encode(message);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
 
-  return hashArray
+  const hashBuffer =
+    await crypto.subtle.digest("SHA-256", data);
+
+  return Array.from(new Uint8Array(hashBuffer))
     .map(b => b.toString(16).padStart(2, "0"))
     .join("");
 }
@@ -124,25 +148,29 @@ function generateSalt() {
 }
 
 async function getAuthenticatedUser(request, env) {
-  const sessionToken = getCookie(request, "lifeos_session");
+  const sessionToken =
+    getCookie(request, "lifeos_session");
 
   if (!sessionToken) return null;
 
-  const sessionId = await sha256(sessionToken);
+  const sessionId =
+    await sha256(sessionToken);
 
-  const session = await env.DB.prepare(
-    "SELECT * FROM sessions WHERE id = ? AND expires_at > datetime('now')"
-  )
-    .bind(sessionId)
-    .first();
+  const session =
+    await env.DB.prepare(
+      "SELECT * FROM sessions WHERE id = ? AND expires_at > datetime('now')"
+    )
+      .bind(sessionId)
+      .first();
 
   if (!session) return null;
 
-  const user = await env.DB.prepare(
-    "SELECT id, email, role, created_at, updated_at FROM users WHERE id = ?"
-  )
-    .bind(session.user_id)
-    .first();
+  const user =
+    await env.DB.prepare(
+      "SELECT id, email, role, created_at, updated_at FROM users WHERE id = ?"
+    )
+      .bind(session.user_id)
+      .first();
 
   return user || null;
 }
@@ -173,29 +201,50 @@ async function logAdminAction(
         adminUserId,
         action,
         targetUserId || null,
-        details ? JSON.stringify(details) : null,
+        details
+          ? JSON.stringify(details)
+          : null,
         result || "SUCCESS"
       )
       .run();
   } catch (err) {
-    console.error("Audit log error:", err);
+    console.error(
+      "Audit log error:",
+      err
+    );
   }
 }
 
-function setCorsHeaders(request, headers = {}) {
-  const origin = request.headers.get("Origin");
-  const url = new URL(request.url);
+function setCorsHeaders(
+  request,
+  headers = {}
+) {
+  const origin =
+    request.headers.get("Origin");
 
-  const allowedOrigins = new Set([url.origin]);
+  const url =
+    new URL(request.url);
+
+  const allowedOrigins =
+    new Set([url.origin]);
 
   const corsHeaders = {
-    "Access-Control-Allow-Credentials": "true",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization"
+    "Access-Control-Allow-Credentials":
+      "true",
+    "Access-Control-Allow-Methods":
+      "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers":
+      "Content-Type, Authorization"
   };
 
-  if (origin && allowedOrigins.has(origin)) {
-    corsHeaders["Access-Control-Allow-Origin"] = origin;
+  if (
+    origin &&
+    allowedOrigins.has(origin)
+  ) {
+    corsHeaders[
+      "Access-Control-Allow-Origin"
+    ] = origin;
+
     corsHeaders["Vary"] = "Origin";
   }
 
@@ -205,54 +254,68 @@ function setCorsHeaders(request, headers = {}) {
   };
 }
 
+
+/* =========================================================
+   WORKER
+   ========================================================= */
+
 export default {
   async fetch(request, env, ctx) {
-    const url = new URL(request.url);
+    const url =
+      new URL(request.url);
 
     if (request.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
-        headers: setCorsHeaders(request)
+        headers:
+          setCorsHeaders(request)
       });
     }
 
     try {
 
-      /*
-       * =====================================================
-       * CHAT
-       * =====================================================
-       */
+      /* =====================================================
+         CHAT
+         ===================================================== */
 
       if (
         url.pathname === "/api/chat" &&
         request.method === "POST"
       ) {
-        const res = await chat({ request, env });
+        const res =
+          await chat({
+            request,
+            env
+          });
 
-        const newHeaders = setCorsHeaders(
-          request,
-          Object.fromEntries(res.headers.entries())
+        const headers =
+          setCorsHeaders(
+            request,
+            Object.fromEntries(
+              res.headers.entries()
+            )
+          );
+
+        return new Response(
+          res.body,
+          {
+            status: res.status,
+            headers
+          }
         );
-
-        return new Response(res.body, {
-          status: res.status,
-          headers: newHeaders
-        });
       }
 
 
-      /*
-       * =====================================================
-       * REGISTER
-       * =====================================================
-       */
+      /* =====================================================
+         REGISTER
+         ===================================================== */
 
       if (
         url.pathname === "/api/register" &&
         request.method === "POST"
       ) {
-        const body = await parseJsonBody(request);
+        const body =
+          await parseJsonBody(request);
 
         if (!body) {
           return json(
@@ -263,10 +326,13 @@ export default {
         }
 
         const email = body.email
-          ? body.email.trim().toLowerCase()
+          ? body.email
+              .trim()
+              .toLowerCase()
           : "";
 
-        const password = body.password;
+        const password =
+          body.password;
 
         if (
           !isValidEmail(email) ||
@@ -283,32 +349,54 @@ export default {
           );
         }
 
-        const existing = await env.DB.prepare(
-          "SELECT id FROM users WHERE email = ?"
-        )
-          .bind(email)
-          .first();
+        const existing =
+          await env.DB.prepare(
+            "SELECT id FROM users WHERE email = ?"
+          )
+            .bind(email)
+            .first();
 
         if (existing) {
           return json(
-            { error: "El email ya está registrado" },
+            {
+              error:
+                "El email ya está registrado"
+            },
             400,
             setCorsHeaders(request)
           );
         }
 
-        const userId = generateUuid();
-        const salt = generateSalt();
-        const passwordHash = await hashPassword(password, salt);
+        const userId =
+          generateUuid();
 
-        const subscriptionId = generateUuid();
+        const salt =
+          generateSalt();
 
-        const sessionToken = generateUuid();
-        const sessionId = await sha256(sessionToken);
+        const passwordHash =
+          await hashPassword(
+            password,
+            salt
+          );
 
-        const sessionExpiresAt = new Date(
-          Date.now() + 30 * 24 * 60 * 60 * 1000
-        ).toISOString();
+        const subscriptionId =
+          generateUuid();
+
+        const sessionToken =
+          generateUuid();
+
+        const sessionId =
+          await sha256(sessionToken);
+
+        const sessionExpiresAt =
+          new Date(
+            Date.now() +
+              30 *
+              24 *
+              60 *
+              60 *
+              1000
+          ).toISOString();
 
         await env.DB.batch([
           env.DB.prepare(`
@@ -405,24 +493,27 @@ export default {
             }
           },
           200,
-          setCorsHeaders(request, {
-            "Set-Cookie": cookieString
-          })
+          setCorsHeaders(
+            request,
+            {
+              "Set-Cookie":
+                cookieString
+            }
+          )
         );
       }
 
 
-      /*
-       * =====================================================
-       * LOGIN
-       * =====================================================
-       */
+      /* =====================================================
+         LOGIN
+         ===================================================== */
 
       if (
         url.pathname === "/api/login" &&
         request.method === "POST"
       ) {
-        const body = await parseJsonBody(request);
+        const body =
+          await parseJsonBody(request);
 
         if (!body) {
           return json(
@@ -433,52 +524,78 @@ export default {
         }
 
         const email = body.email
-          ? body.email.trim().toLowerCase()
+          ? body.email
+              .trim()
+              .toLowerCase()
           : "";
 
-        const password = body.password;
+        const password =
+          body.password;
 
         if (!email || !password) {
           return json(
-            { error: "Email y contraseña requeridos" },
+            {
+              error:
+                "Email y contraseña requeridos"
+            },
             400,
             setCorsHeaders(request)
           );
         }
 
-        const user = await env.DB.prepare(
-          "SELECT * FROM users WHERE email = ?"
-        )
-          .bind(email)
-          .first();
+        const user =
+          await env.DB.prepare(
+            "SELECT * FROM users WHERE email = ?"
+          )
+            .bind(email)
+            .first();
 
         if (!user) {
           return json(
-            { error: "Credenciales inválidas" },
+            {
+              error:
+                "Credenciales inválidas"
+            },
             401,
             setCorsHeaders(request)
           );
         }
 
-        const testHash = await hashPassword(
-          password,
-          user.password_salt
-        );
+        const testHash =
+          await hashPassword(
+            password,
+            user.password_salt
+          );
 
-        if (testHash !== user.password_hash) {
+        if (
+          testHash !==
+          user.password_hash
+        ) {
           return json(
-            { error: "Credenciales inválidas" },
+            {
+              error:
+                "Credenciales inválidas"
+            },
             401,
             setCorsHeaders(request)
           );
         }
 
-        const sessionToken = generateUuid();
-        const sessionId = await sha256(sessionToken);
+        const sessionToken =
+          generateUuid();
 
-        const sessionExpiresAt = new Date(
-          Date.now() + 30 * 24 * 60 * 60 * 1000
-        ).toISOString();
+        const sessionId =
+          await sha256(sessionToken);
+
+        const sessionExpiresAt =
+          new Date(
+            Date.now() +
+              30 *
+              24 *
+              60 *
+              60 *
+              1000
+          ).toISOString();
 
         await env.DB.prepare(`
           INSERT INTO sessions (
@@ -519,30 +636,36 @@ export default {
             }
           },
           200,
-          setCorsHeaders(request, {
-            "Set-Cookie": cookieString
-          })
+          setCorsHeaders(
+            request,
+            {
+              "Set-Cookie":
+                cookieString
+            }
+          )
         );
       }
 
 
-      /*
-       * =====================================================
-       * LOGOUT
-       * =====================================================
-       */
+      /* =====================================================
+         LOGOUT
+         ===================================================== */
 
       if (
         url.pathname === "/api/logout" &&
         request.method === "POST"
       ) {
-        const sessionToken = getCookie(
-          request,
-          "lifeos_session"
-        );
+        const sessionToken =
+          getCookie(
+            request,
+            "lifeos_session"
+          );
 
         if (sessionToken) {
-          const sessionId = await sha256(sessionToken);
+          const sessionId =
+            await sha256(
+              sessionToken
+            );
 
           await env.DB.prepare(
             "DELETE FROM sessions WHERE id = ?"
@@ -562,44 +685,37 @@ export default {
         return json(
           { success: true },
           200,
-          setCorsHeaders(request, {
-            "Set-Cookie": cookieString
-          })
+          setCorsHeaders(
+            request,
+            {
+              "Set-Cookie":
+                cookieString
+            }
+          )
         );
       }
 
 
-      /*
-       * =====================================================
-       * CURRENT USER
-       * =====================================================
-       */
+      /* =====================================================
+         CURRENT USER
+         ===================================================== */
 
       if (
         url.pathname === "/api/me" &&
         request.method === "GET"
       ) {
-        const sessionToken = getCookie(
-          request,
-          "lifeos_session"
-        );
-
-        if (!sessionToken) {
-          return json(
-            { error: "No autorizado" },
-            401,
-            setCorsHeaders(request)
+        const user =
+          await getAuthenticatedUser(
+            request,
+            env
           );
-        }
-
-        const user = await getAuthenticatedUser(
-          request,
-          env
-        );
 
         if (!user) {
           return json(
-            { error: "No autorizado" },
+            {
+              error:
+                "No autorizado"
+            },
             401,
             setCorsHeaders(request)
           );
@@ -613,20 +729,19 @@ export default {
       }
 
 
-      /*
-       * =====================================================
-       * ADMIN CHECK
-       * =====================================================
-       */
+      /* =====================================================
+         ADMIN CHECK
+         ===================================================== */
 
       if (
         url.pathname === "/api/admin/check" &&
         request.method === "GET"
       ) {
-        const user = await getAuthenticatedUser(
-          request,
-          env
-        );
+        const user =
+          await getAuthenticatedUser(
+            request,
+            env
+          );
 
         if (
           !user ||
@@ -634,7 +749,10 @@ export default {
             ROLE_HIERARCHY["ADMIN"]
         ) {
           return json(
-            { error: "Acceso denegado" },
+            {
+              error:
+                "Acceso denegado"
+            },
             403,
             setCorsHeaders(request)
           );
@@ -651,20 +769,19 @@ export default {
       }
 
 
-      /*
-       * =====================================================
-       * ADMIN INFO
-       * =====================================================
-       */
+      /* =====================================================
+         ADMIN INFO
+         ===================================================== */
 
       if (
         url.pathname === "/api/admin/info" &&
         request.method === "GET"
       ) {
-        const user = await getAuthenticatedUser(
-          request,
-          env
-        );
+        const user =
+          await getAuthenticatedUser(
+            request,
+            env
+          );
 
         if (
           !user ||
@@ -672,28 +789,35 @@ export default {
             ROLE_HIERARCHY["ADMIN"]
         ) {
           return json(
-            { error: "Acceso denegado" },
+            {
+              error:
+                "Acceso denegado"
+            },
             403,
             setCorsHeaders(request)
           );
         }
 
-        const userCount = await env.DB.prepare(
-          "SELECT COUNT(*) as count FROM users"
-        ).first();
+        const userCount =
+          await env.DB.prepare(
+            "SELECT COUNT(*) as count FROM users"
+          ).first();
 
-        const subCount = await env.DB.prepare(
-          "SELECT COUNT(*) as count FROM subscriptions"
-        ).first();
+        const subCount =
+          await env.DB.prepare(
+            "SELECT COUNT(*) as count FROM subscriptions"
+          ).first();
 
         return json(
           {
-            users_count: userCount
-              ? userCount.count
-              : 0,
-            subscriptions_count: subCount
-              ? subCount.count
-              : 0
+            users_count:
+              userCount
+                ? userCount.count
+                : 0,
+            subscriptions_count:
+              subCount
+                ? subCount.count
+                : 0
           },
           200,
           setCorsHeaders(request)
@@ -701,20 +825,19 @@ export default {
       }
 
 
-      /*
-       * =====================================================
-       * ADMIN USERS
-       * =====================================================
-       */
+      /* =====================================================
+         ADMIN USERS
+         ===================================================== */
 
       if (
         url.pathname === "/api/admin/users" &&
         request.method === "GET"
       ) {
-        const user = await getAuthenticatedUser(
-          request,
-          env
-        );
+        const user =
+          await getAuthenticatedUser(
+            request,
+            env
+          );
 
         if (
           !user ||
@@ -722,15 +845,25 @@ export default {
             ROLE_HIERARCHY["ADMIN"]
         ) {
           return json(
-            { error: "Acceso denegado" },
+            {
+              error:
+                "Acceso denegado"
+            },
             403,
             setCorsHeaders(request)
           );
         }
 
-        const { results } = await env.DB.prepare(
-          "SELECT id, email, role, created_at, updated_at FROM users"
-        ).all();
+        const { results } =
+          await env.DB.prepare(`
+            SELECT
+              id,
+              email,
+              role,
+              created_at,
+              updated_at
+            FROM users
+          `).all();
 
         return json(
           { users: results },
@@ -740,11 +873,9 @@ export default {
       }
 
 
-      /*
-       * =====================================================
-       * ADMIN USER ROLE
-       * =====================================================
-       */
+      /* =====================================================
+         ADMIN USER ROLE
+         ===================================================== */
 
       const adminRoleMatch =
         url.pathname.match(
@@ -755,10 +886,11 @@ export default {
         adminRoleMatch &&
         request.method === "PUT"
       ) {
-        const user = await getAuthenticatedUser(
-          request,
-          env
-        );
+        const user =
+          await getAuthenticatedUser(
+            request,
+            env
+          );
 
         if (
           !user ||
@@ -788,17 +920,23 @@ export default {
           );
         }
 
-        const newRole = body.role;
+        const newRole =
+          body.role;
 
         if (!ROLE_HIERARCHY[newRole]) {
           return json(
-            { error: "Rol inválido" },
+            {
+              error:
+                "Rol inválido"
+            },
             400,
             setCorsHeaders(request)
           );
         }
 
-        if (newRole === "CEO ADMIN") {
+        if (
+          newRole === "CEO ADMIN"
+        ) {
           return json(
             {
               error:
@@ -818,13 +956,19 @@ export default {
 
         if (!targetUser) {
           return json(
-            { error: "Usuario no encontrado" },
+            {
+              error:
+                "Usuario no encontrado"
+            },
             404,
             setCorsHeaders(request)
           );
         }
 
-        if (targetUser.role === "CEO ADMIN") {
+        if (
+          targetUser.role ===
+          "CEO ADMIN"
+        ) {
           return json(
             {
               error:
@@ -854,8 +998,10 @@ export default {
           "UPDATE_USER_ROLE",
           targetUserId,
           {
-            old_role: targetUser.role,
-            new_role: newRole
+            old_role:
+              targetUser.role,
+            new_role:
+              newRole
           },
           "SUCCESS"
         );
@@ -868,20 +1014,19 @@ export default {
       }
 
 
-      /*
-       * =====================================================
-       * ADMIN SUBSCRIPTIONS
-       * =====================================================
-       */
+      /* =====================================================
+         ADMIN SUBSCRIPTIONS
+         ===================================================== */
 
       if (
         url.pathname === "/api/admin/subscriptions" &&
         request.method === "GET"
       ) {
-        const user = await getAuthenticatedUser(
-          request,
-          env
-        );
+        const user =
+          await getAuthenticatedUser(
+            request,
+            env
+          );
 
         if (
           !user ||
@@ -889,7 +1034,10 @@ export default {
             ROLE_HIERARCHY["ADMIN"]
         ) {
           return json(
-            { error: "Acceso denegado" },
+            {
+              error:
+                "Acceso denegado"
+            },
             403,
             setCorsHeaders(request)
           );
@@ -911,27 +1059,29 @@ export default {
           `).all();
 
         return json(
-          { subscriptions: results },
+          {
+            subscriptions:
+              results
+          },
           200,
           setCorsHeaders(request)
         );
       }
 
 
-      /*
-       * =====================================================
-       * ADMIN AUDIT LOG
-       * =====================================================
-       */
+      /* =====================================================
+         ADMIN AUDIT LOG
+         ===================================================== */
 
       if (
         url.pathname === "/api/admin/audit-log" &&
         request.method === "GET"
       ) {
-        const user = await getAuthenticatedUser(
-          request,
-          env
-        );
+        const user =
+          await getAuthenticatedUser(
+            request,
+            env
+          );
 
         if (
           !user ||
@@ -939,7 +1089,10 @@ export default {
             ROLE_HIERARCHY["ADMIN"]
         ) {
           return json(
-            { error: "Acceso denegado" },
+            {
+              error:
+                "Acceso denegado"
+            },
             403,
             setCorsHeaders(request)
           );
@@ -954,31 +1107,36 @@ export default {
           `).all();
 
         return json(
-          { audit_log: results },
+          {
+            audit_log:
+              results
+          },
           200,
           setCorsHeaders(request)
         );
       }
 
 
-      /*
-       * =====================================================
-       * AI MEMORY
-       * =====================================================
-       */
+      /* =====================================================
+         AI MEMORY
+         ===================================================== */
 
       if (
         url.pathname === "/api/ai/memory" &&
         request.method === "GET"
       ) {
-        const user = await getAuthenticatedUser(
-          request,
-          env
-        );
+        const user =
+          await getAuthenticatedUser(
+            request,
+            env
+          );
 
         if (!user) {
           return json(
-            { error: "No autorizado" },
+            {
+              error:
+                "No autorizado"
+            },
             401,
             setCorsHeaders(request)
           );
@@ -989,12 +1147,16 @@ export default {
             SELECT *
             FROM sai_memory
             WHERE user_id = ?
+            ORDER BY updated_at DESC
           `)
             .bind(user.id)
             .all();
 
         return json(
-          { memory: results },
+          {
+            memory:
+              results
+          },
           200,
           setCorsHeaders(request)
         );
@@ -1005,14 +1167,18 @@ export default {
         url.pathname === "/api/ai/memory" &&
         request.method === "POST"
       ) {
-        const user = await getAuthenticatedUser(
-          request,
-          env
-        );
+        const user =
+          await getAuthenticatedUser(
+            request,
+            env
+          );
 
         if (!user) {
           return json(
-            { error: "No autorizado" },
+            {
+              error:
+                "No autorizado"
+            },
             401,
             setCorsHeaders(request)
           );
@@ -1023,7 +1189,10 @@ export default {
 
         if (!body) {
           return json(
-            { error: "JSON inválido" },
+            {
+              error:
+                "JSON inválido"
+            },
             400,
             setCorsHeaders(request)
           );
@@ -1039,34 +1208,10 @@ export default {
           body.category;
 
         const importance =
-          body.importance || "medium";
+          body.importance ||
+          "medium";
 
-        if (
-          !isNonEmptyString(memoryKey, 255) ||
-          !isNonEmptyString(memoryValue, 5000)
-        ) {
-          return json(
-            {
-              error:
-                "memory_key y memory_value son obligatorios y válidos"
-            },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        if (
-          !["low", "medium", "high"]
-            .includes(importance)
-        ) {
-          return json(
-            { error: "Importance inválida" },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        const validMemoryCategories = [
+        const validCategories = [
           "personal",
           "preference",
           "goal",
@@ -1080,10 +1225,45 @@ export default {
         ];
 
         if (
-          category !== undefined &&
-          category !== null &&
-          category !== "" &&
-          !validMemoryCategories.includes(
+          !isNonEmptyString(
+            memoryKey,
+            255
+          ) ||
+          !isNonEmptyString(
+            memoryValue,
+            5000
+          )
+        ) {
+          return json(
+            {
+              error:
+                "memory_key y memory_value son obligatorios y válidos"
+            },
+            400,
+            setCorsHeaders(request)
+          );
+        }
+
+        if (
+          ![
+            "low",
+            "medium",
+            "high"
+          ].includes(importance)
+        ) {
+          return json(
+            {
+              error:
+                "Importance inválida"
+            },
+            400,
+            setCorsHeaders(request)
+          );
+        }
+
+        if (
+          category &&
+          !validCategories.includes(
             category
           )
         ) {
@@ -1097,9 +1277,7 @@ export default {
           );
         }
 
-        const id = generateUuid();
-
-        const existingMemory =
+        const existing =
           await env.DB.prepare(`
             SELECT id
             FROM sai_memory
@@ -1112,7 +1290,7 @@ export default {
             )
             .first();
 
-        if (existingMemory) {
+        if (existing) {
           await env.DB.prepare(`
             UPDATE sai_memory
             SET
@@ -1127,7 +1305,7 @@ export default {
               memoryValue,
               category || null,
               importance,
-              existingMemory.id,
+              existing.id,
               user.id
             )
             .run();
@@ -1135,12 +1313,15 @@ export default {
           return json(
             {
               success: true,
-              id: existingMemory.id
+              id: existing.id
             },
             200,
             setCorsHeaders(request)
           );
         }
+
+        const id =
+          generateUuid();
 
         await env.DB.prepare(`
           INSERT INTO sai_memory (
@@ -1185,11 +1366,9 @@ export default {
       }
 
 
-      /*
-       * =====================================================
-       * AI MEMORY ITEM
-       * =====================================================
-       */
+      /* =====================================================
+         AI MEMORY ITEM
+         ===================================================== */
 
       const memoryItemMatch =
         url.pathname.match(
@@ -1205,7 +1384,10 @@ export default {
 
         if (!user) {
           return json(
-            { error: "No autorizado" },
+            {
+              error:
+                "No autorizado"
+            },
             401,
             setCorsHeaders(request)
           );
@@ -1214,73 +1396,83 @@ export default {
         const idOrKey =
           memoryItemMatch[1];
 
+        const existing =
+          await env.DB.prepare(`
+            SELECT *
+            FROM sai_memory
+            WHERE user_id = ?
+              AND (
+                id = ?
+                OR memory_key = ?
+              )
+          `)
+            .bind(
+              user.id,
+              idOrKey,
+              idOrKey
+            )
+            .first();
+
+        if (!existing) {
+          return json(
+            {
+              error:
+                "Memoria no encontrada"
+            },
+            404,
+            setCorsHeaders(request)
+          );
+        }
+
         if (request.method === "PUT") {
           const body =
             await parseJsonBody(request);
 
           if (!body) {
             return json(
-              { error: "JSON inválido" },
+              {
+                error:
+                  "JSON inválido"
+              },
               400,
               setCorsHeaders(request)
             );
           }
 
           const memoryValue =
-            body.memory_value;
-
-          const category =
-            body.category;
-
-          const importance =
-            body.importance;
-
-          const existing =
-            await env.DB.prepare(`
-              SELECT *
-              FROM sai_memory
-              WHERE user_id = ?
-                AND (
-                  id = ?
-                  OR memory_key = ?
-                )
-            `)
-              .bind(
-                user.id,
-                idOrKey,
-                idOrKey
-              )
-              .first();
-
-          if (!existing) {
-            return json(
-              {
-                error:
-                  "Memoria no encontrada"
-              },
-              404,
-              setCorsHeaders(request)
-            );
-          }
-
-          const newVal =
-            memoryValue !== undefined
-              ? memoryValue
+            body.memory_value !==
+            undefined
+              ? body.memory_value
               : existing.memory_value;
 
-          const newCat =
-            category !== undefined
-              ? category
+          const category =
+            body.category !==
+            undefined
+              ? body.category
               : existing.category;
 
-          const newImp =
-            importance !== undefined
-              ? importance
+          const importance =
+            body.importance !==
+            undefined
+              ? body.importance
               : existing.importance;
+
+          const validCategories = [
+            "personal",
+            "preference",
+            "goal",
+            "routine",
+            "schedule",
+            "project",
+            "health",
+            "work",
+            "study",
+            "other"
+          ];
 
           if (
             !isNonEmptyString(
-              newVal,
+              memoryValue,
               5000
             )
           ) {
@@ -1295,8 +1487,11 @@ export default {
           }
 
           if (
-            !["low", "medium", "high"]
-              .includes(newImp)
+            ![
+              "low",
+              "medium",
+              "high"
+            ].includes(importance)
           ) {
             return json(
               {
@@ -1308,25 +1503,10 @@ export default {
             );
           }
 
-          const validMemoryCategories = [
-            "personal",
-            "preference",
-            "goal",
-            "routine",
-            "schedule",
-            "project",
-            "health",
-            "work",
-            "study",
-            "other"
-          ];
-
           if (
-            newCat !== undefined &&
-            newCat !== null &&
-            newCat !== "" &&
-            !validMemoryCategories.includes(
-              newCat
+            category &&
+            !validCategories.includes(
+              category
             )
           ) {
             return json(
@@ -1350,50 +1530,24 @@ export default {
               AND user_id = ?
           `)
             .bind(
-              newVal,
-              newCat,
-              newImp,
+              memoryValue,
+              category || null,
+              importance,
               existing.id,
               user.id
             )
             .run();
 
           return json(
-            { success: true },
+            {
+              success: true
+            },
             200,
             setCorsHeaders(request)
           );
         }
 
         if (request.method === "DELETE") {
-          const existing =
-            await env.DB.prepare(`
-              SELECT *
-              FROM sai_memory
-              WHERE user_id = ?
-                AND (
-                  id = ?
-                  OR memory_key = ?
-                )
-            `)
-              .bind(
-                user.id,
-                idOrKey,
-                idOrKey
-              )
-              .first();
-
-          if (!existing) {
-            return json(
-              {
-                error:
-                  "Memoria no encontrada"
-              },
-              404,
-              setCorsHeaders(request)
-            );
-          }
-
           await env.DB.prepare(`
             DELETE FROM sai_memory
             WHERE id = ?
@@ -1406,7 +1560,9 @@ export default {
             .run();
 
           return json(
-            { success: true },
+            {
+              success: true
+            },
             200,
             setCorsHeaders(request)
           );
@@ -1414,11 +1570,9 @@ export default {
       }
 
 
-      /*
-       * =====================================================
-       * AI PREFERENCES
-       * =====================================================
-       */
+      /* =====================================================
+         AI PREFERENCES
+         ===================================================== */
 
       if (
         url.pathname === "/api/ai/preferences" &&
@@ -1432,7 +1586,10 @@ export default {
 
         if (!user) {
           return json(
-            { error: "No autorizado" },
+            {
+              error:
+                "No autorizado"
+            },
             401,
             setCorsHeaders(request)
           );
@@ -1451,14 +1608,20 @@ export default {
           prefs = {
             tone: "balanced",
             personality: "natural",
-            motivation_level: "medium",
-            planning_style: "adaptive",
-            custom_instructions: null
+            motivation_level:
+              "medium",
+            planning_style:
+              "adaptive",
+            custom_instructions:
+              null
           };
         }
 
         return json(
-          { preferences: prefs },
+          {
+            preferences:
+              prefs
+          },
           200,
           setCorsHeaders(request)
         );
@@ -1477,7 +1640,10 @@ export default {
 
         if (!user) {
           return json(
-            { error: "No autorizado" },
+            {
+              error:
+                "No autorizado"
+            },
             401,
             setCorsHeaders(request)
           );
@@ -1488,7 +1654,10 @@ export default {
 
         if (!body) {
           return json(
-            { error: "JSON inválido" },
+            {
+              error:
+                "JSON inválido"
+            },
             400,
             setCorsHeaders(request)
           );
@@ -1533,47 +1702,41 @@ export default {
         const tone =
           body.tone !== undefined
             ? body.tone
-            : (
-                prefs
-                  ? prefs.tone
-                  : "balanced"
-              );
+            : prefs
+              ? prefs.tone
+              : "balanced";
 
         const personality =
-          body.personality !== undefined
+          body.personality !==
+          undefined
             ? body.personality
-            : (
-                prefs
-                  ? prefs.personality
-                  : "natural"
-              );
+            : prefs
+              ? prefs.personality
+              : "natural";
 
-        const motivation_level =
-          body.motivation_level !== undefined
+        const motivation =
+          body.motivation_level !==
+          undefined
             ? body.motivation_level
-            : (
-                prefs
-                  ? prefs.motivation_level
-                  : "medium"
-              );
+            : prefs
+              ? prefs.motivation_level
+              : "medium";
 
-        const planning_style =
-          body.planning_style !== undefined
+        const planningStyle =
+          body.planning_style !==
+          undefined
             ? body.planning_style
-            : (
-                prefs
-                  ? prefs.planning_style
-                  : "adaptive"
-              );
+            : prefs
+              ? prefs.planning_style
+              : "adaptive";
 
-        const custom_instructions =
-          body.custom_instructions !== undefined
+        const customInstructions =
+          body.custom_instructions !==
+          undefined
             ? body.custom_instructions
-            : (
-                prefs
-                  ? prefs.custom_instructions
-                  : null
-              );
+            : prefs
+              ? prefs.custom_instructions
+              : null;
 
         if (
           !validTones.includes(tone) ||
@@ -1581,10 +1744,10 @@ export default {
             personality
           ) ||
           !validMotivations.includes(
-            motivation_level
+            motivation
           ) ||
           !validPlanningStyles.includes(
-            planning_style
+            planningStyle
           )
         ) {
           return json(
@@ -1598,12 +1761,15 @@ export default {
         }
 
         if (
-          custom_instructions !== null &&
-          custom_instructions !== undefined &&
+          customInstructions !==
+            null &&
+          customInstructions !==
+            undefined &&
           (
-            typeof custom_instructions !==
+            typeof customInstructions !==
               "string" ||
-            custom_instructions.length > 2000
+            customInstructions.length >
+              2000
           )
         ) {
           return json(
@@ -1643,9 +1809,9 @@ export default {
               user.id,
               tone,
               personality,
-              motivation_level,
-              planning_style,
-              custom_instructions
+              motivation,
+              planningStyle,
+              customInstructions
             )
             .run();
         } else {
@@ -1663,30 +1829,31 @@ export default {
             .bind(
               tone,
               personality,
-              motivation_level,
-              planning_style,
-              custom_instructions,
+              motivation,
+              planningStyle,
+              customInstructions,
               user.id
             )
             .run();
         }
 
         return json(
-          { success: true },
+          {
+            success: true
+          },
           200,
           setCorsHeaders(request)
         );
       }
 
 
-      /*
-       * =====================================================
-       * CHAT CONVERSATIONS
-       * =====================================================
-       */
+      /* =====================================================
+         CHAT CONVERSATIONS
+         ===================================================== */
 
       if (
-        url.pathname === "/api/chat/conversations" &&
+        url.pathname ===
+          "/api/chat/conversations" &&
         request.method === "GET"
       ) {
         const user =
@@ -1697,694 +1864,14 @@ export default {
 
         if (!user) {
           return json(
-            { error: "No autorizado" },
+            {
+              error:
+                "No autorizado"
+            },
             401,
             setCorsHeaders(request)
           );
         }
 
         const { results } =
-          await env.DB.prepare(`
-            SELECT *
-            FROM conversations
-            WHERE user_id = ?
-            ORDER BY updated_at DESC
-          `)
-            .bind(user.id)
-            .all();
-
-        return json(
-          { conversations: results },
-          200,
-          setCorsHeaders(request)
-        );
-      }
-
-
-      if (
-        url.pathname === "/api/chat/conversations" &&
-        request.method === "POST"
-      ) {
-        const user =
-          await getAuthenticatedUser(
-            request,
-            env
-          );
-
-        if (!user) {
-          return json(
-            { error: "No autorizado" },
-            401,
-            setCorsHeaders(request)
-          );
-        }
-
-        const body =
-          await parseJsonBody(request);
-
-        if (!body) {
-          return json(
-            { error: "JSON inválido" },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        const title =
-          body.title;
-
-        if (
-          !isNonEmptyString(
-            title,
-            255
-          )
-        ) {
-          return json(
-            {
-              error:
-                "Título requerido"
-            },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        const id = generateUuid();
-
-        await env.DB.prepare(`
-          INSERT INTO conversations (
-            id,
-            user_id,
-            title,
-            created_at,
-            updated_at
-          )
-          VALUES (
-            ?,
-            ?,
-            ?,
-            datetime('now'),
-            datetime('now')
-          )
-        `)
-          .bind(
-            id,
-            user.id,
-            title
-          )
-          .run();
-
-        return json(
-          {
-            success: true,
-            id
-          },
-          200,
-          setCorsHeaders(request)
-        );
-      }
-
-
-      /*
-       * =====================================================
-       * CHAT CONVERSATION ITEM
-       * =====================================================
-       */
-
-      const convItemMatch =
-        url.pathname.match(
-          /^\/api\/chat\/conversations\/([^/]+)$/
-        );
-
-      if (
-        convItemMatch &&
-        !url.pathname.includes("/messages")
-      ) {
-        const user =
-          await getAuthenticatedUser(
-            request,
-            env
-          );
-
-        if (!user) {
-          return json(
-            { error: "No autorizado" },
-            401,
-            setCorsHeaders(request)
-          );
-        }
-
-        const convId =
-          convItemMatch[1];
-
-        const conv =
-          await env.DB.prepare(`
-            SELECT *
-            FROM conversations
-            WHERE id = ?
-              AND user_id = ?
-          `)
-            .bind(
-              convId,
-              user.id
-            )
-            .first();
-
-        if (!conv) {
-          return json(
-            {
-              error:
-                "Conversación no encontrada"
-            },
-            404,
-            setCorsHeaders(request)
-          );
-        }
-
-        if (request.method === "GET") {
-          const {
-            results: messages
-          } = await env.DB.prepare(`
-            SELECT *
-            FROM messages
-            WHERE conversation_id = ?
-            ORDER BY created_at ASC
-          `)
-            .bind(convId)
-            .all();
-
-          return json(
-            {
-              conversation: conv,
-              messages
-            },
-            200,
-            setCorsHeaders(request)
-          );
-        }
-
-        if (request.method === "PUT") {
-          const body =
-            await parseJsonBody(request);
-
-          if (!body) {
-            return json(
-              { error: "JSON inválido" },
-              400,
-              setCorsHeaders(request)
-            );
-          }
-
-          const title =
-            body.title;
-
-          if (
-            !isNonEmptyString(
-              title,
-              255
-            )
-          ) {
-            return json(
-              {
-                error:
-                  "Título requerido"
-              },
-              400,
-              setCorsHeaders(request)
-            );
-          }
-
-          await env.DB.prepare(`
-            UPDATE conversations
-            SET
-              title = ?,
-              updated_at = datetime('now')
-            WHERE id = ?
-              AND user_id = ?
-          `)
-            .bind(
-              title,
-              convId,
-              user.id
-            )
-            .run();
-
-          return json(
-            { success: true },
-            200,
-            setCorsHeaders(request)
-          );
-        }
-
-        if (request.method === "DELETE") {
-          await env.DB.batch([
-            env.DB.prepare(`
-              DELETE FROM messages
-              WHERE conversation_id = ?
-            `).bind(convId),
-
-            env.DB.prepare(`
-              DELETE FROM conversations
-              WHERE id = ?
-                AND user_id = ?
-            `).bind(
-              convId,
-              user.id
-            )
-          ]);
-
-          return json(
-            { success: true },
-            200,
-            setCorsHeaders(request)
-          );
-        }
-      }
-
-
-      /*
-       * =====================================================
-       * CHAT CONVERSATION MESSAGES
-       * =====================================================
-       */
-
-      const convMessagesMatch =
-        url.pathname.match(
-          /^\/api\/chat\/conversations\/([^/]+)\/messages$/
-        );
-
-      if (
-        convMessagesMatch &&
-        request.method === "POST"
-      ) {
-        const user =
-          await getAuthenticatedUser(
-            request,
-            env
-          );
-
-        if (!user) {
-          return json(
-            { error: "No autorizado" },
-            401,
-            setCorsHeaders(request)
-          );
-        }
-
-        const convId =
-          convMessagesMatch[1];
-
-        const conv =
-          await env.DB.prepare(`
-            SELECT *
-            FROM conversations
-            WHERE id = ?
-              AND user_id = ?
-          `)
-            .bind(
-              convId,
-              user.id
-            )
-            .first();
-
-        if (!conv) {
-          return json(
-            {
-              error:
-                "Conversación no encontrada"
-            },
-            404,
-            setCorsHeaders(request)
-          );
-        }
-
-        const body =
-          await parseJsonBody(request);
-
-        if (!body) {
-          return json(
-            { error: "JSON inválido" },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        const role =
-          body.role;
-
-        const content =
-          body.content;
-
-        if (
-          role !== "user" ||
-          !isNonEmptyString(
-            content,
-            10000
-          )
-        ) {
-          return json(
-            {
-              error:
-                "Mensaje inválido"
-            },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        const msgId =
-          generateUuid();
-
-        await env.DB.batch([
-          env.DB.prepare(`
-            INSERT INTO messages (
-              id,
-              conversation_id,
-              role,
-              content,
-              created_at
-            )
-            VALUES (
-              ?,
-              ?,
-              ?,
-              ?,
-              datetime('now')
-            )
-          `).bind(
-            msgId,
-            convId,
-            role,
-            content
-          ),
-
-          env.DB.prepare(`
-            UPDATE conversations
-            SET
-              updated_at = datetime('now')
-            WHERE id = ?
-          `).bind(convId)
-        ]);
-
-        return json(
-          {
-            success: true,
-            id: msgId
-          },
-          200,
-          setCorsHeaders(request)
-        );
-      }
-
-
-      /*
-       * =====================================================
-       * PLANS
-       * =====================================================
-       */
-
-      if (
-        url.pathname === "/api/plans" &&
-        request.method === "GET"
-      ) {
-        const user =
-          await getAuthenticatedUser(
-            request,
-            env
-          );
-
-        if (!user) {
-          return json(
-            { error: "No autorizado" },
-            401,
-            setCorsHeaders(request)
-          );
-        }
-
-        const {
-          results: plans
-        } = await env.DB.prepare(`
-          SELECT *
-          FROM plans
-          WHERE user_id = ?
-          ORDER BY created_at DESC
-        `)
-          .bind(user.id)
-          .all();
-
-        return json(
-          { plans },
-          200,
-          setCorsHeaders(request)
-        );
-      }
-
-
-      if (
-        url.pathname === "/api/plans" &&
-        request.method === "POST"
-      ) {
-        const user =
-          await getAuthenticatedUser(
-            request,
-            env
-          );
-
-        if (!user) {
-          return json(
-            { error: "No autorizado" },
-            401,
-            setCorsHeaders(request)
-          );
-        }
-
-        const body =
-          await parseJsonBody(request);
-
-        if (!body) {
-          return json(
-            { error: "JSON inválido" },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        const title =
-          body.title;
-
-        const plan_type =
-          body.plan_type;
-
-        const plan_date =
-          body.plan_date;
-
-        const status =
-          body.status;
-
-        const tasksInput =
-          Array.isArray(body.tasks)
-            ? body.tasks
-            : [];
-
-        if (
-          !isNonEmptyString(
-            title,
-            500
-          )
-        ) {
-          return json(
-            {
-              error:
-                "Título del plan requerido"
-            },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        if (
-          plan_type !== undefined &&
-          plan_type !== null &&
-          !isNonEmptyString(
-            plan_type,
-            100
-          )
-        ) {
-          return json(
-            {
-              error:
-                "plan_type inválido"
-            },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        if (!isValidIsoDate(plan_date)) {
-          return json(
-            {
-              error:
-                "plan_date inválido"
-            },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        if (
-          status !== undefined &&
-          status !== null &&
-          !isNonEmptyString(
-            status,
-            50
-          )
-        ) {
-          return json(
-            {
-              error:
-                "status inválido"
-            },
-            400,
-            setCorsHeaders(request)
-          );
-        }
-
-        const validatedTasks = [];
-
-        for (const t of tasksInput) {
-          const tTitle =
-            t.title;
-
-          const tPriority =
-            t.priority || "medium";
-
-          const tStatus =
-            t.status || "pending";
-
-          const tDuration =
-            t.duration_minutes !== undefined &&
-            t.duration_minutes !== null
-              ? Number(t.duration_minutes)
-              : 0;
-
-          const tDueDate =
-            t.due_date;
-
-          const tStartTime =
-            t.start_time;
-
-          const tEndTime =
-            t.end_time;
-
-          const tDescription =
-            t.description;
-
-          const tCategory =
-            t.category;
-
-          if (
-            !isNonEmptyString(
-              tTitle,
-              500
-            )
-          ) {
-            return json(
-              {
-                error:
-                  "Título de tarea inválido"
-              },
-              400,
-              setCorsHeaders(request)
-            );
-          }
-
-          if (
-            !["low", "medium", "high"]
-              .includes(tPriority)
-          ) {
-            return json(
-              {
-                error:
-                  "Prioridad de tarea inválida"
-              },
-              400,
-              setCorsHeaders(request)
-            );
-          }
-
-          if (
-            ![
-              "pending",
-              "completed",
-              "missed",
-              "in_progress"
-            ].includes(tStatus)
-          ) {
-            return json(
-              {
-                error:
-                  "Estado de tarea inválido"
-              },
-              400,
-              setCorsHeaders(request)
-            );
-          }
-
-          if (
-            !Number.isInteger(tDuration) ||
-            tDuration < 0
-          ) {
-            return json(
-              {
-                error:
-                  "Duración de tarea inválida"
-              },
-              400,
-              setCorsHeaders(request)
-            );
-          }
-
-          if (
-            !isValidIsoDate(tDueDate)
-          ) {
-            return json(
-              {
-                error:
-                  "Fecha límite de tarea inválida"
-              },
-              400,
-              setCorsHeaders(request)
-            );
-          }
-
-          if (
-            !isValidTime(tStartTime) ||
-            !isValidTime(tEndTime)
-          ) {
-            return json(
-              {
-                error:
-                  "Hora de tarea inválida"
-              },
-              400,
-              setCorsHeaders(request)
-            );
-          }
-
-          if (
-            tDescription !== undefined &&
-            tDescription !== null &&
-            !isNonEmptyString(
-              tDescription,
-              2000
-            )
-          ) {
-            return json(
-              {
-                error:
-                  "Descripción de tarea inválida"
-              },
-              400,
-              setCorsHeaders(request)
-            );
-}
+          await
